@@ -1,0 +1,208 @@
+
+.form-control:focus {
+  border-color: #f56363;
+}
+
+.colorstext {
+  color: #f56363;
+}
+.coloricon i {
+  color: #f56363;
+}
+.colorsbg {
+  background: #f56363;
+}
+
+.separator {
+  background: #f56363;
+}
+.separator-left {
+  background: #f56363;
+}
+
+.separator_wrap::after,
+.separator_wrap::before {
+  background-color: #f56363;
+}
+.separator_wrap-left::after {
+  background-color: #f56363;
+}
+.separator2 {
+  border: 2px solid #f56363;
+}
+/*
+Button
+*/
+.btn-primary.active.focus,
+.btn-primary.active:focus,
+.btn-primary.active:hover,
+.btn-primary:active.focus,
+.btn-primary:active:focus,
+.btn-primary:active:hover,
+.open > .dropdown-toggle.btn-primary.focus,
+.open > .dropdown-toggle.btn-primary:focus,
+.open > .dropdown-toggle.btn-primary:hover,
+.btn-primary.focus,
+.btn-primary:focus,
+.btn-primary.disabled,
+.btn-primary.disabled:hover {
+  background-color: #f56363;
+  border-color: #f56363;
+}
+
+.btn-primary.btnxs:hover {
+  background: #f56363;
+}
+
+.btn-default:hover {
+  color: #f56363;
+}
+.btn-primary {
+  background-color: #f56363;
+  border: 2px solid #f56363;
+}
+
+btn-primary:focus {
+  background-color: #f56363;
+}
+.btn-primary:hover {
+  border-color: #f56363;
+  color: #f56363;
+}
+
+h1 span {
+  color: #f56363;
+}
+
+
+.nav .btn-primary:hover {
+  color: #f56363 !important;
+}
+
+.navbar-default .btn-default:hover {
+  border: 1px solid #f56363;
+}
+
+.fixed-nav.navbar .navbar-nav > .active > a,
+.fixed-nav.navbar .navbar-nav > .active > a:hover,
+.fixed-nav.navbar .navbar-nav > .active > a:focus,
+.fixed-nav.navbar .navbar-nav > li > a:hover,
+.fixed-nav.navbar .navbar-nav > li > a:focus {
+  color: #f56363;
+}
+
+.try-registration-form input {
+  border-left: 3px solid #f56363;
+}
+.try-registration-form textarea {
+  border-left: 3px solid #f56363;
+}
+.try-registration-form input:focus {
+  border: 1px solid #f56363;
+  border-left: 3px solid #f56363;
+}
+
+.team-separator {
+  background: #f56363;
+}
+
+.testimonialslide .carousel-indicators .active {
+  background: #f56363 !important;
+  border-color: #f56363 !important;
+}
+
+.rating {
+  color: #f56363;
+}
+
+.pricing-table {
+  border: 2px solid #f56363;
+}
+
+.pricing-table.active {
+  background-color: #f56363;
+  border-color: #f56363;
+}
+
+.timeline .timeline-year {
+  border: 3px solid #f56363;
+  color: #f56363;
+
+}
+.timeline .timeline-year:hover {
+  background: #f56363;
+  -webkit-box-shadow: 0px 0px 0px 2px #f56363;
+  box-shadow: 0px 0px 0px 2px #f56363;
+}
+
+.timeline .start {
+  background: #f56363;
+}
+
+.timeline .timeline-info:hover:after {
+  background: #f56363;
+  border: 2px solid #f56363;
+}
+
+.subscribe-wrap.body-subscribe .subscribe-input {
+  border-color: #f56363;
+}
+
+.newsletter-icon i {
+  font-size: 225px;
+  color: #f56363;
+}
+
+.tweet a:hover {
+  color: #f56363;
+}
+
+.owl-theme .owl-dots .owl-dot.active span,
+.owl-theme .owl-dots .owl-dot:hover span {
+  background: #f56363;
+}
+
+.faq-details i {
+  z-index: 1 !important;
+}
+
+#fancy-inputs label.input span:before {
+  background-color: #f56363;
+}
+
+#fancy-inputs input:focus + span span {
+  color: #f56363;
+}
+
+#fancy-inputs label.textarea span:before {
+  background-color: #f56363;
+}
+
+#fancy-inputs textarea:focus + span span {
+  color: #f56363;
+}
+
+.address i {
+  color: #f56363;
+}
+
+.footer-link a:hover {
+  color: #f56363;
+}
+
+.social-link-img a span:hover {
+  color: #f56363;
+}
+
+.social-link a span:hover {
+  color: #f56363;
+}
+
+.footer-link-default a:hover {
+  color: #f56363;
+}
+.form-control:focus {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px #f56363;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px #f56363;
+}
+/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,27 @@
+AppMatch (iOS App)
+==================
+After success login => new matches page.(if no new matches message : No new matches come back soon.)
+saved App Matches => saved matches page--listing of app with icon,name,developer,tags,price,download button,click on app opens app detail(abel to slide that will loads other apps),back button back to saved matches page,find new matches link.(count-saved apps in toggle menu)
+skipped Apps => like saved App Matches.(count-skipped apps in toggle menu)
+Settings => profile settings.
+			two options: include games in matches(if selected apps with games category will display,if not even if user selects game in questionary screen,not to display apps with this category.)
+
+when user is not logged in and first time visting site:
+	how it works functionality: 5 screens
+	when click on i am ready : redirects to questionnaries page where he can save and skip categories.(with swipe functionality)
+	when click on done : apps with details will be displayed by categories saved by user,here if user swipe left means skip nothing happens,if swipe right for save app it will redirects to login page.where he can login or register. 
+	==============
+	
+	dana.breen@gmail.com  qjzSUNCs3GdYFsC3BqCezBWkfi/OlKU3KdEAT6r3Fng=
+EAAXR7hBRqicBAKJyoKNGW5WveGhAjrGQRKALzZCj26sv9pZBoVgZCdS7YJF3pM0m8fXFDZBC9LM8TZBHKyBC6ESTD2OfmDhkvzmnZAjph46PlI5iT6kYJrptjzXRzu660OOHEWIyueNjZAwPq55ZBa9lsKWE8jUQEMPMey0NZCcsMymPULIaZB7U5xhkp7F8ukLjoZD
+var deleteAccountHref = '<?php echo baase_url() . 'admin/delete_user';?>' + href;
+            $.ajax({
+                url: '<?php echo base_url() . 'admin/user_detail/' ?>',
+                data: {email: href},
+                method: 'post',
+                success: function (data) {
+                    console.log(data);
+                    $('#uDetailContent').html(data);
+//                    $('#deleteAccountHref').attr('href',deleteAccountHref);
+                    $('#uDetailModal').modal('show');
+	

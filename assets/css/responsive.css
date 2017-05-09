@@ -1,0 +1,255 @@
+
+/* 
+    Created on : Sep 28, 2015, 1:08:32 PM
+    Author     : XpeedStudio
+*/
+
+
+
+
+
+/* Large desktops and laptops */
+@media (min-width: 800px) {
+    /*Child menu*/
+    nav ul li .dropdown-menu {
+        display: block;
+        visibility: hidden;
+        background-color: #fff;
+        min-width: 10em;
+        border: 1px solid rgba(0,0,0,0.2);
+        border-top: none;
+        position: absolute;
+        left: -0.5em;
+        padding: 0;
+        text-align: left;
+        list-style-type: none;
+        opacity: 0;
+        -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+        transition: opacity 0.35s, transform 0.35s;
+        -webkit-transform: translate3d(0, -15px, 0);
+        transform: translate3d(0, -15px, 0);
+
+    }
+    nav ul li:hover .dropdown-menu {
+        visibility: visible;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+
+    }
+    nav ul li .dropdown-menu li {
+        margin: 0;
+    }
+    nav ul li .dropdown-menu li:hover a {
+        background-color: #fbfbfb;
+    }
+    nav ul li .dropdown-menu li a {
+        display: block;
+        line-height: 2.5em;
+        padding: 0.2em 1em;
+        border-bottom: 1px solid rgba(0,0,0,0.07);
+    }
+    nav ul li .dropdown-menu li a:hover {
+        color: #1ac6ff; //need to be add in color css
+    } 
+}
+
+
+
+/* Portrait tablets and small desktops */
+@media  (max-width: 991px) {
+    html {
+        font-size: 90%;
+    }
+
+    .home-fluid-left {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    .home-intro-2nd-half-try {
+        padding-top: 2rem;
+    }
+    .home-fluid-wrapper{
+        height: auto;
+    }
+    .home-overlay-fluid {
+        width: 100%;
+    }
+    .home-video-btn-left {
+        margin-bottom: 40px;
+        margin-top: 4rem;
+    }
+
+    .fluid-blocks-col {
+        padding: 70px 40px 0px 15px;
+    }
+
+
+
+
+
+
+}
+/* Landscape phones and portrait tablets */
+@media (max-width: 767px) {
+    html {
+        font-size: 80%;
+    }
+    .fluid-blocks-col {
+        padding: 70px 0px 0px 15px;
+    }
+    .home-button img {
+        margin-bottom: 20px;
+    }
+    .service {
+        margin-bottom: 30px;
+    }
+
+    .funfacts-counter .col-md-3 {
+        width: 50%;
+        float: left;
+    }
+    .partner {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .portfolio .portfolio-item { 
+        width: 50%; 
+    }
+    
+    .team-member{
+        width: 45%;
+        float: left;
+        margin: 10px;
+    }
+    .newsletter-img {
+        margin: auto;
+        display: block;
+        margin-bottom: 30px;
+    }
+    .subscribe-wrap.body-subscribe .subscribe-input{
+        display: block;
+        margin-top: 29px;
+        width: 100%;
+        border: 1px solid #EDEDED;
+        border-radius: 0px;
+    }
+    .subscribe-wrap.body-subscribe button{
+        width: 100%;
+        border-radius: 0px;
+        margin-top: 40px;
+    }
+    .footer-link {
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+    }
+    .social-link {
+        margin-top: 1.5rem;
+    }
+    .footer-link-default {
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+    }
+    .address {
+        text-align: center;
+        padding-bottom: 40px;
+        margin-bottom: 20px;
+    }
+
+}
+
+
+
+/* Landscape phones and smaller */
+@media (max-width: 480px) {
+    html {
+        font-size: 65%;
+    }
+    .btnxs {
+        margin-bottom: 20px;
+    }
+
+    .subscribe-wrap .subscribe-input ,
+    .subscribe-wrap button {
+        width: 100%;
+        border-radius: 0px;
+        margin-bottom: 10px;
+    }
+    .subscribe-wrap .message{
+        margin-bottom: 20px;
+    }
+    .intro-wrap {
+        padding-top:0;
+    }
+    .funfacts-counter .col-md-3 {
+        width: 100%;
+        float: left;
+    }
+
+
+    ul.timeline {
+        background-position: left;
+        margin-left: 20px;
+    }
+    .timeline .timeline-year {
+        line-height: 25px;
+        width: 40px;
+        height: 40px;
+        font-size: 11px;
+        margin: 31px 10px 31px -15px;
+    }
+    .timeline .timeline-info:nth-of-type(2n) {
+        float: none;
+        clear: both;
+    }
+    .timeline .timeline-info{
+        padding: 10px;
+        width: 85%;
+        margin-left: 10px;
+    }
+    .timeline .timeline-info:after {
+        left: -6.8%;
+        right: 0;
+    }
+    .timeline .timeline-info .arrow{
+        left: -1.5%;
+        right: auto;
+    }
+    .timeline .start {
+        width: 35px;
+        height: 35px;
+        padding: 14px 0;
+        font-size: 14px;
+        left: 0%;
+        margin-left: -16px;
+    }
+
+    .portfolio .portfolio-item { 
+        width: 100%; 
+    }
+
+    .team-member{
+        width: 100%;
+    }
+
+    .block-message {
+        padding: 0 20px;
+    }
+    .clients2 .col-xs-6 {
+        width: 100%;
+        margin-top: 30px;
+    }
+
+}
+
+
+
+@media (max-width: 320px) {
+
+
+    html {
+        font-size: 60.5%;
+    }
+}
+

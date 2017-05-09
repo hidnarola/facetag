@@ -1,0 +1,35 @@
+.upload-dir {
+    background-color: #ddd;
+    border-style: dashed;
+    border-color: #ccc;
+}
+.upload-dir-main{padding: 20px;}
+.blockOverlay{opacity: 0.7 !important;background-color: rgba(0, 0, 0, 0.83) !important;}
+.blockElement{color: #fff !important;}
+.upload-dir h1 {
+    text-align: center;
+    padding-top: 10px;
+}
+.switch-input{
+    padding-left: 0px !important;
+}
+.duration-filter{
+    min-width: 200px;
+    float: right;
+    margin-top: 15px;
+    margin-right: 20px;
+    margin-bottom: -15px;
+}
+.popover{width: 100%;}
+.btn-icon.btn-xs, .input-group-xs > .input-group-btn > .btn.btn-icon{margin-top: 2px;}
+.app-profile-screen img{height: 100%;width: 100%;}
+.app-profile-screen h4{text-align: center; border-bottom: 1px solid #ddd;}
+.app-profile-screen{margin:0px  30px;
+    box-shadow: 0px 0px 69px -15px rgba(0,0,0,0.75);
+}
+.private-info-texts{margin-left: 10px;}
+@media(max-width:480px){
+    #image_preview_div{display: block;}
+}
+
+    
