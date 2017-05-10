@@ -76,7 +76,7 @@ $query_builder = TRUE;
 $hostname = "localhost";
 $username = "root";
 $password = "narola21";
-$database = "facetag";}
+$database = "facetag";
 
 $db['default'] = array(
     'dsn' => '',
