@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   | a PHP script and you can easily do that on your own.
   |
  */
- echo $_SERVER['HTTP_HOST'];die;
+
 if ($_SERVER['HTTP_HOST'] == 'clientapp.narola.online') {
     $base_url = '/HD/facetag';
 } elseif($_SERVER['HTTP_HOST'] == '13.54.170.29') {
