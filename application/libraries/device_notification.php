@@ -7,7 +7,7 @@ if (!defined('BASEPATH'))
 // You can use DX_Auth_Event to extend DX_Auth to fullfil your needs
 // For example: you can use event below to PM user when he already activated the account, etc.
 
-class device_notification {
+class Device_notification {
 
     public function sendMessageToAndroidPhone($API_KEY, $registrationIds, $messageText) {
 

@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class push_notification {
+class Push_notification {
 
     public function sendPushiOS($postData, $pushData) {
 //        $deviceToken = validateObject($postData, 'deviceToken', "");
