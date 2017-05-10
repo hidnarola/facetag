@@ -28,7 +28,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 if ($_SERVER['HTTP_HOST'] == 'clientapp.narola.online') {
     $base_url = '/HD/facetag';
 } elseif($_SERVER['HTTP_HOST'] == '13.54.170.29') {
-	$base_url = 'http://13.54.170.29/';
+	$base_url = '13.54.170.29';
 }else {
     $base_url = '/facetag';
 }
