@@ -73,16 +73,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 $active_group = 'default';
 $query_builder = TRUE;
-$hostname = "192.168.1.201";
-	$username = "facetag";
-	$password = "W73vdXD1l3lc72u";
-	$database = "facetag";
-if ($_SERVER['HTTP_HOST'] == 'http://13.54.170.29/') {
-	$hostname = "localhost";
-	$username = "root";
-	$password = "narola21";
-	$database = "facetag";
-}
+$hostname = "localhost";
+$username = "root";
+$password = "narola21";
+$database = "facetag";}
+
 $db['default'] = array(
     'dsn' => '',
     'hostname' => $hostname,
