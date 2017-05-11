@@ -1073,42 +1073,46 @@
     }
 </script>
 <script type="text/javascript">
+    sub_url = site_url + 'business/icps/add';
+<?php if (isset($icp_data)) { ?>
+        sub_url = site_url + 'business/icps/edit/<?php echo $icp_data['id'] ?>';
+<?php } ?>
     $(document).ready(function () {
-    $("#icp_info").submit(function (event) {
-    event.preventDefault();
+        $("#icp_info").submit(function (event) {
+            event.preventDefault();
             var formData = new FormData($(this)[0]);
             $.ajax({
-            url: '<?php echo base_url(); ?>business/icps/add',
-                    type: 'POST',
-                    data: formData,
-                    async: false,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
+                url: sub_url,
+                type: 'POST',
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
 //                dataType: "json",
-                    success: function (result) {
+                success: function (result) {
                     swal({
-                    title: "Add another Image Capture Point?",
-                            text: "",
-                            type: "info",
-                            showCancelButton: true,
-                            cancelButtonText: 'No',
-                            confirmButtonColor: "#297DCE",
-                            confirmButtonText: "Yes"
+                        title: "Add another Image Capture Point?",
+                        text: "",
+                        type: "info",
+                        showCancelButton: true,
+                        cancelButtonText: 'No',
+                        confirmButtonColor: "#297DCE",
+                        confirmButtonText: "Yes"
                     },
                             function (isConfirm) {
-                            if (!isConfirm) {
-                            // if later:
-                            window.location.href = 'business/promo_images';
-                            } else {
-                            // if yes:
-                            window.location.href = 'business/icps/add';
-                            }
+                                if (!isConfirm) {
+                                    // if later:
+                                    window.location.href = 'business/promo_images';
+                                } else {
+                                    // if yes:
+                                    window.location.href = 'business/icps/add';
+                                }
                             });
-                            return false;
-                    }
+                    return false;
+                }
             });
-    });
+        });
     }
     );
     var img1 = new Image();
