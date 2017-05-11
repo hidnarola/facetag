@@ -112,15 +112,23 @@ class Icps extends CI_Controller {
 
             //-- Upload icp logo
             $crop_img = $this->input->post('cropimg');
-                    if(!empty($crop_img)) {
-                    $file = ICP_LOGO . '/Logo-' . str_replace(' ', '', time()) . '.png';
-                    $icp_logo = 'Logo-' . str_replace(' ', '', time()) . '.png';
-                    $imgData = base64_decode(stripslashes(substr($crop_img, 22)));
-                    $fp = fopen($file, 'w');
-                    fwrite($fp, $imgData);
-                    fclose($fp);
-                    }
-            
+            if (!empty($crop_img)) {
+//                    $file = ICP_LOGO . '/Logo-' . str_replace(' ', '', time()) . '.png';
+//                    $icp_logo = 'Logo-' . str_replace(' ', '', time()) . '.png';
+//                    $imgData = base64_decode(stripslashes(substr($crop_img, 22)));
+//                    $fp = fopen($file, 'w');
+//                    fwrite($fp, $imgData);
+//                    fclose($fp);
+
+                $data_img = $crop_img;
+
+                list($type, $data_img) = explode(';', $data_img);
+                list(, $data_img) = explode(',', $data_img);
+                $data_img = base64_decode($data_img);
+
+                file_put_contents(ICP_LOGO . '/Logo-' . str_replace(' ', '', time()) . '.png', $data_img);
+            }
+
 //            if ($_FILES['icp_logo']['name'] != '') {
 //                $img_array = array('png', 'jpeg', 'jpg', 'PNG', 'JPEG', 'JPG');
 //                $exts = explode(".", $_FILES['icp_logo']['name']);
@@ -150,7 +158,6 @@ class Icps extends CI_Controller {
 //                    }
 //                }
 //            }
-
             //-- Upload icp preview image
             if ($_FILES['preview_photo']['name'] != '') {
                 $img_array = array('png', 'jpeg', 'jpg', 'PNG', 'JPEG', 'JPG');
@@ -666,7 +673,7 @@ class Icps extends CI_Controller {
 //                                    $icp_users = $this->users_model->get_checkedinusers_by_icp($icp_id);
 //                                    //-- merge both users
 //                                    $users = array_merge($business_users, $icp_users);
-                                     $users = $this->users_model->all_users();
+                                    $users = $this->users_model->all_users();
 
                                     foreach ($users as $image) {
 
@@ -859,7 +866,7 @@ class Icps extends CI_Controller {
 //                    $icp_users = $this->users_model->get_checkedinusers_by_icp($icp_id);
 //                    //-- merge both users
 //                    $users = array_merge($business_users, $icp_users);
-                     $users = $this->users_model->all_users();
+                    $users = $this->users_model->all_users();
                     /*
                       $userids = array();
                       $device_tokens = array();

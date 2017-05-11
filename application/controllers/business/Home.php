@@ -207,12 +207,20 @@ class Home extends CI_Controller {
             $business_logo = $business_profile[0]['logo'];
             $crop_img = $this->input->post('cropimg');
             if (!empty($crop_img)) {
-                $file = BUSINESS_LOGO_IMAGES . '/Logo-' . str_replace(' ', '', time()) . '.png';
-                $business_logo = 'Logo-' . str_replace(' ', '', time()) . '.png';
-                $imgData = base64_decode(stripslashes(substr($crop_img, 22)));
-                $fp = fopen($file, 'w');
-                fwrite($fp, $imgData);
-                fclose($fp);
+//                $file = BUSINESS_LOGO_IMAGES . '/Logo-' . str_replace(' ', '', time()) . '.png';
+//                $business_logo = 'Logo-' . str_replace(' ', '', time()) . '.png';
+//                $imgData = base64_decode(stripslashes(substr($crop_img, 22)));
+//                $fp = fopen($file, 'w');
+//                fwrite($fp, $imgData);
+//                fclose($fp);
+
+                $data_img = $crop_img;
+
+                list($type, $data_img) = explode(';', $data_img);
+                list(, $data_img) = explode(',', $data_img);
+                $data_img = base64_decode($data_img);
+
+                file_put_contents(BUSINESS_LOGO_IMAGES . '/Logo-' . str_replace(' ', '', time()) . '.png', $data_img);
             }
 //            if ($_FILES['logo']['name'] != '') {
 //                $img_array = array('png', 'jpeg', 'jpg', 'PNG', 'JPEG', 'JPG');
