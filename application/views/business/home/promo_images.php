@@ -231,7 +231,7 @@
                             return false;
                         if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
                             myDropzone.removeFile(file);
-                            window.location.href = site_url + 'business/promo_images';
+                            window.location.href = site_url + 'business/private_information';
 
                         }
                     }

@@ -272,17 +272,27 @@ class Home extends CI_Controller {
                     'modified' => date('Y-m-d H:i:s')
                 );
                 $this->businesses_model->update_record('id=' . $business_id, $update_array);
-                $this->session->set_flashdata('success', 'Business details have been updated successfully!');
-
+//                $this->session->set_flashdata('success', 'Business details have been updated successfully!');
                 //-- If Business logged in for first time then update is_ever_loggedin field to 1
+                $icps = $this->businesses_model->get_icps($business_id);
+                if (!empty($icps)) {
+                    $result['icpexist'] = 1;
+                } else {
+                    $result['icpexist'] = 0;
+                }
+//                    echo $this->session->userdata('facetag_admin')['is_ever_loggedin'];exit;
                 if ($this->session->userdata('facetag_admin')['is_ever_loggedin'] == 0) {
                     $this->users_model->update_record('id =' . $this->session->userdata('facetag_admin')['id'], array('is_ever_loggedin' => 1));
                     $facetag_admin = $this->session->userdata('facetag_admin');
                     $facetag_admin['is_ever_loggedin'] = 1;
                     $this->session->unset_userdata('facetag_admin');
                     $this->session->set_userdata('facetag_admin', $facetag_admin);
+                } else {
+                    $result['icpexist'] = 1;
                 }
-                redirect('business/profile');
+
+                echo json_encode($result);
+                exit;
             }
         }
         $this->template->load('default', 'business/home/business_profile', $data);

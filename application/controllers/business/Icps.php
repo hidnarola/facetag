@@ -355,7 +355,9 @@ class Icps extends CI_Controller {
                         $this->icp_images_model->insert_physical_product($image_data);
                     }
                 }
-                redirect('business/icps/');
+                $result['status'] = 'success';
+                echo json_encode($result);
+                 exit;
             }
         }
         $this->template->load('default', 'business/icps/form', $data);
