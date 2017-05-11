@@ -264,48 +264,52 @@ class Cron extends CI_Controller {
                                     if ($user['device_type'] == 0) {
                                         $where = 'im.id = ' . $this->db->escape($icp_image_id);
                                         $icp_img_data = $this->icp_images_model->get_result($where);
-                                        $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
-                                        $icp_data = $this->icps_model->get_result($where);
+                                        if (!empty($icp_img_data)) {
+                                            $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
+                                            $icp_data = $this->icps_model->get_result($where);
 
-                                        $extension = explode('/', $icp_img_data[0]['image']);
-                                        $image_name = explode('.', $extension[2]);
+                                            $extension = explode('/', $icp_img_data[0]['image']);
+                                            $image_name = explode('.', $extension[2]);
 
-                                        $pushData = array(
-                                            "notification_type" => "data",
-                                            "body" => $messageText,
-                                            "selfietagid" => $icp_image_tag_id,
-                                            "businessid" => $icp_img_data[0]['business_id'],
-                                            "businessname" => $icp_data[0]['businessname'],
-                                            "businessaddress" => $icp_data[0]['businessaddress'],
-                                            "icpid" => $icp['id'],
-                                            "icpname" => $icp_data[0]['name'],
-                                            "icpaddress" => $icp_data[0]['address'],
-                                            "imgid" => $icp_image_id,
+                                            $pushData = array(
+                                                "notification_type" => "data",
+                                                "body" => $messageText,
+                                                "selfietagid" => $icp_image_tag_id,
+                                                "businessid" => $icp_img_data[0]['business_id'],
+                                                "businessname" => $icp_data[0]['businessname'],
+                                                "businessaddress" => $icp_data[0]['businessaddress'],
+                                                "icpid" => $icp['id'],
+                                                "icpname" => $icp_data[0]['name'],
+                                                "icpaddress" => $icp_data[0]['address'],
+                                                "imgid" => $icp_image_id,
 //                                            "image" => $icp_img_data[0]['image']
-                                            "image" => $image_name[0] . $icp_image_tag_id . "." . $image_name[1]
-                                        );
+                                                "image" => $image_name[0] . $icp_image_tag_id . "." . $image_name[1]
+                                            );
 
-                                        $response = $this->push_notification->sendPushToAndroid(array($user['device_id']), $pushData, FALSE);
+                                            $response = $this->push_notification->sendPushToAndroid(array($user['device_id']), $pushData, FALSE);
+                                        }
                                     } else {
 
                                         $where = 'im.id = ' . $this->db->escape($icp_image_id);
                                         $icp_img_data = $this->icp_images_model->get_result($where);
-                                        $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
-                                        $icp_data = $this->icps_model->get_result($where);
+                                        if (!empty($icp_img_data)) {
+                                            $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
+                                            $icp_data = $this->icps_model->get_result($where);
 
-                                        $pushData = array(
-                                            "selfietagid" => $icp_image_tag_id,
-                                            "businessid" => $icp_img_data[0]['business_id'],
-                                            "businessname" => $icp_data[0]['businessname'],
-                                            "businessaddress" => $icp_data[0]['businessaddress'],
-                                            "icpid" => $icp['id'],
-                                            "icpname" => $icp_data[0]['name'],
-                                            "icpaddress" => $icp_data[0]['address'],
-                                            "imgid" => $icp_image_id,
-                                            "image" => $icp_img_data[0]['image']
-                                        );
+                                            $pushData = array(
+                                                "selfietagid" => $icp_image_tag_id,
+                                                "businessid" => $icp_img_data[0]['business_id'],
+                                                "businessname" => $icp_data[0]['businessname'],
+                                                "businessaddress" => $icp_data[0]['businessaddress'],
+                                                "icpid" => $icp['id'],
+                                                "icpname" => $icp_data[0]['name'],
+                                                "icpaddress" => $icp_data[0]['address'],
+                                                "imgid" => $icp_image_id,
+                                                "image" => $icp_img_data[0]['image']
+                                            );
 
-                                        $response = $this->push_notification->sendPushiOS(array('deviceToken' => $user['device_id'], 'pushMessage' => $messageText), $pushData);
+                                            $response = $this->push_notification->sendPushiOS(array('deviceToken' => $user['device_id'], 'pushMessage' => $messageText), $pushData);
+                                        }
                                     }
                                 }
                             }
