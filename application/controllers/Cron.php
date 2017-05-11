@@ -8,7 +8,7 @@ class Cron extends CI_Controller {
         parent::__construct();
 
         $this->load->library('facerecognition');
-        $this->load->library('device_notification');
+//        $this->load->library('device_notification');
         $this->load->library('push_notification');
 
         $this->load->model(array('icp_images_model', 'users_model', 'icp_imagetag_model', 'settings_model', 'icps_model'));
