@@ -204,7 +204,7 @@
 
             <div class="col-md-6 col-sm-6">
                 <div class="text-center describe-images wow fadeInRight" data-wow-offset="10" data-wow-duration="1.5s">
-                    <img src="<?php echo base_url(); ?>assets/images/AdobeStock_57267484.jpeg" alt="">
+                    <img src="<?php echo base_url(); ?>assets/images/AdobeStock_57267484.jpg" alt="">
                 </div>
             </div>
 
