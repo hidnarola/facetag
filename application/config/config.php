@@ -24,15 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   | a PHP script and you can easily do that on your own.
   |
  */
-
-if ($_SERVER['HTTP_HOST'] == 'clientapp.narola.online') {
-    $config['base_url'] = 'http://192.168.1.202/HD/facetag/';
-} elseif($_SERVER['HTTP_HOST'] == '13.54.170.29') {
-	$config['base_url'] = 'http://13.54.170.29/';
-}else {
-    $config['base_url'] = '/facetag';
-}
-
+$config['base_url'] = '';
 /*
   |--------------------------------------------------------------------------
   | Index File
