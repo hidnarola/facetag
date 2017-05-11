@@ -2,23 +2,23 @@
     <div id="myCarousel" class="carousel slide main-slider" data-ride="carousel">
         <div class="carousel-inner" role="listbox">
             <div class="item active">
-                <img src="<?php echo base_url(); ?>assets/images/AdobeStock_104204655.jpg" alt="Chania" width="460" height="345">
+                <img src="<?php echo base_url(); ?>assets/images/AdobeStock_104204655.jpg" alt="Chania">
             </div>
 
             <div class="item">
-                <img src="<?php echo base_url(); ?>assets/images/AdobeStock_31230300.jpg" alt="Chania" width="460" height="345">
+                <img src="<?php echo base_url(); ?>assets/images/AdobeStock_31230300.jpg" alt="Chania">
             </div>
 
             <div class="item">
-                <img src="<?php echo base_url(); ?>assets/images/shutterstock_115589419.jpg" alt="Flower" width="460" height="345">
+                <img src="<?php echo base_url(); ?>assets/images/shutterstock_115589419.jpg" alt="Flower">
             </div>
 
             <div class="item">
-                <img src="<?php echo base_url(); ?>assets/images/shutterstock_113815783.jpg" alt="Flower" width="460" height="345">
+                <img src="<?php echo base_url(); ?>assets/images/shutterstock_113815783.jpg" alt="Flower">
             </div>
 
             <div class="item">
-                <img src="<?php echo base_url(); ?>assets/images/AdobeStock_96473480.jpg" alt="Chania" width="460" height="345">
+                <img src="<?php echo base_url(); ?>assets/images/AdobeStock_96473480.jpg" alt="Chania">
             </div>
         </div>
 
