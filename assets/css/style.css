@@ -1281,7 +1281,7 @@ Testimonial Caoursel
    SECTION:  Company history overview                 
 -----------------------------------------*/
 .timeline-overview {
-    background: url(../images/AdobeStock_67292612.jpeg) no-repeat center top fixed;
+    background: url(../images/AdobeStock_67292612.jpg) no-repeat center top fixed;
     /*background-size*/
     -moz-background-size: cover;
     background-size: cover;
@@ -2181,7 +2181,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
 .footer-wrap img{margin-bottom: 0;}
 .play-store-img{width: 272px;height: 81px;}
 #whale {
-    background: url(../images/AdobeStock_131102573.jpeg) no-repeat center top fixed;
+    background: url(../images/AdobeStock_131102573.jpg) no-repeat center top fixed;
     -moz-background-size: cover;
     background-size: cover;
     -webkit-background-size: cover;
@@ -2198,7 +2198,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
     margin: 120px 0px;
 }
 #giraffe {
-    background: url(../images/AdobeStock_78994707.jpeg) no-repeat center top fixed;
+    background: url(../images/AdobeStock_78994707.jpg) no-repeat center top fixed;
     -moz-background-size: cover;
     background-size: cover;
     -webkit-background-size: cover;
@@ -2234,7 +2234,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
 }}
 @media(max-width:1024px){
    #whale {
-    background: url(../images/AdobeStock_131102573.jpeg) no-repeat center top;
+    background: url(../images/AdobeStock_131102573.jpg) no-repeat center top;
     background-attachment:inherit !important;
     -moz-background-size: 100% 100% !important;
     background-size: 100% 100% !important;
@@ -2254,7 +2254,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
     overflow: hidden;
 }
 #giraffe {
-   background: url(../images/AdobeStock_78994707.jpeg) no-repeat center top;
+   background: url(../images/AdobeStock_78994707.jpg) no-repeat center top;
     background-attachment:inherit !important;
     -moz-background-size: 100% 100% !important;
     background-size: 100% 100% !important;
@@ -2264,7 +2264,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
     overflow: hidden;
 }
 #timeline{
-        background: url(../images/AdobeStock_67292612.jpeg) no-repeat center top;
+        background: url(../images/AdobeStock_67292612.jpg) no-repeat center top;
     background-attachment:inherit !important;
     -moz-background-size: 100% 100% !important;
     background-size: 100% 100% !important;
