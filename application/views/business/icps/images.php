@@ -160,7 +160,7 @@
                     visible: true,
                     render: function (data, type, full, meta) {
 //                        return '';
-                        return '<a href="<?php echo site_url() . 'business/icps/get_image?image=' ?>' + base_url + icp_image_path + data + '" data-popup="lightbox"><img src="<?php echo site_url() . 'business/icps/get_image?image=' ?>' + base_url + icp_image_path + data + '" alt="" class="img-rounded img-preview"></a>';
+                        return '<a href="' + base_url + icp_image_path + data + '" data-popup="lightbox"><img src="' + base_url + icp_image_path + data + '" alt="" class="img-rounded img-preview"></a>';
                     },
                     sortable: false,
                 },
