@@ -321,7 +321,7 @@ class Users_model extends CI_Model {
 
     
     public function all_users() {
-        $this->db->select('img.image,u.device_id,u.device_type');
+        $this->db->select('img.image,u.id as user_id,u.device_id,u.device_type');
         $this->db->where('u.is_active', 1);
         $this->db->where('u.is_delete', 0);
         $this->db->where('u.user_role', 3);

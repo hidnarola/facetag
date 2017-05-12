@@ -215,7 +215,7 @@ class Home extends CI_Controller {
 //                fclose($fp);
 
                 $data_img = $crop_img;
-
+                $business_logo = 'Logo-' . str_replace(' ', '', time()) . '.png';
                 list($type, $data_img) = explode(';', $data_img);
                 list(, $data_img) = explode(',', $data_img);
                 $data_img = base64_decode($data_img);
@@ -250,9 +250,9 @@ class Home extends CI_Controller {
             if ($flag != 1) {
 
                 //--Unlink the previosly uploaded image if new image is uploaded
-                if ($_FILES['logo']['name'] != '') {
-                    unlink(BUSINESS_LOGO_IMAGES . $data['business_data']['logo']);
-                }
+//                if ($_FILES['logo']['name'] != '') {
+//                    unlink(BUSINESS_LOGO_IMAGES . $data['business_data']['logo']);
+//                }
                 $update_array = array(
                     'name' => $this->input->post('name'),
                     'logo' => $business_logo,
