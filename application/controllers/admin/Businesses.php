@@ -2401,5 +2401,9 @@ class Businesses extends CI_Controller {
             }
         }
     }
-
+    
+    public function print_phpinfo() {
+        phpinfo();exit;
+    }
+    
 }
