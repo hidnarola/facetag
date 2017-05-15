@@ -56,8 +56,8 @@ class Home extends CI_Controller {
         $this->load->library('email', $configs);
 //        $this->email->initialize($configs);
         $this->email->from($this->input->post('contact_email'), $this->input->post('contact_name'));
-//        $this->email->to('info@facetag.com.au');
-        $this->email->to('ku@narola.email');
+        $this->email->to('info@facetag.com.au');
+//        $this->email->to('ku@narola.email');
         $msg = 'Following are the details of contact us form filled by user<br>';
         $msg .= '<b>Name</b> : ' . $this->input->post('contact_name') . '<br>';
         $msg .= '<b>Email</b> : ' . $this->input->post('contact_email') . '<br>';
