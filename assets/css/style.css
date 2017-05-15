@@ -1281,7 +1281,7 @@ Testimonial Caoursel
    SECTION:  Company history overview                 
 -----------------------------------------*/
 .timeline-overview {
-    background: url(../images/AdobeStock_67292612.jpg) no-repeat center top fixed;
+    background: url(../images/AdobeStock_67292612-new.jpg) no-repeat center top fixed;
     /*background-size*/
     -moz-background-size: cover;
     background-size: cover;
@@ -1590,7 +1590,7 @@ FUNFACT
 TWITTER FEED
 ======================*/
 .tweets {
-    background: url(../images/shutterstock_588854924.jpg) no-repeat center top fixed;
+    background: url(../images/shutterstock_588854924-new.jpg) no-repeat center top fixed;
     /*background-size*/
     -moz-background-size: cover;
     background-size: cover;
@@ -2083,7 +2083,7 @@ span.error-custom{
 .hidden-m{display: none;}
 
 @media(max-width:767px){
-    .main-slider{height: 100%;}
+    .main-slider{height: 100%;margin-top: 30px;}
     .step-block  {
         padding: 15px;
     }
@@ -2099,7 +2099,7 @@ span.error-custom{
     #subscribes{padding-top:50px;padding-bottom:50px;}
     .login_btns .text-right { text-align:center !important }
     .login_btns .text-left { text-align:center !important}
-    .accept_cls input#accept_terms{    width: 10%;}
+    .accept_cls input#accept_terms{width: 10%;}
     .accept_cls label{width:85%;}
 }
 /*ac-style*/
@@ -2181,7 +2181,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
 .footer-wrap img{margin-bottom: 0;}
 .play-store-img{width: 272px;height: 81px;}
 #whale {
-    background: url(../images/AdobeStock_131102573.jpg) no-repeat center top fixed;
+    background: url(../images/AdobeStock_131102573-new.jpg) no-repeat center top fixed;
     -moz-background-size: cover;
     background-size: cover;
     -webkit-background-size: cover;
@@ -2198,7 +2198,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
     margin: 120px 0px;
 }
 #giraffe {
-    background: url(../images/AdobeStock_78994707.jpg) no-repeat center top fixed;
+    background: url(../images/AdobeStock_78994707-new.jpg) no-repeat center top fixed;
     -moz-background-size: cover;
     background-size: cover;
     -webkit-background-size: cover;
@@ -2214,7 +2214,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
     margin: 120px 0px;
 }
 #green-screen {
-    background: url(../images/greenscreen.jpg) no-repeat center top fixed;
+    background: url(../images/greenscreen-new.jpg) no-repeat center top fixed;
     -moz-background-size: cover;
     background-size: cover;
     -webkit-background-size: cover;
@@ -2233,8 +2233,9 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
     height: 920px !important;
 }}
 @media(max-width:1024px){
-   #whale {
-    background: url(../images/AdobeStock_131102573.jpg) no-repeat center top;
+    #whale,#green-screen,#giraffe,#timeline,#tweets{background-attachment:scroll !important;}
+/*   #whale {
+    background: url(../images/AdobeStock_131102573.jpeg) no-repeat center top;
     background-attachment:inherit !important;
     -moz-background-size: 100% 100% !important;
     background-size: 100% 100% !important;
@@ -2254,7 +2255,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
     overflow: hidden;
 }
 #giraffe {
-   background: url(../images/AdobeStock_78994707.jpg) no-repeat center top;
+   background: url(../images/AdobeStock_78994707.jpeg) no-repeat center top;
     background-attachment:inherit !important;
     -moz-background-size: 100% 100% !important;
     background-size: 100% 100% !important;
@@ -2264,7 +2265,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
     overflow: hidden;
 }
 #timeline{
-        background: url(../images/AdobeStock_67292612.jpg) no-repeat center top;
+        background: url(../images/AdobeStock_67292612.jpeg) no-repeat center top;
     background-attachment:inherit !important;
     -moz-background-size: 100% 100% !important;
     background-size: 100% 100% !important;
@@ -2282,7 +2283,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
     -o-background-size: 100% 100% !important;
     width: 100%;
     overflow: hidden;
-}
+}*/
 }
 @media(min-width:991px) and (max-width:1024px){
     .social-menu{margin-right: 10px;}
