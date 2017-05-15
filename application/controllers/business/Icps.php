@@ -689,7 +689,7 @@ class Icps extends CI_Controller {
                                     }
                                     $img_arr = array(
                                         'photo' => $photo,
-                                        'threshold' => 0.7,
+                                        'threshold' => 0.72,
                                         'mf_selector' => 'all',
                                         'n' => $total_users,
                                     );
@@ -782,7 +782,7 @@ class Icps extends CI_Controller {
                                       $img_arr = array(
                                       'photo1' => base_url() . USER_IMAGE_SITE_PATH . $image['image'],
                                       'photo2' => $photo,
-                                      'threshold' => 0.7,
+                                      'threshold' => 0.72,
                                       'mf_selector' => 'all'
                                       );
 
@@ -982,7 +982,7 @@ class Icps extends CI_Controller {
                     }
                     $img_arr = array(
                         'photo' => $photo,
-                        'threshold' => 0.7,
+                        'threshold' => 0.72,
                         'mf_selector' => 'all',
                         'n' => $total_users,
                     );
@@ -1075,7 +1075,7 @@ class Icps extends CI_Controller {
                       $img_arr = array(
                       'photo1' => base_url() . USER_IMAGE_SITE_PATH . $image['image'],
                       'photo2' => $photo,
-                      'threshold' => 0.7,
+                      'threshold' => 0.72,
                       'mf_selector' => 'all'
                       );
 
