@@ -37,7 +37,7 @@ class Home extends CI_Controller {
         $msg .= '<b>test email</b>';
         $msg .= '</body></html>';
         $this->email->subject('Invitation - facetag');
-        $this->email->message($msg);
+        $this->email->message(stripslashes($msg));
         if ($this->email->send()) {
             echo 'sent';
         } else {
