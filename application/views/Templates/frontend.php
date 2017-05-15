@@ -114,10 +114,10 @@
                             </div>  <!--end collapse -->
                         </div>
                     </div>  <!--end container -->
+                    <?php if ($this->session->flashdata('success')) { ?>
+                        <div class="alert alert-success text-center hide-msg" style="color: #fff;background-color: rgba(0, 0, 0, 0.5);border-color: #000;border-radius: 0px;margin-top: 5px;"><a href="#" class="close" data-dismiss="alert" aria-label="close" style="color: #fff;opacity: 1">&times;</a><?php echo $this->session->flashdata('success') ?></div>
+                    <?php } ?>
                 </nav>
-                <?php if ($this->session->flashdata('success')) { ?>
-                    <div class="alert alert-success text-center hide-msg" style="color: #fff;background-color: rgba(0, 0, 0, 0.5);border-color: #000;border-radius: 0px;margin-top: 5px;"><a href="#" class="close" data-dismiss="alert" aria-label="close" style="color: #fff;opacity: 1">&times;</a><?php echo $this->session->flashdata('success') ?></div>
-                <?php } ?>
             </div>
             <!-- Main content -->
             <div>
