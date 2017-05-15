@@ -52,6 +52,13 @@
         <script type="text/javascript" src="assets/js/bootstrap-multiselect/bootstrap-multiselect.js"></script>
         <link rel="stylesheet" href="assets/css/bootstrap-multiselect/bootstrap-multiselect.css" type="text/css"/>
         <script src='https://www.google.com/recaptcha/api.js'></script>
+        <script>
+            $(document).ready(function () {
+                $(".hide-msg").fadeTo(2000, 500).slideUp(500, function () {
+                    $(".hide-msg").slideUp(500);
+                });
+            });
+        </script>
 
 
         <!--Google Analytics Here-->
@@ -108,6 +115,9 @@
                         </div>
                     </div>  <!--end container -->
                 </nav>
+                <?php if ($this->session->flashdata('success')) { ?>
+                    <div class="alert alert-success text-center hide-msg" style="color: #fff;background-color: rgba(0, 0, 0, 0.5);border-color: #000;border-radius: 0px;margin-top: 5px;"><a href="#" class="close" data-dismiss="alert" aria-label="close" style="color: #fff;opacity: 1">&times;</a><?php echo $this->session->flashdata('success') ?></div>
+                <?php } ?>
             </div>
             <!-- Main content -->
             <div>

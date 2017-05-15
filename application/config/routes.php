@@ -68,6 +68,7 @@ $route['business/change_password'] = 'business/home/change_password'; //--- Chan
 $route['business/account_profile'] = 'business/home/account_profile'; //--- Update Profile route
 $route['business/icps/add'] = 'business/icps/edit'; //--- Add Icp route 
 $route['business/hotels/add/(:any)'] = 'business/hotels/edit/$1'; //--- Edit Hotel route
+$route['legal/terms'] = 'home/terms'; //--- Logout route
 $route['logout'] = 'login/logout'; //--- Logout route
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

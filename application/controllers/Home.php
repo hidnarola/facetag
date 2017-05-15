@@ -47,8 +47,9 @@ class Home extends CI_Controller {
         $configs = mail_config();
         $this->load->library('email', $configs);
         $this->email->initialize($configs);
-        $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
-        $this->email->to('info@facetag.com.au');
+        $this->email->from($this->input->post('contact_email'), $this->input->post('contact_name'));
+//        $this->email->to('info@facetag.com.au');
+        $this->email->to('ku@narola.email');
         $msg = 'Following are the details of contact us form filled by user<br>';
         $msg .= '<b>Name</b> : ' . $this->input->post('contact_name') . '<br>';
         $msg .= '<b>Email</b> : ' . $this->input->post('contact_email') . '<br>';
@@ -64,6 +65,15 @@ class Home extends CI_Controller {
             p($this->email->print_debugger());
             return false;
         }
+    }
+
+    /**
+     * Terms and condition page
+     * @author KU
+     */
+    public function terms() {
+        $data['title'] = 'Terms of Service';
+        $this->template->load('frontend', 'terms', $data);
     }
 
 }
