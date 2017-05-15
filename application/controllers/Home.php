@@ -38,6 +38,8 @@ class Home extends CI_Controller {
         $msg .= '</body></html>';
         $this->email->subject('Invitation - facetag');
         $this->email->message(stripslashes($msg));
+//        $this->email->set_header("Content-Type: text/plain; charset=ISO-8859-1\r\n");
+        $this->email->set_mailtype("html");
         if ($this->email->send()) {
             echo 'sent';
         } else {
