@@ -14,7 +14,7 @@ function mail_config() {
         'transport' => 'Smtp',
         'charset' => 'utf-8',
         'newline' => "\r\n",
-        'headerCharset' => 'iso-8859-1',
+//        'headerCharset' => 'iso-8859-1',
         'mailtype' => 'html'
     );
     return $configs;
