@@ -2234,12 +2234,12 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
                          }}
 @media(max-width:1024px){
     #whale {
-        background: url(../images/AdobeStock_131102573.jpg) no-repeat center top;
+        background: url(../images/AdobeStock_131102573.jpg) no-repeat center top fixed;
         background-attachment:inherit !important;
-        -moz-background-size: 100% 100% !important;
-        background-size: 100% 100% !important;
-        -webkit-background-size:100% 100% !important;
-        -o-background-size: 100% 100% !important;
+        -moz-background-size:cover !important;
+        background-size: cover !important;
+        -webkit-background-size:cover !important;
+        -o-background-size:cover !important;
         width: 100%;
         overflow: hidden;
     }
@@ -2254,12 +2254,12 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
         overflow: hidden;
     }
     #giraffe {
-        background: url(../images/AdobeStock_78994707.jpg) no-repeat center top;
+        background: url(../images/AdobeStock_78994707.jpg) no-repeat center top fixed;
         background-attachment:inherit !important;
-        -moz-background-size: 100% 100% !important;
-        background-size: 100% 100% !important;
-        -webkit-background-size:100% 100% !important;
-        -o-background-size: 100% 100% !important;
+         -moz-background-size:cover !important;
+        background-size: cover !important;
+        -webkit-background-size:cover !important;
+        -o-background-size:cover !important;
         width: 100%;
         overflow: hidden;
     }
