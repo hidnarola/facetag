@@ -26,7 +26,7 @@ class Home extends CI_Controller {
     public function test() {
         $configs = mail_config();
         $this->load->library('email', $configs);
-        $this->email->initialize($configs);
+//        $this->email->initialize($configs);
         $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
         $this->email->to('ku@narola.email');
         $msg = 'test email';
