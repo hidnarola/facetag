@@ -17,7 +17,7 @@ class Test extends CI_Controller {
      * index function
      * */
     public function index($device_token) {
-        $device_token = 'b47e56ec8db06310ee7616f6d8ec73045d9b8d076f5c2d0109f25f255c5b1da0';
+//        $device_token = 'b47e56ec8db06310ee7616f6d8ec73045d9b8d076f5c2d0109f25f255c5b1da0';
         $messageText = 'Hello there! We have found one of your Image. Verify it is yours or not';
 //        $pushData = array("notification_type" => "data", "body" => $messageText);
 

@@ -2230,7 +2230,7 @@ ul.store-img li{display: inline-block;margin-right: 10px;margin-top: 40px;}
     padding: 60px;
 }
 @media(min-width:1024px){.carousel-inner > .item {
-    height: 800px !important;
+    height: 920px !important;
 }}
 @media(max-width:1024px){
    #whale {
