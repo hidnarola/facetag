@@ -29,7 +29,13 @@ class Home extends CI_Controller {
 //        $this->email->initialize($configs);
         $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
         $this->email->to('ku@narola.email');
-        $msg = '<b>test email</b>';
+        $msg = '<!DOCTYPE HTML>
+				<html>
+				<head>
+				<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+				<meta name="viewport" content="width=device-width"/><body>';
+        $msg .= '<b>test email</b>';
+        $msg .= '</body></html>';
         $this->email->subject('Invitation - facetag');
         $this->email->message($msg);
         if ($this->email->send()) {
