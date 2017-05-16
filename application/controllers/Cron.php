@@ -45,7 +45,7 @@ class Cron extends CI_Controller {
             if ($user['user_image'] != '' && isset($facerecog_images[$user['icp_id']])) {
                 $img_arr = array(
                     'photo' => base_url() . USER_IMAGE_SITE_PATH . $user['user_image'],
-                    'threshold' => 0.7,
+                    'threshold' => 0.72,
                     'mf_selector' => 'all',
                     'n' => $facerecog_images[$user['icp_id']],
                 );
@@ -218,7 +218,7 @@ class Cron extends CI_Controller {
                 if ($user['user_image'] != '' && isset($facerecog_images[$icp['id']])) {
                     $img_arr = array(
                         'photo' => base_url() . USER_IMAGE_SITE_PATH . $user['user_image'],
-                        'threshold' => 0.7,
+                        'threshold' => 0.72,
                         'mf_selector' => 'all',
                         'n' => $facerecog_images[$icp['id']],
                     );

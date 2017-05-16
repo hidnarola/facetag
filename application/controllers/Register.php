@@ -97,13 +97,14 @@ class Register extends CI_Controller {
                 $url = site_url() . 'register/verify?id=' . $encoded_mail;
                 $configs = mail_config();
                 $this->load->library('email', $configs);
-                $this->email->initialize($configs);
+//                $this->email->initialize($configs);
                 $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
                 $this->email->to($this->input->post('email'));
 
                 $msg = $this->load->view('email_templates/verification_mail', array('firstname' => $this->input->post('firstname'), 'lastname' => $this->input->post('lastname'), 'url' => $url), true);
                 $this->email->subject('Email Verification - facetag');
-                $this->email->message($msg);
+                $this->email->message(stripslashes($msg));
+                $this->email->set_mailtype("html");
                 $this->email->send();
                 $this->email->print_debugger();
             }
