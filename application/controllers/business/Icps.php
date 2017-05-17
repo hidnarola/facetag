@@ -751,7 +751,9 @@ class Icps extends CI_Controller {
                                                             "imgid" => $icp_image_id,
                                                             "image" => $icp_img_data[0]['image']
                                                         );
+                                                        if(!empty($device_tokens[$user_id])) {
                                                         $response = $this->push_notification->sendPushToAndroid(array($device_tokens[$user_id]), $pushData, FALSE);
+                                                        }
                                                     } else {
                                                         $url = '';
                                                         $where = 'im.id = ' . $this->db->escape($icp_image_id);
@@ -769,7 +771,9 @@ class Icps extends CI_Controller {
                                                             "imgid" => $icp_image_id,
                                                             "image" => $icp_img_data[0]['image']
                                                         );
+                                                        if(!empty($device_tokens[$user_id])) {
                                                         $response = $this->push_notification->sendPushiOS(array('deviceToken' => $device_tokens[$user_id], 'pushMessage' => $messageText), $pushData);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -1044,7 +1048,9 @@ class Icps extends CI_Controller {
                                             "imgid" => $icp_image_id,
                                             "image" => $icp_img_data[0]['image']
                                         );
+                                        if(!empty($device_tokens[$user_id])) {
                                         $response = $this->push_notification->sendPushToAndroid(array($device_tokens[$user_id]), $pushData, FALSE);
+                                        }
                                     } else {
                                         $url = '';
                                         $where = 'im.id = ' . $this->db->escape($icp_image_id);
@@ -1062,7 +1068,9 @@ class Icps extends CI_Controller {
                                             "imgid" => $icp_image_id,
                                             "image" => $icp_img_data[0]['image']
                                         );
+                                        if(!empty($device_tokens[$user_id])) {
                                         $response = $this->push_notification->sendPushiOS(array('deviceToken' => $device_tokens[$user_id], 'pushMessage' => $messageText), $pushData);
+                                        }
                                     }
                                 }
                             }
