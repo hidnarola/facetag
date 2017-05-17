@@ -12,6 +12,7 @@ class Test extends CI_Controller {
         parent::__construct();
         $this->load->library('push_notification');
         $this->load->library('facerecognition');
+        $this->load->model('users_model');
     }
 
     /**
