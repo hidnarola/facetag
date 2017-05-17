@@ -105,9 +105,11 @@ class Test extends CI_Controller {
         p($response);
     }
     
-    public function store_selfie() {
+   public function store_selfie() {
         //-- post user selfie gallery to FR
         $gallary_name = 'userselfies';
+        $this->facerecognition->post_gallery($gallary_name);
+
         $users = $this->users_model->get_active_users();
         //-- Post userselfi into FR's userselfi gallery;
         foreach ($users as $user) {
