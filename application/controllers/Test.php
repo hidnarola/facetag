@@ -65,7 +65,46 @@ class Test extends CI_Controller {
         $response = $this->push_notification->sendPushiOS(array('deviceToken' => $device_token, 'pushMessage' => $messageText), $pushData);
         p($response);
     }
+    
+    public function test_android($device_token) {
+//        $device_token = 'b47e56ec8db06310ee7616f6d8ec73045d9b8d076f5c2d0109f25f255c5b1da0';
+        $messageText = 'Hello there! We have found one of your Image. Verify it is yours or not';
+//        $pushData = array("notification_type" => "data", "body" => $messageText);
 
+        
+          $pushData = array(
+          "notification_type" => "data",
+          "body" => $messageText,
+          "selfietagid" => 33,
+          "businessid" => 6,
+          "businessname" => "CB Photography Pty Ltd test",
+          "businessaddress" => 'This field should be optional',
+          "icpid" => 15,
+          "icpname" => 'Schoolies 2016',
+          "icpaddress" => 'Gold Coast Schoolies 2016',
+          "imgid" => 407,
+          "image" => 'business_6/icp_15/584e9681d7f571481545345.jpeg'
+          ); 
+
+//        $data = array("selfietagid" => 33,
+//            "businessid" => 6,
+//            "businessname" => "CB Photography Pty Ltd test",
+//            "businessaddress" => 'This field should be optional',
+//            "icpid" => 15,
+//            "icpname" => 'Schoolies 2016',
+//            "icpaddress" => 'Gold Coast Schoolies 2016',
+//            "imgid" => 407,
+//            "image" => 'business_6/icp_15/584e9681d7f571481545345.jpeg');
+//        $pushData['data'] = json_encode($data);
+//        $pushData['data'] = $pushData;
+//                                    $pushData = array("notification_type" => "data", "body" => $messageText);
+//        $image['device_id'] = 'f0qe2ctOVRU:APA91bFlYFUZydHB4m5a0Pk6L6nqf_0-M5fUndmM8QJWzNb6rWQHKVaUsKGG71QIT33PtAsyScCjll6mOC-gkDJ0qqQs1gcOYQUn0BoyxHBetnL6_iNIZEmSSkebgGzDba_PHiGDhq1j';
+        $response = $this->push_notification->sendPushToAndroid(array($device_token), $pushData, FALSE);
+
+//        $response = $this->push_notification->sendPushiOS(array('deviceToken' => $device_token, 'pushMessage' => $messageText), $pushData);
+        p($response);
+    }
+    
     public function transparency() {
 //        $trans = $this->is_alpha_png('http://clientapp.narola.online/HD/facetag/uploads/icp_preview_images/gift-575653_640.png');
         /*
