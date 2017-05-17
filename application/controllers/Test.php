@@ -105,6 +105,26 @@ class Test extends CI_Controller {
         p($response);
     }
     
+    public function store_selfie() {
+        //-- post user selfie gallery to FR
+        $gallary_name = 'userselfies';
+        $users = $this->users_model->get_active_users();
+        //-- Post userselfi into FR's userselfi gallery;
+        foreach ($users as $user) {
+            $photo = base_url() . USER_IMAGE_SITE_PATH . $user['user_image'];
+            $gallery_name = "userselfies";
+            $user_id = $user['id'];
+            $data = array(
+                'photo' => $photo,
+                'meta' => 'user_' . $user_id,
+                'galleries' => array($gallery_name)
+            );
+            $this->facerecognition->delete_face('meta', 'user_' . $user_id); //-- delete already added image
+            $facerecog_data = $this->facerecognition->post_face('application/json', $data);
+            p($facerecog_data);
+        }
+    }
+    
     public function transparency() {
 //        $trans = $this->is_alpha_png('http://clientapp.narola.online/HD/facetag/uploads/icp_preview_images/gift-575653_640.png');
         /*
