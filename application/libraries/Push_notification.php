@@ -35,14 +35,16 @@ class Push_notification {
         $apns_port = 2195;
 
 
-        if (ENVIRONMENT == "production") {
-            $apns_url = 'gateway.push.apple.com';
+//        if (ENVIRONMENT == "production") {
+//            $apns_url = 'gateway.push.apple.com';
+//            $apns_cert = 'APNS_Dis.pem';
+//        } else {
+//            $apns_url = 'gateway.sandbox.push.apple.com';
+//            $apns_cert = 'APNS_Dev.pem';
+//        }
+        
+        $apns_url = 'gateway.push.apple.com';
             $apns_cert = 'APNS_Dis.pem';
-        } else {
-            $apns_url = 'gateway.sandbox.push.apple.com';
-            $apns_cert = 'APNS_Dev.pem';
-        }
-
 //        $apns_url = 'gateway.push.apple.com';
 //        $apns_cert = 'APNS_Dis.pem';
         $stream_context = stream_context_create();
