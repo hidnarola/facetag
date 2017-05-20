@@ -321,7 +321,7 @@ function image_fix_orientation($filename) {
     if ($extension == 'jpg' || $extension == 'jpeg') {
         $source = imagecreatefromjpeg($filename);
         $function = 'imagejpeg';
-        $exif = exif_read_data($filename);
+        $exif = @exif_read_data($filename);
         $rotate = $source;
         if (isset($exif['Orientation'])) {
             switch ($exif['Orientation']) {
