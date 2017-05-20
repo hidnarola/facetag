@@ -969,8 +969,8 @@ class Businesses extends CI_Controller {
         if (is_numeric($icp_id)) {
             $where = 'i.id = ' . $this->db->escape($icp_id);
             $icp_data = $this->icps_model->get_result($where);
-            p($this->db->queries);
-            exit;
+//            p($this->db->queries);
+//            exit;
             if ($icp_data) {
                 $data['icp_data'] = $icp_data[0];
                 $data['title'] = 'facetag | ICP Images';
