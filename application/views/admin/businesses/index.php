@@ -170,24 +170,37 @@
                     sortable: false,
                     render: function (data, type, full, meta) {
                         action = '';
+                        action += '<ul class="icons-list">';
+                        action += '<li class="dropdown">';
+                        action += '<a href="#" class="dropdown-toggle" data-toggle="dropdown">';
+                        action += '<i class="icon-menu9"></i>';
+                        action += '</a>';
+                        action += '<ul class="dropdown-menu dropdown-menu-right">';
+                        action += '<li>';
                         if (full.user_verified == 0) {
-                            action += '<a href="' + site_url + 'admin/businesses/view/' + full.id + '" class="btn border-teal text-teal btn-flat btn-icon btn-rounded btn-xs" title="View Business"><i class="icon-eye4"></i></a>';
-                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/delete/' + full.id + '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete Business"><i class="icon-trash"></i></a>';
+                            action += '<a href="' + site_url + 'admin/businesses/view/' + full.id + '" title="View Business"><i class="icon-eye2"></i>View Business</a>';
+                            action += '<a href="' + site_url + 'admin/businesses/delete/' + full.id + '" onclick="return confirm_alert(this)" title="Delete Business"><i class="icon-trash"></i>Delete Business</a>';
                         }
                         else if (full.is_active == 1) {
-                            action += '<a href="' + site_url + 'admin/businesses/dashboard/' + full.id + '" class="btn border-blue text-blue btn-flat btn-icon btn-rounded btn-xs" title="View Dashboard"><i class="icon-home2"></i></a>';
-                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/edit/' + full.id + '" class="btn border-primary text-primary btn-flat btn-icon btn-rounded btn-xs" title="Edit Business"><i class="icon-pencil7"></i></a>';
-                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/edit_private_information/' + full.id + '" class="btn border-primary text-primary btn-flat btn-icon btn-rounded btn-xs" title="Edit Business Private Information"><i class="icon-key"></i></a>';
+                            action += '<a href="' + site_url + 'admin/businesses/dashboard/' + full.id + '" title="View Dashboard"><i class="icon-home2"></i>View Dashboard</a>';
+                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/edit/' + full.id + '" title="Edit Business"><i class="icon-pencil7"></i>Edit Business</a>';
+                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/edit_private_information/' + full.id + '" title="Edit Business Private Information"><i class="icon-key"></i>Edit Business Private Information</a>';
                             if (full.is_invite == 2) {
-                                action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/invite_mail/' + full.id + '" class="btn border-pink text-pink btn-flat btn-icon btn-rounded btn-xs" title="Invite Business" onclick="return invite_alert(this)" data-email="' + full.email + '"><i class="icon-mail5"></i></a>';
+                                action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/invite_mail/' + full.id + '" title="Invite Business" onclick="return invite_alert(this)" data-email="' + full.email + '"><i class="icon-mail5"></i>Invite Business</a>';
                             }
-                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/view/' + full.id + '" class="btn border-teal text-teal btn-flat btn-icon btn-rounded btn-xs" title="View Business"><i class="icon-eye4"></i></a>';
-                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/block/' + full.id + '" class="btn border-slate  text-slate-600 btn-flat btn-icon btn-rounded btn-xs" onclick="return block_alert(this,\'block\')" title="Block Business"><i class="icon-blocked"></i></a>';
-                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/delete/' + full.id + '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete Business"><i class="icon-trash"></i></a>';
+                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/view/' + full.id + '" title="View Business"><i class="icon-eye2"></i>View Business</a>';
+                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/hotels/index/' + full.id + '" title="Manage Hotels"><i class="icon-city"></i>Manage Hotels</a>';
+                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/block/' + full.id + '" onclick="return block_alert(this,\'block\')" title="Block Business"><i class="icon-blocked"></i>Block Business</a>';
+                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/delete/' + full.id + '" onclick="return confirm_alert(this)" title="Delete Business"><i class="icon-trash"></i>Delete Business</a>';
                         } else {
-                            action += '<a href="' + site_url + 'admin/businesses/block/' + full.id + '" class="btn border-teal text-teal-600 btn-flat btn-icon btn-rounded btn-xs" title="Unblock Business" onclick="return block_alert(this,\'unblock\')" ><i class="icon-checkmark4"></i></a>';
-                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/delete/' + full.id + '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete Business"><i class="icon-trash"></i></a>';
+                            action += '<a href="' + site_url + 'admin/businesses/block/' + full.id + '" title="Unblock Business" onclick="return block_alert(this,\'unblock\')" ><i class="icon-checkmark4"></i>Unblock Business</a>';
+                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/delete/' + full.id + '" onclick="return confirm_alert(this)" title="Delete Business"><i class="icon-trash"></i>Delete Business</a>';
                         }
+                        action += '</li>';
+                        action += '</ul>';
+                        action += '</li>';
+                        action += '</ul>';
+                        
 //                        action='<ul class="icons-list"><li class="text-teal-600"><a href="" id="edit" class="edit"><i class="icon-pencil7"></i></a></li><li class="text-purple-700"><a href="" id="view_" data-record="" class="view"><i class="icon-eye"></i></a></li><li class="text-danger-600"><a id="delete_" data-record="" class="delete"><i class="icon-trash"></i></a></li></ul>'
                         return action;
                     }

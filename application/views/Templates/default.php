@@ -136,8 +136,8 @@
                                         <li class="<?php echo ($controller == 'home' && $action == 'index') ? 'active' : ''; ?>"><a href="<?php echo site_url('business/home'); ?>"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
                                         <li class="<?php echo ($this->uri->segment(2) == 'profile') ? 'active' : ''; ?>"><a href="<?php echo site_url('business/profile'); ?>"><i class="icon-profile"></i> <span>Business Profile</span></a></li>
                                         <li class="<?php echo ($this->uri->segment(2) == 'private_information') ? 'active' : ''; ?>"><a href="<?php echo site_url('business/private_information'); ?>"><i class="icon-profile"></i> <span>Business Private Information</span></a></li>
-                                        <li class="<?php echo ($this->uri->segment(2) == 'promo_images') ? 'active' : ''; ?>"><a href="<?php echo site_url('business/promo_images'); ?>"><i class="icon-images2"></i> <span>Promo Feature Images</span></a></li>
-                                        <li class="<?php echo ($controller == 'icps' || $controller == 'hotels') ? 'active' : ''; ?>"><a href="<?php echo site_url('business/icps'); ?>"><i class="icon-lan2"></i> <span>Manage ICPs</span></a></li>
+                                        <li class="<?php echo ($controller == 'hotels') ? 'active' : ''; ?>"><a href="<?php echo site_url('business/hotels/index/'.$this->session->userdata('facetag_admin')['business_id']); ?>"><i class="icon-city"></i> <span>Manage Hotels</span></a></li>
+                                        <li class="<?php echo ($controller == 'icps') ? 'active' : ''; ?>"><a href="<?php echo site_url('business/icps'); ?>"><i class="icon-lan2"></i> <span>Manage ICPs</span></a></li>
                                         <li class="<?php echo ($controller == 'orders') ? 'active' : ''; ?>"><a href="<?php echo site_url('business/orders'); ?>"><i class="icon-list2"></i> <span>Manage Orders</span></a></li>
                                         <li><a href="<?php echo site_url('logout'); ?>"><i class="icon-switch2"></i> <span>Logout</span></a></li>
 
