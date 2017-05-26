@@ -169,7 +169,7 @@
                                 <?php } ?>
                                 </div>
                                 <div class="media-body">
-                                    <input type="file" name="preview_photo" id="preview_photo" class="previewfile-styled" onchange="readpreview_photo(this);" >
+                                    <input type="file" name="preview_photo" id="preview_photo" class="previewfile-styled" onchange="readpreview_photo(this);" required="">
                                     <span class="help-block">Accepted formats: png, jpg. Max file size 2Mb</span>
                                 </div>
                                 <div style="opacity: 0;height: 0;">
