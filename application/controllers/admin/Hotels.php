@@ -118,7 +118,7 @@ class Hotels extends CI_Controller {
                     $this->session->set_flashdata('success', '"' . trim($this->input->post('name')) . '" Hotel updated successfully!');
                 } else { //-- If hotel id is not present then add new hotel details
                     $insert_array = array(
-                        'busienss_id' => $business_id,
+                        'business_id' => $business_id,
                         'name' => $this->input->post('name'),
                         'address' => $this->input->post('address'),
                         'hotel_pic' => $hotel_image,
