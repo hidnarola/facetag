@@ -107,14 +107,21 @@ class Hotels extends CI_Controller {
                     }
                 }
             if (is_numeric($hotel_id)) {
-                
-                //-- If hotel id is present then edit hotel details
-                $update_array = array(
+                if(!empty($hotel_image)) {
+                    $update_array = array(
                     'name' => $this->input->post('name'),
                     'address' => $this->input->post('address'),
                     'hotel_pic' => $hotel_image,
                     'modified' => date('Y-m-d H:i:s')
                 );
+                }else {
+                //-- If hotel id is present then edit hotel details
+                $update_array = array(
+                    'name' => $this->input->post('name'),
+                    'address' => $this->input->post('address'),
+                    'modified' => date('Y-m-d H:i:s')
+                );
+                }
                 $this->hotels_model->update_record('id=' . $hotel_id, $update_array);
                 $this->session->set_flashdata('success', '"' . trim($this->input->post('name')) . '" Hotel updated successfully!');
             } else { //-- If hotel id is not present then add new hotel details
