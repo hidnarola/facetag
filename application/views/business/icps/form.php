@@ -519,7 +519,7 @@
                                     <div class="form-group">
                                         <div class="col-lg-offset-1">
                                             <!--<a href="javascript(void)" class="btn btn-primary"><i class="icon-office"></i>&nbsp;&nbsp;</a>-->
-                                            <a href="<?php echo site_url('business/hotels/index/' . $icp_data['id']) ?>" class="btn bg-teal-400 btn-labeled" target="_blank"><b><i class="icon-city"></i></b> Manage Hotels</a>
+<!--                                            <a href="<?php echo site_url('business/hotels/index/' . $icp_data['id']) ?>" class="btn bg-teal-400 btn-labeled" target="_blank"><b><i class="icon-city"></i></b> Manage Hotels</a>-->
                                         </div>
                                     </div>
                                 <?php } ?>

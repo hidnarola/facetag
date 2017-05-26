@@ -523,7 +523,7 @@
                                     <div class="form-group">
                                         <div class="col-lg-offset-1">
                                             <!--<button type="button" class="btn bg-teal-400 btn-labeled" data-toggle="modal" data-target="#modal_default"><b><i class="icon-office"></i></b> Manage Hotels</button>-->
-                                            <a href="<?php echo site_url('admin/hotels/index/' . $icp_data['id']) ?>" class="btn bg-teal-400 btn-labeled" target="_blank"><b><i class="icon-city"></i></b> Manage Hotels</a>
+                                            <!--<a href="<?php echo site_url('admin/hotels/index/' . $icp_data['id']) ?>" class="btn bg-teal-400 btn-labeled" target="_blank"><b><i class="icon-city"></i></b> Manage Hotels</a>-->
                                         </div>
                                     </div>
                                 <?php } ?>

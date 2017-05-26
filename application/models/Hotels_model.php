@@ -12,11 +12,11 @@ class Hotels_model extends CI_Model {
 
     /**
      * Get result from table
-     * @param int $icp_id icp id
+     * @param int $business_id business id
      * @param string $condition Where condition to be checked
      * @return array
      */
-    public function get_hotels($icp_id, $condition = NULL, $type = 'result') {
+    public function get_hotels($business_id, $condition = NULL, $type = 'result') {
 
         $columns = ['id', 'name', 'address', 'created'];
         $keyword = $this->input->get('search');
@@ -26,7 +26,7 @@ class Hotels_model extends CI_Model {
             $this->db->where($where);
         }
 
-        $this->db->where('icp_id', $icp_id);
+        $this->db->where('business_id', $business_id);
         if (!is_null($condition)) {
             $this->db->where($condition);
         }

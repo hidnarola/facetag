@@ -122,6 +122,7 @@ define('TBL_INVOICES', 'tblinvoices');
 /**
  * Constants for Images
  */
+define('HOTEL_IMAGES', 'uploads/');
 define('PROFILE_IMAGES', 'uploads/profile_images/');
 define('BUSINESS_LOGO_IMAGES', 'uploads/business_logo/');
 define('BUSINESS_PROMO_IMAGES', 'uploads/business_promo_images/');
