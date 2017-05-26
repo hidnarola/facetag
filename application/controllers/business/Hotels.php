@@ -144,7 +144,11 @@ class Hotels extends CI_Controller {
         $hotel_data = $this->hotels_model->get_hotel($hotel_id);
 
         if ($hotel_data) {
-            $this->hotels_model->delete($hotel_id);
+             $update_array = array(
+                'is_delete' => 1,
+                'modified' => date('Y-m-d H:i:s')
+            );
+            $this->hotels_model->update_record('id=' . $hotel_id, $update_array);
             $this->session->set_flashdata('success', '"' . $hotel_data['name'] . '" deleted successfully!');
         } else {
             $this->session->set_flashdata('error', 'Invalid request. Please try again!');
