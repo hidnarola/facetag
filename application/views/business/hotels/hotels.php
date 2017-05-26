@@ -47,6 +47,7 @@
                     <th>Hotel Name</th>
                     <th>Hotel Address</th>
                     <th>Added On</th>
+                    <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -106,13 +107,31 @@
                     visible: true,
                 },
                 {
+                    data: "is_delete",
+                    visible: true,
+                    searchable: false,
+                    sortable: false,
+                    render: function (data, type, full, meta) {
+                        status = '';
+                        if (data == 1) {
+                            status = '<span class="label bg-danger">Deleted</span>';
+                        } else if (data == 0) {
+                            var status = '<span class="label bg-success">Active</span>';
+                        }
+                        return status;
+
+                    }
+                },
+                {
                     data: "is_active",
                     visible: true,
                     searchable: false,
                     sortable: false,
                     render: function (data, type, full, meta) {
                         action = '<a href="' + site_url + 'business/hotels/edit/<?php echo $business_data['id'] ?>/' + full.id + '" class="btn border-primary text-primary btn-flat btn-icon btn-rounded btn-xs" title="Edit Business"><i class="icon-pencil3"></i></a>';
-                        action += '&nbsp;&nbsp;<a href="' + site_url + 'business/hotels/delete/' + full.id + '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete Business"><i class="icon-cross2"></i></a>';
+                        if (full.is_delete == 0) {
+                        action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/hotels/delete/' + full.id + '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete Business"><i class="icon-cross2"></i></a>';
+                    }
                         return action;
                     }
                 },
