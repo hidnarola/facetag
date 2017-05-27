@@ -87,7 +87,7 @@
                      render: function (data, type, full, meta) {
                         var hotel_img = '';
                         if (full.hotel_pic != '' && full.hotel_pic != null) {
-                            hotel_img = '<a href="' + site_url + 'uploads/' + full.hotel_pic + '" data-popup="lightbox"><img src="assets/timthumb.php?src=' + site_url + 'uploads/' + full.hotel_pic + '&w=60&h=60&q=100&zc=2"></a>';
+                            hotel_img = '<a href="' + site_url + hotel_images_path + full.hotel_pic + '" data-popup="lightbox"><img src="assets/timthumb.php?src=' + site_url + hotel_images_path + full.hotel_pic + '&w=60&h=60&q=100&zc=2"></a>';
                         } else {
                             hotel_img = '<a href="assets/admin/images/no_logo.png" data-popup="lightbox"><img src="assets/timthumb.php?src='+site_url+'assets/admin/images/no_logo.png&w=55&h=55&q=100&zc=2" height="55px" width="55px" alt="' + full.name + '"></a>';
                         }

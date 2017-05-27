@@ -10,6 +10,7 @@
             var base_url = "<?php echo base_url() ?>";
             var profile_img_path = "<?php echo PROFILE_IMAGES ?>";
             var business_logo_path = "<?php echo BUSINESS_LOGO_IMAGES ?>";
+            var hotel_images_path = "<?php echo HOTEL_IMAGES ?>";
             var icp_image_path = "<?php echo ICP_IMAGES ?>";
             var business_promo_feature_img_path = "<?php echo BUSINESS_PROMO_IMAGES ?>";
             var icp_logo = "<?php echo ICP_LOGO ?>";
