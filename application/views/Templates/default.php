@@ -69,6 +69,7 @@
                             <?php } else { ?>
                                 <li><a href="<?php echo site_url('business/account_profile') ?>"><i class="icon-cog5"></i> Manage Profile</a></li>
                                 <li><a href="<?php echo site_url('business/change_password') ?>"><i class="icon-key"></i> Change password</a></li>
+                                <li><a target="_blank" href="<?php echo site_url('legal/terms'); ?>"><i class="icon-help"></i> Help</a></li>
                                 <li><a href="<?php echo site_url('logout') ?>"><i class="icon-switch2"></i> Logout</a></li>
                             <?php } ?>
                         </ul>

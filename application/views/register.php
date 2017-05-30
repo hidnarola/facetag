@@ -135,7 +135,7 @@
                                                     $accept_selected = 'checked';
                                                 ?>
                                                 <input type="checkbox" name="accept_terms" class="form-control <?php if (form_error('accept_terms')) echo 'error-input'; ?>" id="accept_terms" <?php echo $accept_selected ?>/>&nbsp;
-                                                <label for="accept_terms">I accept facetags' Terms and Conditions</label> 
+                                                <label for="accept_terms">I accept facetags' <a class="terms-link" target="_blank" href="<?php echo site_url('legal/terms'); ?>">Terms and Conditions</a></label>
                                                 <span class="checkbox-checked"></span>
                                             </div>
                                         </div>
