@@ -147,8 +147,12 @@ define('EMAIL_FROM_NAME', 'facetag');
 /**
  * Google Captch Site Key and Secret Constatns
  */
-define('GOOGLE_SITE_KEY', '6LcbSwoUAAAAAGwOF1kSPJuMoXiS93XMOYnRjzI4');
-define('GOOGLE_SECRET_KEY', '6LcbSwoUAAAAALW-xGxnulbTqPbthDtXHomkEp27');
+//define('GOOGLE_SITE_KEY', '6LcbSwoUAAAAAGwOF1kSPJuMoXiS93XMOYnRjzI4');
+//define('GOOGLE_SECRET_KEY', '6LcbSwoUAAAAALW-xGxnulbTqPbthDtXHomkEp27');
+
+/*@anp : Google Captch Site Key and Secret Constatns*/
+define('GOOGLE_SITE_KEY', '6Lc0aSMUAAAAAM5ZJWSSC3u3PqZQlwiRjbPzEm0w');
+define('GOOGLE_SECRET_KEY', '6Lc0aSMUAAAAAGjHF7ViRUNmpguWt6VFygzBq47k');
 
 /**
  * Facerecognition access token
