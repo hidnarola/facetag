@@ -786,6 +786,9 @@ class Businesses extends CI_Controller {
                         if ($this->input->post('lowfree_on_highpurchase')) {
                             $lowfree_on_highpurchase = 1;
                         }
+                        if ($this->input->post('digital_free_on_physical_purchase')) {
+                            $digital_free_on_physical_purchase = 1;
+                        }
                         if ($this->input->post('collection_point_delivery') && $this->input->post('offer_printed_souvenir')) {
                             $collection_point_delivery = 1;
                         }
@@ -1244,8 +1247,8 @@ class Businesses extends CI_Controller {
                                                             "imgid" => $icp_image_id,
                                                             "image" => $icp_img_data[0]['image']
                                                         );
-                                                        if(!empty($device_tokens[$user_id])) {
-                                                        $response = $this->push_notification->sendPushToAndroid(array($device_tokens[$user_id]), $pushData, FALSE);
+                                                        if (!empty($device_tokens[$user_id])) {
+                                                            $response = $this->push_notification->sendPushToAndroid(array($device_tokens[$user_id]), $pushData, FALSE);
                                                         }
                                                     } else {
                                                         $url = '';
@@ -1264,8 +1267,8 @@ class Businesses extends CI_Controller {
                                                             "imgid" => $icp_image_id,
                                                             "image" => $icp_img_data[0]['image']
                                                         );
-                                                        if(!empty($device_tokens[$user_id])) {
-                                                        $response = $this->push_notification->sendPushiOS(array('deviceToken' => $device_tokens[$user_id], 'pushMessage' => $messageText), $pushData);
+                                                        if (!empty($device_tokens[$user_id])) {
+                                                            $response = $this->push_notification->sendPushiOS(array('deviceToken' => $device_tokens[$user_id], 'pushMessage' => $messageText), $pushData);
                                                         }
                                                     }
                                                 }
@@ -1540,8 +1543,8 @@ class Businesses extends CI_Controller {
                                             "imgid" => $icp_image_id,
                                             "image" => $icp_img_data[0]['image']
                                         );
-                                        if(!empty($device_tokens[$user_id])) {
-                                        $response = $this->push_notification->sendPushToAndroid(array($device_tokens[$user_id]), $pushData, FALSE);
+                                        if (!empty($device_tokens[$user_id])) {
+                                            $response = $this->push_notification->sendPushToAndroid(array($device_tokens[$user_id]), $pushData, FALSE);
                                         }
                                     } else {
                                         $url = '';
@@ -1560,8 +1563,8 @@ class Businesses extends CI_Controller {
                                             "imgid" => $icp_image_id,
                                             "image" => $icp_img_data[0]['image']
                                         );
-                                        if(!empty($device_tokens[$user_id])) {
-                                        $response = $this->push_notification->sendPushiOS(array('deviceToken' => $device_tokens[$user_id], 'pushMessage' => $messageText), $pushData);
+                                        if (!empty($device_tokens[$user_id])) {
+                                            $response = $this->push_notification->sendPushiOS(array('deviceToken' => $device_tokens[$user_id], 'pushMessage' => $messageText), $pushData);
                                         }
                                     }
                                 }
@@ -2412,9 +2415,10 @@ class Businesses extends CI_Controller {
             }
         }
     }
-    
+
     public function print_phpinfo() {
-        phpinfo();exit;
+        phpinfo();
+        exit;
     }
-    
+
 }

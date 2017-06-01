@@ -234,6 +234,9 @@ class Icps extends CI_Controller {
                 if ($this->input->post('lowfree_on_highpurchase')) {
                     $lowfree_on_highpurchase = 1;
                 }
+                 if ($this->input->post('digital_free_on_physical_purchase')) {
+                    $digital_free_on_physical_purchase = 1;
+                }
                 if ($this->input->post('collection_point_delivery') && $this->input->post('offer_printed_souvenir')) {
                     $collection_point_delivery = 1;
                 }
