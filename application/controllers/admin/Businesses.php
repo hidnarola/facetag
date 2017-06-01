@@ -836,6 +836,7 @@ class Businesses extends CI_Controller {
                             'is_low_image_free' => $is_low_image_free,
                             'is_high_image_free' => $is_high_image_free,
                             'lowfree_on_highpurchase' => $lowfree_on_highpurchase,
+                            'digital_free_on_physical_purchase' => $digital_free_on_physical_purchase,
                             'collection_point_delivery' => $collection_point_delivery,
                             'local_hotel_delivery' => $local_hotel_delivery,
                             'domestic_shipping' => $domestic_shipping,

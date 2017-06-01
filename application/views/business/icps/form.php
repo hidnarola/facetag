@@ -150,7 +150,7 @@
     </div>
     <div class="panel panel-flat">
         <div class="panel-body">
-            <form class="form-horizontal form-validate-jquery" action="" id="icp_info" method="post" enctype="multipart/form-data" onsubmit="return validateForm();">
+            <form class="form-horizontal form-validate-jquery" action="" id="icp_info" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label class="control-label col-lg-3">ICP Logo
                     <!--<span class="text-danger">*</span>-->
@@ -606,6 +606,16 @@
                                 </div>
                             </div>
                             <span id="spn-purchase_options_and_prices-error" class="validation-error-label"></span>
+                            <div class="form-group">
+                                <label class="col-lg-6 control-label">If the Guest buy's the Printed Souvenir product, do you want to offer both digital versions FREE?</label>
+                                <div class="col-lg-4">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="styled" name="digital_free_on_physical_purchase" id="digital_free_on_physical_purchase"  <?php echo (isset($icp_data) && $icp_data['digital_free_on_physical_purchase'] == 1) ? 'checked="checked"' : '' ?>/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </fieldset>
                     </div>
                 </fieldset>
@@ -1080,6 +1090,10 @@
     $(document).ready(function () {
         $("#icp_info").submit(function (event) {
             event.preventDefault();
+            var valid = validateForm();
+            if(valid == 1) {
+                return false;
+            }
             var formData = new FormData($(this)[0]);
             $.ajax({
                 url: sub_url,
@@ -1389,16 +1403,16 @@
         if ($('#description').val() != '' && $('#description').val().length > 160) {
             $('#spn-description-error').html('Description can not be more than 160 characters!');
             $('#description').focus();
-            //            flag = 1;
-            return false;
+                        flag = 1;
+//            return false;
         } else {
             $('#spn-description-error').html('');
         }
         if ($('#unique_location_for_icp').is(':checked') && ($('#latitude').val() == '' || $('#longitude').val() == '')) {
             $('#spn-address-error').html('Please enter valid address!');
             $('#address').focus();
-//            flag = 1;
-            return false;
+            flag = 1;
+//            return false;
         } else {
             $('#spn-address-error').html('');
         }
@@ -1407,8 +1421,8 @@
             if (valid_preview_image == 0) {
                 $('#spn-preview_photo-error').html('Preview image should be transparent. Please upload transparent image!');
                 $('#preview_photo').focus();
-//            flag = 1;
-                return false;
+            flag = 1;
+//                return false;
             }
         } else {
             $('#spn-preview_photo-error').html('');
@@ -1416,16 +1430,16 @@
         if ((!$('#is_low_image_free').is(':checked')) && (!validatePrice($('#low_resolution_price').val()))) {
             $('#spn-low_resolution_price-error').html('Please enter valid low resolution version (webpic) Price!');
             $('#low_resolution_price').focus();
-//            flag = 1;
-            return false;
+            flag = 1;
+//            return false;
         } else {
             $('#spn-low_resolution_price-error').html('');
         }
         if ((!$('#is_high_image_free').is(':checked')) && (!validatePrice($('#high_resolution_price').val()))) {
             $('#spn-high_resolution_price-error').html('Please enter valid high resolution version (printable) Price!');
             $('#high_resolution_price').focus();
-//            flag = 1;
-            return false;
+            flag = 1;
+//            return false;
         } else {
             $('#spn-high_resolution_price-error').html('');
         }
@@ -1433,8 +1447,8 @@
         if (($('#offer_printed_souvenir').is(':checked')) && (!validatePrice($('#printed_souvenir_price').val()))) {
             $('#spn-printed_souvenir_price-error').html('Please enter valid price for Printed Souvenir!');
             $('#printed_souvenir_price').focus();
-//            flag = 1;
-            return false;
+            flag = 1;
+//            return false;
         } else {
             $('#spn-printed_souvenir_price-error').html('');
         }
@@ -1442,58 +1456,59 @@
             if ((!$('#collection_point_delivery').is(':checked')) && (!$('#local_hotel_delivery').is(':checked')) && (!$('#domestic_shipping').is(':checked')) && (!$('#international_shipping').is(':checked'))) {
                 $('#spn-purchase_options_and_prices-error').html('Please select any of the above option for product delivery!');
                 $('#collection_point_delivery').focus();
-//            flag = 1;
-                return false;
+            flag = 1;
+//                return false;
             } else {
                 $('#spn-purchase_options_and_prices-errorr').html('');
             }
             if (($('#collection_point_delivery').is(':checked')) && ($('#collection_address').val() == '') && ($('#collection_address_latitude').val() == '') && ($('#collection_address_longitude').val() == '')) {
                 $('#spn-collection_address-error').html('Please enter valid collection location!');
                 $('#collection_address').focus();
-//            flag = 1;
-                return false;
+            flag = 1;
+//                return false;
             } else {
                 $('#spn-collection_address-error').html('');
             }
             if ($('#collection_point_delivery').is(':checked') && $('#collection_address_instructions').val() == '') {
                 $('#spn-collection_address_instructions-error').html('Please enter valid collection location!');
                 $('#collection_address_instructions').focus();
-//            flag = 1;
-                return false;
+            flag = 1;
+//                return false;
             } else {
                 $('#spn-collection_address_instructions-error').html('');
             }
             if (($('#local_hotel_delivery').is(':checked')) && ($('input[name="local_hotel_delivery_free"]:checked').val() == 0) && (!validatePrice($('#local_hotel_delivery_price').val()))) {
                 $('#spn-local_hotel_delivery_price-error').html('Please enter valid price for local hotel delivery!');
                 $('#local_hotel_delivery_price').focus();
-//            flag = 1;
-                return false;
+            flag = 1;
+//                return false;
             } else {
                 $('#spn-local_hotel_delivery_price-error').html('');
             }
             if (($('#domestic_shipping').is(':checked')) && ($('input[name="domestic_shipping_free"]:checked').val() == 0) && (!validatePrice($('#domestic_shipping_price').val()))) {
                 $('#spn-domestic_shipping_price-error').html('Please enter valid price for Domestic shipping!');
                 $('#domestic_shipping_price').focus();
-//            flag = 1;
-                return false;
+            flag = 1;
+//                return false;
             } else {
                 $('#spn-domestic_shipping_price-error').html('');
             }
             if (($('#international_shipping').is(':checked')) && ($('input[name="international_shipping_free"]:checked').val() == 0) && (!validatePrice($('#international_shipping_price').val()))) {
                 $('#spn-international_shipping_price-error').html('Please enter valid price for Domestic shipping!');
                 $('#international_shipping_free').focus();
-//            flag = 1;
-                return false;
+            flag = 1;
+//                return false;
             } else {
                 $('#spn-international_shipping_price-error').html('');
             }
         }
-        if (flag == 1) {
-            return false;
-        } else {
-            $('#btn_submit').prop('disabled', true);
-            return true;
-        }
+        return flag;
+//        if (flag == 1) {
+//            return false;
+//        } else {
+//            $('#btn_submit').prop('disabled', true);
+//            return true;
+//        }
     }
 
     function validatePrice(price) {

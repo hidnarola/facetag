@@ -610,6 +610,16 @@
                                 </div>
                             </div>
                             <span id="spn-purchase_options_and_prices-error" class="validation-error-label"></span>
+                            <div class="form-group">
+                                <label class="col-lg-6 control-label">If the Guest buy's the Printed Souvenir product, do you want to offer both digital versions FREE?</label>
+                                <div class="col-lg-4">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" class="styled" name="digital_free_on_physical_purchase" id="digital_free_on_physical_purchase"  <?php echo (isset($icp_data) && $icp_data['digital_free_on_physical_purchase'] == 1) ? 'checked="checked"' : '' ?>/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </fieldset>
                     </div>
                 </fieldset>
