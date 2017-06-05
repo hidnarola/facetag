@@ -17,6 +17,7 @@ class Test extends CI_Controller {
             "X-PAYPAL-REQUEST-DATA-FORMAT: JSON",
             "X-PAYPAL-RESPONSE-DATA-FORMAT: JSON",
             "X-PAYPAL-APPLICATION-ID: APP-80W284485P519543T",
+            "Content-Type: application/json"
         );
         $this->load->library('push_notification');
         $this->load->library('facerecognition');
@@ -90,6 +91,7 @@ class Test extends CI_Controller {
         $headers;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $apiUrl . $call);
+        curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
