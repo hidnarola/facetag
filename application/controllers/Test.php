@@ -10,6 +10,14 @@ class Test extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
+        $this->headers = array(
+            "X-PAYPAL-SECURITY-USERID: nm.narola-facilitator_api1.narolainfotech.com",
+            "X-PAYPAL-SECURITY-PASSWORD: PURBT7QJ8269REDX",
+            "X-PAYPAL-SECURITY-SIGNATURE: An5ns1Kso7MWUdW4ErQKJJJ4qi4-ALAY2A-6E0F2AV4GES-mVAHKPval",
+            "X-PAYPAL-REQUEST-DATA-FORMAT: JSON",
+            "X-PAYPAL-RESPONSE-DATA-FORMAT: JSON",
+            "X-PAYPAL-APPLICATION-ID: APP-80W284485P519543T",
+        );
         $this->load->library('push_notification');
         $this->load->library('facerecognition');
         $this->load->model('users_model');
@@ -66,6 +74,62 @@ class Test extends CI_Controller {
 
         $response = $this->push_notification->sendPushiOS(array('deviceToken' => $device_token, 'pushMessage' => $messageText), $pushData);
         p($response);
+    }
+    
+    public function getPaymentOptions($paykey) {
+        
+    }
+
+    public function setPaymentOptions() {
+        
+    }
+
+    public function paypalSend($data, $call) {
+        $apiUrl = 'https://svcs.sandbox.paypal.com/AdaptivePayments/';
+        $paypalUrl = "https://www.paypal.com/webscr?cmd=_ap-payment&paykey=";
+        $headers;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiUrl . $call);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HEADER, $this->headers);
+        $response = json_decode(curl_exec($ch), true);
+        p(curl_error($ch));
+        exit;
+        return $response;
+    }
+
+    public function splitPay() {
+
+        // create the pay request
+        $createPacket = array(
+            "actionType" => "PAY",
+            "currencyCode" => "USD",
+            "receiverList" => array(
+                "receiver" => array(
+                    array(
+                        "amount" => "1.00",
+                        "email" => "kek.narola@narolainfotech.com"
+                    ),
+                    array(
+                        "amount" => "2.00",
+                        "email" => "kek.narola@narolainfotech.com"
+                    ),
+                ),
+            ),
+            "returnUrl" => "http://test.local/payments/confirm",
+            "cancelUrl" => "http://test.local/payments/cancel",
+            "requestEnvelope" => array(
+                "errorLanguage" => "en_US",
+                "detailLevel" => "ReturnAll",
+            ),
+        );
+
+        $response = $this->paypalSend($createPacket, "Pay");
+        p($response);
+        exit;
     }
     
     public function test_android($device_token) {
