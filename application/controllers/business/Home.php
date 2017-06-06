@@ -346,6 +346,7 @@ class Home extends CI_Controller {
                     );
                     $this->businesses_model->update_record('id=' . $business_id, $update_array_business);
                     $update_array = array(
+                        'paypal_email_address' => $this->input->post('paypal_email_address'),
                         'account_name' => $this->input->post('account_name'),
                         'bsb' => $this->input->post('bsb'),
                         'account_number' => $this->input->post('account_number'),
@@ -363,6 +364,7 @@ class Home extends CI_Controller {
                     $this->businesses_model->update_record('id=' . $business_id, $update_array_business);
                     $insert_business_data = array(
                         'business_id' => $business_id,
+                        'paypal_email_address' => $this->input->post('paypal_email_address'),
                         'account_name' => $this->input->post('account_name'),
                         'bsb' => $this->input->post('bsb'),
                         'account_number' => $this->input->post('account_number'),

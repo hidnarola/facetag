@@ -153,6 +153,18 @@
                     </div>
                 </fieldset>
                 <fieldset class="content-group">
+                    <legend class="text-bold">PayPal Details <a data-popup="popover-custom" data-trigger="hover" data-placement="right" data-content="If you want facetag to transfer payment to your PayPal account then please input your paypal Email address below."><i class="icon-question4"></i></a></legend>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">PayPal Email Address</label>
+                        <div class="col-lg-6">
+                            <input type="email" name="paypal_email_address" id="paypal_email_address" placeholder="PayPal email address" class="form-control" value="<?php echo (isset($business_data)) ? $business_data['paypal_email_address'] : set_value('paypal_email_address'); ?>">
+                            <?php
+                            echo '<label id="paypal_email_address-error" class="validation-error-label" for="paypal_email_address">' . form_error('paypal_email_address') . '</label>';
+                            ?>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="content-group">
                     <legend class="text-bold">ORDER PROCESSING FEES</legend>
                     <div class="form-group">
                         <label class="control-label private-info-texts">A Credit/Debit Card Processing fee of <span class="text-bold"><?php echo $settings['creditcard_debitcard_processing_fees']?>%</span> for a Domestic Card or <span class="text-bold"><?php echo $settings['international_card_processing_fees']?>%</span> for an International Card, plus an Order fee of <span class="text-bold">AU$<?php echo $settings['transaction_fees']?></span> will be applied to each gross Order value.</label>

@@ -4,7 +4,38 @@
 <script type="text/javascript" src="assets/admin/js/plugins/notifications/sweet_alert.min.js"></script>
 <!-- Stripe.js to collect payment details -->
 <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<style>
+    /* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+    .modal {
+        display:    none;
+        position:   fixed;
+        z-index:    1000;
+        top:        0;
+        left:       0;
+        height:     100%;
+        width:      100%;
+        background: rgba( 255, 255, 255, .6 ) 
+            url('assets/images/loader.gif') 
+            50% 50% 
+            no-repeat;
+    }
 
+    /* When the body has the loading class, we turn
+       the scrollbar off with overflow:hidden */
+    body.loading {
+        overflow: hidden;   
+    }
+
+    /* Anytime the body has the loading class, our
+       modal element will be visible */
+    body.loading .modal {
+        display: block;
+    }
+</style>
 <div class="page-header page-header-default">
     <div class="page-header-content">
         <div class="page-title">
@@ -41,6 +72,7 @@
     </div>
     <div class="panel panel-flat">
         <form action="" method="POST" id="payment-form">
+            <input type="hidden" name="paypal_email_address" id="paypal_email_address" value="<?php echo $business_settings['paypal_email_address'] ?>">
             <input type="hidden" name="account_name" id="account_name" value="<?php echo $business_settings['account_name'] ?>">
             <input type="hidden" name="bsb" id="bsb" value="<?php echo $business_settings['bsb'] ?>">
             <input type="hidden" name="account_number" id="account_number" value="<?php echo $business_settings['account_number'] ?>">
@@ -78,14 +110,25 @@
                                 echo $status;
                                 ?>
                             </td>
-                            <td>
-                                <?php
-                                echo '&nbsp;&nbsp;<a href="' . site_url() . 'admin/invoice/weekly_orders/' . $row["businessId"] . '/' . $row["start_date"] . 'to' . $row["end_date"] . '" class="btn border-teal text-teal-600 btn-flat btn-icon btn-rounded btn-xs" title="View All Orders"><i class="icon-eye4"></i></a>';
-                                if ($row["weekly_total_payment"] != 0) {
-                                    echo '&nbsp;&nbsp;<a onclick="transfer_payment(this)" data-startdate="' . $row["start_date"] . '" data-enddate="' . $row["end_date"] . '"  data-href="' . site_url() . 'admin/invoice/transfer_payment/' . $row["businessId"] . '" href="javascript:void(0);" class="transfer-btn btn border-blue text-blue-600 btn-flat btn-icon btn-rounded btn-xs" title="Transfer Payment"><i class="icon-wallet"></i></a>';
-                                }
-//                                echo '&nbsp;&nbsp;<a href="#" class="btn border-teal text-teal-600 btn-flat btn-icon btn-rounded btn-xs" title="View All Orders"><i class="icon-eye4"></i></a>';
-                                ?>
+                            <td class="text-center">
+                                <ul class="icons-list">
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                            <i class="icon-menu9"></i>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-right">
+                                            <li>
+                                                <a href="<?php echo site_url() . 'admin/invoice/weekly_orders/' . $row["businessId"] . '/' . $row["start_date"] . 'to' . $row["end_date"]; ?>" title="View All Orders"><i class="icon-eye4 text-teal-600"></i>View All Orders</a>
+                                                <?php if ($row["weekly_total_payment"] != 0) { ?>
+                                                    <a onclick="transfer_payment(this)" data-startdate="<?php echo $row["start_date"]; ?>" data-enddate="<?php echo $row["end_date"]; ?>"  data-href="<?php echo site_url() . 'admin/invoice/transfer_payment/' . $row["businessId"]; ?>" href="javascript:void(0);" title="Transfer Payment with Stripe"><i class="icon-wallet text-blue-600"></i> Pay with Stripe</a>
+                                                    <?php if (isset($business_settings['paypal_email_address']) && $business_settings['paypal_email_address'] != "") { ?>
+                                                        <a onclick="paypal_transfer_payment(this)" data-startdate="<?php echo $row["start_date"]; ?>" data-enddate="<?php echo $row["end_date"]; ?>"  data-href="<?php echo site_url() . 'admin/invoice/paypal_transfer_payment/' . $row["businessId"]; ?>" href="javascript:void(0);" title="Transfer Payment with PayPal"><i class="icon-wallet text-slate-600"></i> Pay with PayPal</a>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
                             </td>
                         </tr>
                         <?php
@@ -179,6 +222,47 @@
                 });
         return false;
     }
+    
+    // transfer payment with paypal
+    function paypal_transfer_payment(e) {
+        swal({
+            title: "Are you sure?",
+            text: "You are about to transfer Payment to this business!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#FF7043",
+            confirmButtonText: "Yes, please transfer!"
+        },
+                function (isConfirm) {
+                    if (!isConfirm) {
+                        return;
+                    }
+                    // Request a token from Stripe:
+                    var paypal_email_address = $('#paypal_email_address').val();
+                    start_date = $(e).data('startdate');
+                    end_date = $(e).data('enddate');
+                    url = $(e).data('href');
+                    $body = $("body");
+                    $('.loading').show();
+                    $body.addClass("loading");
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        dataType: "json",
+                        data: {paypal_email_address: paypal_email_address, invoice_period: start_date + 'to' + end_date, amount: '1'},
+                        success: function (data) {
+                            $body.removeClass("loading");
+                            if (data.result == "success") {
+                                swal("Done!", "You have successfully transfer payment!", "success");
+                            } else {
+                                swal("Oops...", "Transfer payment failed, Please try again!", "error");
+                            }
+                        }
+                    });
+                });
+        return false;
+    }
+    
     function invite_alert(e) {
         var email = $(e).attr('data-email');
         swal({
