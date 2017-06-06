@@ -143,6 +143,7 @@
     </div>
     <?php $this->load->view('Templates/footer'); ?>
 </div>
+<div class="modal"><!-- Place at bottom of page --></div>
 <script>
     var token = '';
     var start_date = '';
