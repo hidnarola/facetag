@@ -114,7 +114,7 @@ class Test extends CI_Controller {
             $amount = urlencode($receiverData['amount']);
 //            $uniqueID = urlencode($receiverData['uniqueID']);
             $note = urlencode($receiverData['note']);
-            $nvpStr .= "&L_EMAIL$i=$receiverEmail&L_Amt$i=$amount&L_UNIQUEID$i=$uniqueID&L_NOTE$i=$note";
+            $nvpStr .= "&L_EMAIL$i=$receiverEmail&L_Amt$i=$amount&L_NOTE$i=$note";
         }
 
 // Execute the API operation; see the PPHttpPost function above.
