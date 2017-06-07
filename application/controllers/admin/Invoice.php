@@ -91,6 +91,12 @@ class Invoice extends CI_Controller {
             $new_result_array[date('W', strtotime($row['createddate']))]['start_date'] = $d[0];
             $new_result_array[date('W', strtotime($row['createddate']))]['end_date'] = $d[1];
             $new_result_array[date('W', strtotime($row['createddate']))]['businessId'] = $business_id;
+            $is_transfer = $this->invoice_model->is_transfer($business_id, $d[0], $d[1]);
+            if($is_transfer != 0) {
+                $new_result_array[date('W', strtotime($row['createddate']))]['transfer_status'] = 1;
+            }else{
+                $new_result_array[date('W', strtotime($row['createddate']))]['transfer_status'] = 0;
+            }
 
             if (!in_array($row["cart_id"], $new_result_array[date('W', strtotime($row['createddate']))]['cartIds'])) {
                 array_push($new_result_array[date('W', strtotime($row['createddate']))]['cartIds'], $row["cart_id"]);

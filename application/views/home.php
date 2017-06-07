@@ -1,3 +1,26 @@
+<style>
+    .g-recaptcha {
+        margin-top: 20px;
+        margin-left: 16px;
+    }
+    .msg-error {
+        color: red;
+        margin-left: 15px;
+    }
+    @media screen and (max-width:767px){
+        .g-recaptcha {
+        margin-top: 50px;
+    }
+    }
+</style>
+<script>
+    var vcc = function (g_recaptcha_response) {
+        var $captcha = $('#recaptcha');
+
+        $('.msg-error').text('');
+        $captcha.removeClass("error");
+    };
+</script>
 <section id="home" class="home-wrap home-default">
     <div id="myCarousel" class="carousel slide main-slider" data-ride="carousel">
         <div class="carousel-inner" role="listbox">
@@ -391,6 +414,7 @@
 
                 <form method="post" action="<?php echo site_url('home/contact_us') ?>" class="contact-form" id="contact_form">
                     <div id="fancy-inputs">
+                        <div class="row">
                         <div class="col-md-6">
 
                             <div class="">
@@ -421,6 +445,14 @@
                                 <span><span>Message</span></span>
                             </label>
 
+                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="g-recaptcha" data-sitekey="<?php echo GOOGLE_SITE_KEY ?>" data-callback="vcc"></div>
+                                <?php echo form_error('g-recaptcha-response'); ?>
+                                <span class="msg-error"></span>
+                            </div>
                         </div>
                         <div class="submit-button">
                             <!--<button class="btn btn-primary btnxs btn-lg" type="button" id="submit" name="submit" data-loading-text="Loading..."><i class="fa fa-paper-plane"></i> Send Message</button>-->
@@ -478,8 +510,24 @@
             }
         },
         submitHandler: function (form) {
-            $('.btn-contact-form').prop('disabled', true);
-            form.submit();
+            $captcha = $('#recaptcha');
+            response = grecaptcha.getResponse();
+
+            if (response.length === 0) {
+                $('.msg-error').text("Captcha is not verified properly!");
+                if (!$captcha.hasClass("error")) {
+                    $captcha.addClass("error");
+                }
+//                $('.btn-contact-form').prop('disabled', true);
+                return false;
+            } else {
+                $('.msg-error').text('');
+                $captcha.removeClass("error");
+                // form submit return true
+//                $('.btn-contact-form').prop('disabled', false);
+                return true;
+                form.submit();
+            }
         },
 //        invalidHandler: function () {
 //            console.log('eror');

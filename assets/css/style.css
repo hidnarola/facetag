@@ -1808,7 +1808,7 @@ TWITTER FEED
     font-size: 16px;
     position: relative;
     z-index: 99;
-    margin-top: 10px;
+    margin-top: 0px;
 }
 #fancy-inputs textarea:focus {
     outline: 0;

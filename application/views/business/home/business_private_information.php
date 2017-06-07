@@ -163,6 +163,12 @@
                             ?>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="text-bold control-label private-info-texts">Don't have PayPal account, Please click below to create your acount </label>&nbsp;<a data-popup="popover-custom" data-trigger="hover" data-placement="right" data-content='Please select "Business Account" as account type and connect your bank account. So you can receive payment easily.'><i class="icon-question4"></i></a>
+                    </div>
+                    <div class="form-group">
+                        <a class="btn btn-primary private-info-texts" href="https://www.paypal.com/us/webapps/mpp/account-selection" target="_BLANK">Create PayPal Account</a>
+                    </div>
                 </fieldset>
                 <fieldset class="content-group">
                     <legend class="text-bold">ORDER PROCESSING FEES</legend>

@@ -94,6 +94,15 @@ class Invoice_model extends CI_Model {
         return $query->result_array();
     }
     
+    public function is_transfer($business_id, $start_date, $end_date) {
+        $this->db->select('*');
+        $this->db->where('business_id', $business_id);
+        $this->db->where('start_date', $start_date);
+        $this->db->where('end_date', $end_date);
+        $query = $this->db->get(TBL_INVOICES);
+        return $query->num_rows();
+    }
+    
     public function get_all_invoice_list() {
         $this->db->select("citem.id,citem.cart_id,citem.is_small_photo,citem.is_large_photo,citem.is_frame,img.image,"
                 . "i.business_id as businessId,i.name as icp_name,i.low_resolution_price,i.high_resolution_price,"

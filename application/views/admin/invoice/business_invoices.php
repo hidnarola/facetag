@@ -106,7 +106,11 @@
                             <td><?php echo $row["weekly_total_payment"]; ?></td>
                             <td>
                                 <?php
-                                $status = '<span class="label bg-danger">Not Transfer</span>';
+                                if ($row["transfer_status"] == 0) {
+                                    $status = '<span class="label bg-danger">Not Transfer</span>';
+                                } else {
+                                    $status = '<span class="label bg-success">Transferred</span>';
+                                }
                                 echo $status;
                                 ?>
                             </td>
@@ -119,7 +123,7 @@
                                         <ul class="dropdown-menu dropdown-menu-right">
                                             <li>
                                                 <a href="<?php echo site_url() . 'admin/invoice/weekly_orders/' . $row["businessId"] . '/' . $row["start_date"] . 'to' . $row["end_date"]; ?>" title="View All Orders"><i class="icon-eye4 text-teal-600"></i>View All Orders</a>
-                                                <?php if ($row["weekly_total_payment"] != 0) { ?>
+                                                <?php if ($row["weekly_total_payment"] != 0  && $row["transfer_status"] == 0) { ?>
                                                     <a onclick="transfer_payment(this)" data-startdate="<?php echo $row["start_date"]; ?>" data-enddate="<?php echo $row["end_date"]; ?>"  data-href="<?php echo site_url() . 'admin/invoice/transfer_payment/' . $row["businessId"]; ?>" href="javascript:void(0);" title="Transfer Payment with Stripe"><i class="icon-wallet text-blue-600"></i> Pay with Stripe</a>
                                                     <?php if (isset($business_settings['paypal_email_address']) && $business_settings['paypal_email_address'] != "") { ?>
                                                         <a onclick="paypal_transfer_payment(this)" data-startdate="<?php echo $row["start_date"]; ?>" data-enddate="<?php echo $row["end_date"]; ?>"  data-href="<?php echo site_url() . 'admin/invoice/paypal_transfer_payment/' . $row["businessId"]; ?>" href="javascript:void(0);" title="Transfer Payment with PayPal"><i class="icon-wallet text-slate-600"></i> Pay with PayPal</a>
