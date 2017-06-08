@@ -46,14 +46,13 @@ class Register extends CI_Controller {
 
         $this->form_validation->set_rules('visitor', 'Visitor Attendence', 'required', array('required' => 'Please Select Average daily visitor attendance'));
         $this->form_validation->set_rules('visitor_photo', 'Visitor photographs', 'required', array('required' => 'Please Select Average number of Visitor photographs taken daily'));
-        $this->form_validation->set_rules('distribute', 'Distribute Photograph', 'required', array('required' => 'Please Select one'));
+//        $this->form_validation->set_rules('distribute', 'Distribute Photograph', 'required', array('required' => 'Please Select one'));
 
 
-        if (($this->input->post('distribute') == 'forsale') || ($this->input->post('distribute') == 'both')) {
-            $this->form_validation->set_rules('sale_value', 'Sale Price', 'trim|required', array('required' => 'Please Enter Sale Price!'));
-        }
+//        if (($this->input->post('distribute') == 'forsale') || ($this->input->post('distribute') == 'both')) {
+//            $this->form_validation->set_rules('sale_value', 'Sale Price', 'trim|required', array('required' => 'Please Enter Sale Price!'));
+//        }
 
-        $this->form_validation->set_rules('hear_about', 'Hear about us', 'required');
         $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_captcha_validation', array('required' => 'Please verify captcha'));
 
 

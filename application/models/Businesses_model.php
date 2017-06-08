@@ -18,7 +18,16 @@ class Businesses_model extends CI_Model {
         $query = $this->db->get(TBL_BUSINESS_TYPES);
         return $query->result_array();
     }
-
+    
+    /**
+     * Get all business types
+     */
+    public function get_all_hear_abouts() {
+        $this->db->select('id,name');
+        $query = $this->db->get(TBL_USER_HEAR_ABOUTS);
+        return $query->result_array();
+    }
+    
     /**
      * count rows of table
      * @return number of rows

@@ -160,7 +160,7 @@
                                         <div class="form-group">
                                             <label class="input">
                                                 <input type="text" name="business_name" id="business_name" class="name <?php echo (form_error('business_name') ? 'error-input' : '') ?>" value="<?php echo set_value('business_name'); ?>">
-                                                <span <?php echo (!empty(set_value('business_name'))) ? 'style="display:none"' : '' ?>><span>Business name</span></span> 
+                                                <span <?php echo (!empty(set_value('business_name'))) ? 'style="display:none"' : '' ?>><span>Attraction, Place or Business Name</span></span> 
                                                 <?php echo form_error('business_name'); ?>
                                             </label>
                                         </div>
@@ -230,65 +230,90 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="multi margin-top-10">
+                                            <label>Do you currently take Photographs of your Visitor/Guests?</label>
+                                            <?php
+                                            $posted_array = array();
+                                            if ($this->input->post('take_photos'))
+                                                $posted_array = $this->input->post('take_photos');
+                                            ?>
+                                            <div class="checkbox-wrapper display-block">
+                                                <input type="checkbox" name="take_photos" value="1" id="take_photos_radio1" class="take_photos" <?php if (set_value('take_photos') && $posted_array == 1) echo 'checked'; ?> checked=""/>&nbsp;
+                                                <label for="take_photos_radio1">YES</label>
+                                                <span class="checkbox-checked"></span>
+                                            </div>
+                                            <div class="checkbox-wrapper display-block">
+                                                <input type="checkbox" name="take_photos" value="0" id="take_photos_radio2" class="take_photos" <?php if (set_value('take_photos') && $posted_array == 0) echo 'checked'; ?>/>&nbsp;
+                                                <label for="take_photos_radio2">NO</label>
+                                                <span class="checkbox-checked"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 avg-num-of-photos">
+                                        <div class="multi margin-top-10">
                                             <label>Average number of Visitor photographs taken daily?</label>
                                             <div class="checkbox-wrapper display-block">
-                                                <input type="checkbox" name="visitor_photo" value="<500" id="visitor_photo1" <?php if ($this->input->post('visitor_photo') == '<500') echo 'checked' ?> class="<?php if (form_error('visitor_photo')) echo 'error-input'; ?>"/>&nbsp;
-                                                <label for="visitor_photo1"><500</label>
+                                                <input type="checkbox" name="visitor_photo" value="<100" id="visitor_photo1" <?php if ($this->input->post('visitor_photo') == '<100') echo 'checked' ?> class="<?php if (form_error('visitor_photo')) echo 'error-input'; ?>"/>&nbsp;
+                                                <label for="visitor_photo1">less than 100</label>
                                                 <span class="checkbox-checked"></span>
                                             </div>
                                             <div class="checkbox-wrapper display-block">
-                                                <input type="checkbox" name="visitor_photo" value="501-2000" id="visitor_photo2" <?php if (set_value('visitor_photo') == '501-2000') echo 'checked' ?>/>&nbsp;  
-                                                <label for="visitor_photo2">501-2000</label> 
+                                                <input type="checkbox" name="visitor_photo" value="101-300" id="visitor_photo2" <?php if (set_value('visitor_photo') == '101-300') echo 'checked' ?>/>&nbsp;  
+                                                <label for="visitor_photo2">101-300</label> 
                                                 <span class="checkbox-checked"></span>
                                             </div>
                                             <div class="checkbox-wrapper display-block">
-                                                <input type="checkbox" name="visitor_photo" value="2001-10,000" id="visitor_photo3" <?php if (set_value('visitor_photo') == '2001-10,000') echo 'checked' ?>/>&nbsp;  
-                                                <label for="visitor_photo3">2001-10,000</label>
+                                                <input type="checkbox" name="visitor_photo" value="301-600" id="visitor_photo3" <?php if (set_value('visitor_photo') == '301-600') echo 'checked' ?>/>&nbsp;  
+                                                <label for="visitor_photo3">301-600</label>
                                                 <span class="checkbox-checked"></span>
                                             </div>
                                             <div class="checkbox-wrapper display-block">
-                                                <input type="checkbox" name="visitor_photo" value="10,000+" id="visitor_photo4" <?php if (set_value('visitor_photo') == '10,000+') echo 'checked' ?>/>&nbsp;  
-                                                <label for="visitor_photo4">10,000+</label>
+                                                <input type="checkbox" name="visitor_photo" value="601-1000" id="visitor_photo4" <?php if (set_value('visitor_photo') == '601-1000') echo 'checked' ?>/>&nbsp;  
+                                                <label for="visitor_photo4">601-1000</label>
+                                                <span class="checkbox-checked"></span>
+                                            </div>
+                                            <div class="checkbox-wrapper display-block">
+                                                <input type="checkbox" name="visitor_photo" value="1000+" id="visitor_photo5" <?php if (set_value('visitor_photo') == '1000+') echo 'checked' ?>/>&nbsp;  
+                                                <label for="visitor_photo5">1000+</label>
                                                 <span class="checkbox-checked"></span>
                                             </div>
                                             <?php echo form_error('visitor_photo'); ?>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <div class="multi margin-top-10">
-                                            <label>Would you like to distribute your Visitor photographs:</label>
-                                            <div class="checkbox-wrapper display-block">
-                                                <input type="checkbox" name="distribute" value="free" id="free" <?php if (set_value('distribute') == 'free') echo 'checked' ?> class="<?php if (form_error('distribute')) echo 'error-input'; ?>"/>&nbsp; 
-                                                <label for="free">Free</label>
-                                                <span class="checkbox-checked"></span>
-                                            </div>
-                                            <div class="checkbox-wrapper display-block">
-                                                <input type="checkbox" name="distribute" value="forsale" id="forsale" <?php if (set_value('distribute') == 'forsale') echo 'checked' ?>/>&nbsp;
-                                                <label for="forsale">For Sale (approx. average price)</label>
-                                                <span class="checkbox-checked"></span>
-                                            </div>
-                                            <div class="checkbox-wrapper display-block">
-                                                <input type="checkbox" name="distribute" value="both" id="both" <?php if (set_value('distribute') == 'both') echo 'checked' ?>/>&nbsp;
-                                                <label for="both"> Both</label> 
-                                                <span class="checkbox-checked"></span>
-                                            </div>
-                                            <?php echo form_error('distribute'); ?>
-                                            <?php
-                                            $sale_style = 'style="display: none;"';
-                                            $sale_class = '';
-                                            if (form_error('sale_value')) {
-                                                $sale_style = '';
-                                                $sale_class = 'error-input';
-                                            } else if (set_value('distribute') == 'forsale' || set_value('distribute') == 'both') {
-                                                $sale_style = '';
-                                            }
-                                            ?>
-                                            <div id="sale_value_txtbox" <?php echo $sale_style ?>>
-                                                <input type="text" name="sale_value" class="sale_value-form-control <?php echo $sale_class ?>" placeholder="Enter Approx. average price" value="<?php echo set_value('sale_value') ?>"/>
-                                                <div style="margin-left: 15px;"><?php echo form_error('sale_value'); ?></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <!--                                    <div class="col-sm-6">
+                                                                            <div class="multi margin-top-10">
+                                                                                <label>Would you like to distribute your Visitor photographs:</label>
+                                                                                <div class="checkbox-wrapper display-block">
+                                                                                    <input type="checkbox" name="distribute" value="free" id="free" <?php if (set_value('distribute') == 'free') echo 'checked' ?> class="<?php if (form_error('distribute')) echo 'error-input'; ?>"/>&nbsp; 
+                                                                                    <label for="free">Free</label>
+                                                                                    <span class="checkbox-checked"></span>
+                                                                                </div>
+                                                                                <div class="checkbox-wrapper display-block">
+                                                                                    <input type="checkbox" name="distribute" value="forsale" id="forsale" <?php if (set_value('distribute') == 'forsale') echo 'checked' ?>/>&nbsp;
+                                                                                    <label for="forsale">For Sale (approx. average price)</label>
+                                                                                    <span class="checkbox-checked"></span>
+                                                                                </div>
+                                                                                <div class="checkbox-wrapper display-block">
+                                                                                    <input type="checkbox" name="distribute" value="both" id="both" <?php if (set_value('distribute') == 'both') echo 'checked' ?>/>&nbsp;
+                                                                                    <label for="both"> Both</label> 
+                                                                                    <span class="checkbox-checked"></span>
+                                                                                </div>
+                                    <?php // echo form_error('distribute'); ?>
+                                    <?php
+//                                    $sale_style = 'style="display: none;"';
+//                                    $sale_class = '';
+//                                    if (form_error('sale_value')) {
+//                                        $sale_style = '';
+//                                        $sale_class = 'error-input';
+//                                    } else if (set_value('distribute') == 'forsale' || set_value('distribute') == 'both') {
+//                                        $sale_style = '';
+//                                    }
+                                    ?>
+                                                                                <div id="sale_value_txtbox" <?php echo $sale_style ?>>
+                                                                                    <input type="text" name="sale_value" class="sale_value-form-control <?php echo $sale_class ?>" placeholder="Enter Approx. average price" value="<?php echo set_value('sale_value') ?>"/>
+                                                                                    <div style="margin-left: 15px;"><?php echo form_error('sale_value'); ?></div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>-->
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
