@@ -21,6 +21,7 @@ class Register extends CI_Controller {
     public function index() {
         $data['title'] = 'Facetag Register Business';
         $data['business_types'] = $this->businesses_model->get_all_types();
+        $data['hear_abouts'] = $this->businesses_model->get_all_hear_abouts();
 //        $this->form_validation->set_error_delimiters('<div class="alert alert-error alert-danger"><a class="close" data-dismiss="alert">×</a><strong>', '</strong></div>');
         $this->form_validation->set_error_delimiters('<span class="error-custom">', '</span>');
 
