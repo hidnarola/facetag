@@ -170,7 +170,7 @@
                                     <div class="col-sm-6">
                                         <div class="multi">
                                             <label>Select all that apply:</label>
-                                            <select id="business_type" multiple="multiple" name="business_type[]">
+                                            <select id="business_type" class="multiple" multiple="multiple" name="business_type[]">
                                                 <?php
                                                 $posted_array = array();
                                                 if ($this->input->post('business_type'))
@@ -316,14 +316,25 @@
                                                                         </div>-->
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label class="input margin-top-10">
-                                                <input type="text" name="hear_about" id="hear_about" class="name <?php echo (form_error('hear_about') ? 'error-input' : '') ?>" value="<?php echo set_value('hear_about') ?>">
-                                                <span <?php echo (!empty(set_value('hear_about'))) ? 'style="display:none"' : '' ?>><span>How did you hear about us?</span></span> 
-                                                <?php echo form_error('hear_about'); ?>
-                                            </label>
+                                    <div class="col-sm-6">
+                                        <div class="multi">
+                                            <label>Where did you hear about us?</label>
+                                            <select class="multiple" id="hear_about" multiple="multiple" name="hear_about[]">
+                                                <?php
+                                                $posted_array = array();
+                                                if ($this->input->post('hear_about'))
+                                                    $posted_array = $this->input->post('hear_about');
+                                                foreach ($hear_abouts as $hear_about) {
+                                                    $selected = '';
+                                                    if (in_array($hear_about['id'], $posted_array)) {
+                                                        $selected = 'selected';
+                                                    }
+                                                    echo '<option value="' . $hear_about['id'] . '" ' . $selected . '>' . $hear_about['name'] . '</option>';
+                                                }
+                                                ?>
+                                            </select>
                                         </div>
+                                        <?php if (form_error('hear_about[]')) echo '<br/>' . form_error('hear_about[]'); ?>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -349,8 +360,8 @@
 <script>
     $(document).ready(function () {
 
-        //-- Intialize business type as mulriselect box
-        $('#business_type').multiselect();
+        //-- Intialize business type and hear about as mulriselect box
+       $('.multiple').multiselect();
 
         //-- If Other type is selected then show the teztbox to enter the other types
         $('#business_type').change(function () {

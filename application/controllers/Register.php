@@ -78,6 +78,7 @@ class Register extends CI_Controller {
                 'user_id' => $user_id,
                 'name' => $this->input->post('business_name'),
                 'business_type_id' => implode(',', $this->input->post('business_type')),
+                'user_hear_abouts_id' => implode(',', $this->input->post('hear_about')),
                 'other_business_type' => $this->input->post('other_business_type'),
                 'daily_visitors' => $this->input->post('visitor'),
                 'visitor_photographs' => $this->input->post('visitor_photo'),

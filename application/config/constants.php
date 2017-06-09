@@ -92,6 +92,7 @@ define('TBL_BUSINESSES', 'businesses');
 define('TBL_BUSINESSES_SETTINGS', 'business_settings');
 define('TBL_BUSINESS_PROMO_IMAGES', 'business_promo_images');
 define('TBL_BUSINESS_TYPES', 'business_types');
+define('TBL_USER_HEAR_ABOUTS', 'user_hear_abouts');
 define('TBL_CARD_DETAIL', 'card_detail');
 define('TBL_CART', 'cart');
 define('TBL_CART_ITEM', 'cart_item');

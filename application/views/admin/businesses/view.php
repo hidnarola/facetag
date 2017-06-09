@@ -79,6 +79,15 @@
                                         ?>
                                     </dd>
                                 <?php } ?>
+                                    <?php if ($business_data['hear_about'] != '') { ?>
+                                    <dt>Hear about facetag from</dt>
+                                    <dd><?php
+                                        $hear_about = $business_data['hear_about'];
+                                        $hear_about = rtrim($hear_about);
+                                        echo rtrim($hear_about, ",")
+                                        ?>
+                                    </dd>
+                                <?php } ?>
                                 <?php if ($business_data['daily_visitors'] != '') { ?>
                                     <dt>Average daily visitors</dt>
                                     <dd><?php echo $business_data['daily_visitors'] ?></dd>

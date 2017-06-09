@@ -85,7 +85,8 @@ class Businesses_model extends CI_Model {
      */
     public function get_result($condition = null) {
         $sub_select = ',(select IF(b.other_business_type IS NOT NULL,CONCAT(GROUP_CONCAT(name), ", ", b.other_business_type),GROUP_CONCAT(name)) from ' . TBL_BUSINESS_TYPES . ' WHERE FIND_IN_SET(id,b.business_type_id) !=0) as business_type';
-        $this->db->select('b.*,bs.paypal_email_address,bs.account_name,bs.bsb,bs.account_number,bs.commission_on_digital_image_sales_percentage,bs.commission_on_digital_image_sales,bs.commission_on_product_sales,bs.commission_on_product_sales_percentage,bs.quota,bs.monthly_subscription,bs.comments,u.firstname,u.lastname,u.email,u.phone_no,c.name as country,s.name as state,ci.name as city' . $sub_select);
+        $sub_select_hear_about = ',(select GROUP_CONCAT(name) from ' . TBL_USER_HEAR_ABOUTS . ' WHERE FIND_IN_SET(id,b.user_hear_abouts_id) !=0) as hear_about';
+        $this->db->select('b.*,bs.paypal_email_address,bs.account_name,bs.bsb,bs.account_number,bs.commission_on_digital_image_sales_percentage,bs.commission_on_digital_image_sales,bs.commission_on_product_sales,bs.commission_on_product_sales_percentage,bs.quota,bs.monthly_subscription,bs.comments,u.firstname,u.lastname,u.email,u.phone_no,c.name as country,s.name as state,ci.name as city' . $sub_select . $sub_select_hear_about);
         $this->db->join(TBL_USERS . ' u', 'b.user_id=u.id', 'left');
         $this->db->join(TBL_COUNTRIES . ' c', 'b.country_id=c.id', 'left');
         $this->db->join(TBL_STATES . ' s', 'b.state_id=s.id', 'left');
