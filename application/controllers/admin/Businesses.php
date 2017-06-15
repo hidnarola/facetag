@@ -642,6 +642,7 @@ class Businesses extends CI_Controller {
                     if ($check_icp) {
                         $icp_logo = $check_icp[0]['icp_logo'];
                         $icp_preview_image = $check_icp[0]['preview_photo'];
+                        $icp_frame_image = $check_icp[0]['frame_image'];
                         $data['icp_data'] = $check_icp[0];
                         $data['physical_product_images'] = $this->icp_images_model->get_physical_product_images($icp_id);
                         $data['title'] = 'facetag | Edit ICP';
@@ -736,6 +737,32 @@ class Businesses extends CI_Controller {
                             $icp_preview_image = $file_info['file_name'];
                         }
                     }
+                    //-- Upload icp frame image
+                    if ($_FILES['frame_image']['name'] != '') {
+                        $img_array = array('png', 'jpeg', 'jpg', 'PNG', 'JPEG', 'JPG');
+                        $exts = explode(".", $_FILES['frame_image']['name']);
+                        $name = $exts[0] . time() . "." . $exts[1];
+                        $name = "Frame-" . date("mdYhHis") . "." . end($exts);
+
+                        $config['upload_path'] = ICP_FRAMES;
+                        $config['allowed_types'] = implode("|", $img_array);
+                        $config['max_size'] = '10240';
+                        $config['file_name'] = $name;
+
+                        $this->upload->initialize($config);
+
+                        if (!$this->upload->do_upload('frame_image')) {
+                            $flag1 = 1;
+//                    $this->session->set_flashdata('error', $this->upload->display_errors());
+                            $data['frame_image_validation'] = $this->upload->display_errors();
+                        } else {
+                            if (is_numeric($icp_id) && $icp_frame_image != '') {
+                                unlink(ICP_PREVIEW_IMAGES . $icp_frame_image);
+                            }
+                            $file_info = $this->upload->data();
+                            $icp_frame_image = $file_info['file_name'];
+                        }
+                    }
                     //-- Upload icp physical printed image
                     if ($_FILES['printed_souvenir_images']['name'][0] != '') {
                         $filesCount = count($_FILES['printed_souvenir_images']['name']);
@@ -788,6 +815,8 @@ class Businesses extends CI_Controller {
                         }
                         if ($this->input->post('digital_free_on_physical_purchase')) {
                             $digital_free_on_physical_purchase = 1;
+                        }else {
+                            $digital_free_on_physical_purchase = 0;
                         }
                         if ($this->input->post('collection_point_delivery') && $this->input->post('offer_printed_souvenir')) {
                             $collection_point_delivery = 1;
@@ -835,6 +864,7 @@ class Businesses extends CI_Controller {
                         }
                         $update_settings = array(
                             'preview_photo' => $icp_preview_image,
+                            'frame_image' => $icp_frame_image,
                             'addlogo_to_sharedimage' => $addlogo_to_sharedimage,
                             'is_low_image_free' => $is_low_image_free,
                             'is_high_image_free' => $is_high_image_free,

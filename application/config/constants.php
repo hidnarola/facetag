@@ -133,6 +133,7 @@ define('ICP_BLUR_IMAGES', 'uploads/icp_blur_images/');
 define('ICP_SMALL_IMAGES', 'uploads/icp_small_images/');
 define('ICP_LOGO', 'uploads/icp_logo/');
 define('ICP_PREVIEW_IMAGES', 'uploads/icp_preview_images/');
+define('ICP_FRAMES', 'uploads/icp_frames/');
 define('ICP_PHYSICAL_PRODUCT_IMAGES', 'uploads/icp_physical_product_images/');
 define('USER_IMAGES', 'uploads/user_images/');
 define('CROP_FACES', 'uploads/crop_faces/');

@@ -26,14 +26,28 @@
     {
         z-index: 10;
     }
+    #frame_image_img1
+    {
+        z-index: 10;
+    }
     #preview_photo_img2
+    {
+        z-index: 20;
+    }
+    #frame_image_img2
     {
         z-index: 20;
     }
     #preview_photo_div{
         width: 90px;
     }
+    #frame_image_div{
+        width: 90px;
+    }
     #preview_photo_div +  .media-body{
+        width: 86%;
+    }
+    #frame_image_div +  .media-body{
         width: 86%;
     }
     @media(max-width:767px){
@@ -73,6 +87,9 @@
             width: 97%;
             display: block;
         }#preview_photo_div +  .media-body{
+            width: 100%;
+        }
+        #frame_image_div +  .media-body{
             width: 100%;
         }
     }
@@ -173,13 +190,13 @@
                                 <?php } ?>
                             </div>
                             <div class="media-body">
-                                
+
                                 <input type="file" class="file-styled js-fileinput img-upload" accept="image/jpeg,image/png,image/gif">
-                                    <span class="help-block">Accepted formats: png, jpg. Max file size 2Mb</span>
-                                    <canvas class="js-editorcanvas"></canvas>
-                                    <canvas class="js-previewcanvas" style="display: none;"></canvas><br>
-                                    <a href="javascript:void(0);" class="js-export img-export btn_img_crop btn">Crop</a><br><br>
-                                    <input type="hidden" name="cropimg" id="cropimg" value="">
+                                <span class="help-block">Accepted formats: png, jpg. Max file size 2Mb</span>
+                                <canvas class="js-editorcanvas"></canvas>
+                                <canvas class="js-previewcanvas" style="display: none;"></canvas><br>
+                                <a href="javascript:void(0);" class="js-export img-export btn_img_crop btn">Crop</a><br><br>
+                                <input type="hidden" name="cropimg" id="cropimg" value="">
                             </div>
                         </div>
                         <?php
@@ -611,6 +628,37 @@
                             </div>
                             <span id="spn-purchase_options_and_prices-error" class="validation-error-label"></span>
                             <div class="form-group">
+                                <label class="col-lg-3 control-label">Upload Frame Image</label>
+                                <div class="col-lg-5">
+                                    <div class="media no-margin-top preview_photo_div_wrapper">
+                                        <div class="media-left" id="frame_image_div">
+                                            <?php
+                                            if (isset($icp_data) && $icp_data['frame_image'] != '') {
+                                                ?>
+                                                <img src="assets/admin/images/placeholder.jpg" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="frame_image_img1" class="preview_images">
+                                                <img src="<?php echo ICP_FRAMES . $icp_data['frame_image'] ?>" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="frame_image_img2" class="preview_images">
+                                                <?php
+                                            } else {
+                                                ?>
+                                                <img src="assets/admin/images/placeholder.jpg" style="width: 58px; height: 58px; border-radius: 2px;" alt="" class="preview_images" id="frame_image_img1">
+                                            <?php } ?>
+                                        </div>
+                                        <div class="media-body">
+                                            <input type="file" name="frame_image" id="frame_image" class="previewfile-styled" onchange="readframe_image(this);" >
+                                            <span class="help-block">Accepted formats: png, jpg.</span>
+                                        </div>
+                                        <div style="opacity: 0;height: 0;">
+                                            <canvas id="canvas1" width="58" height="58" border="0"></canvas>
+                                        </div>
+                                    </div>
+                                    <?php
+                                    if (isset($frame_image_validation))
+                                        echo '<label id="frame_image-error" class="validation-error-label" for="frame_image">' . $frame_image_validation . '</label>';
+                                    ?>
+                                    <span id="spn-frame_image-error" class="validation-error-label"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-lg-6 control-label">If the Guest buy's the Printed Souvenir product, do you want to offer both digital versions FREE?</label>
                                 <div class="col-lg-4">
                                     <div class="checkbox">
@@ -779,373 +827,373 @@
 </div>
 <!-- /Manage Hotels modal -->
 <script>
-                                /**
-                                 * @file Allows uploading, cropping (with automatic resizing) and exporting
-                                 * of images.
-                                 * @author Billy Brown
-                                 * @license MIT
-                                 * @version 2.1.0
-                                 */
+    /**
+     * @file Allows uploading, cropping (with automatic resizing) and exporting
+     * of images.
+     * @author Billy Brown
+     * @license MIT
+     * @version 2.1.0
+     */
 
-                                /** Class used for uploading images. */
-                                class Uploader {
-                                    /**
-                                     * <p>Creates an Uploader instance with parameters passed as an object.</p>
-                                     * <p>Available parameters are:</p>
-                                     * <ul>
-                                     *  <li>exceptions {function}: the exceptions handler to use, function that takes a string.</li>
-                                     *  <li>input {HTMLElement} (required): the file input element. Instantiation fails if not provided.</li>
-                                     *  <li>types {array}: the file types accepted by the uploader.</li>
-                                     * </ul>
-                                     *
-                                     * @example
-                                     * var uploader = new Uploader({
-                                     *  input: document.querySelector('.js-fileinput'),
-                                     *  types: [ 'gif', 'jpg', 'jpeg', 'png' ]
-                                     * });
-                                     * *
-                                     * @param {object} options the parameters to be passed for instantiation
-                                     */
-                                    constructor(options) {
-                                        if (!options.input) {
-                                            throw '[Uploader] Missing input file element.';
-                                        }
-                                        this.fileInput = options.input;
-                                        this.types = options.types || ['gif', 'jpg', 'jpeg', 'png'];
-                                    }
+    /** Class used for uploading images. */
+    class Uploader {
+        /**
+         * <p>Creates an Uploader instance with parameters passed as an object.</p>
+         * <p>Available parameters are:</p>
+         * <ul>
+         *  <li>exceptions {function}: the exceptions handler to use, function that takes a string.</li>
+         *  <li>input {HTMLElement} (required): the file input element. Instantiation fails if not provided.</li>
+         *  <li>types {array}: the file types accepted by the uploader.</li>
+         * </ul>
+         *
+         * @example
+         * var uploader = new Uploader({
+         *  input: document.querySelector('.js-fileinput'),
+         *  types: [ 'gif', 'jpg', 'jpeg', 'png' ]
+         * });
+         * *
+         * @param {object} options the parameters to be passed for instantiation
+         */
+        constructor(options) {
+            if (!options.input) {
+                throw '[Uploader] Missing input file element.';
+            }
+            this.fileInput = options.input;
+            this.types = options.types || ['gif', 'jpg', 'jpeg', 'png'];
+        }
 
-                                    /**
-                                     * Listen for an image file to be uploaded, then validate it and resolve with the image data.
-                                     */
-                                    listen(resolve, reject) {
-                                        this.fileInput.onchange = (e) => {
-                                            // Do not submit the form
-                                            e.preventDefault();
+        /**
+         * Listen for an image file to be uploaded, then validate it and resolve with the image data.
+         */
+        listen(resolve, reject) {
+            this.fileInput.onchange = (e) => {
+                // Do not submit the form
+                e.preventDefault();
 
-                                            // Make sure one file was selected
-                                            if (!this.fileInput.files || this.fileInput.files.length !== 1) {
-                                                reject('[Uploader:listen] Select only one file.');
-                                            }
+                // Make sure one file was selected
+                if (!this.fileInput.files || this.fileInput.files.length !== 1) {
+                    reject('[Uploader:listen] Select only one file.');
+                }
 
-                                            let file = this.fileInput.files[0];
-                                            let reader = new FileReader();
-                                            // Make sure the file is of the correct type
-                                            if (!this.validFileType(file.type)) {
-                                                reject(`[Uploader:listen] Invalid file type: ${file.type}`);
-                                            } else {
-                                                // Read the image as base64 data
-                                                reader.readAsDataURL(file);
-                                                // When loaded, return the file data
-                                                reader.onload = (e) => resolve(e.target.result);
-                                            }
-                                        };
-                                    }
+                let file = this.fileInput.files[0];
+                let reader = new FileReader();
+                // Make sure the file is of the correct type
+                if (!this.validFileType(file.type)) {
+                    reject(`[Uploader:listen] Invalid file type: ${file.type}`);
+                } else {
+                    // Read the image as base64 data
+                    reader.readAsDataURL(file);
+                    // When loaded, return the file data
+                    reader.onload = (e) => resolve(e.target.result);
+                }
+            };
+        }
 
-                                    /** @private */
-                                    validFileType(filename) {
-                                        // Get the second part of the MIME type
-                                        let extension = filename.split('/').pop().toLowerCase();
-                                        // See if it is in the array of allowed types
-                                        return this.types.includes(extension);
-                                    }
-                                }
+        /** @private */
+        validFileType(filename) {
+            // Get the second part of the MIME type
+            let extension = filename.split('/').pop().toLowerCase();
+            // See if it is in the array of allowed types
+            return this.types.includes(extension);
+        }
+    }
 
-                                function squareContains(square, coordinate) {
-                                    return coordinate.x >= square.pos.x
-                                            && coordinate.x <= square.pos.x + square.size.x
-                                            && coordinate.y >= square.pos.y
-                                            && coordinate.y <= square.pos.y + square.size.y;
-                                }
+    function squareContains(square, coordinate) {
+        return coordinate.x >= square.pos.x
+                && coordinate.x <= square.pos.x + square.size.x
+                && coordinate.y >= square.pos.y
+                && coordinate.y <= square.pos.y + square.size.y;
+    }
 
-                                /** Class for cropping an image. */
-                                class Cropper {
-                                    /**
-                                     * <p>Creates a Cropper instance with parameters passed as an object.</p>
-                                     * <p>Available parameters are:</p>
-                                     * <ul>
-                                     *  <li>size {object} (required): the dimensions of the cropped, resized image. Must have 'width' and 'height' fields. </li>
-                                     *  <li>limit {integer}: the longest side that the cropping area will be limited to, resizing any larger images.</li>
-                                     *  <li>canvas {HTMLElement} (required): the cropping canvas element. Instantiation fails if not provided.</li>
-                                     *  <li>preview {HTMLElement} (required): the preview canvas element. Instantiation fails if not provided.</li>
-                                     * </ul>
-                                     *
-                                     * @example
-                                     * var editor = new Cropper({
-                                     *  size: { width: 128, height: 128 },
-                                     *  limit: 600,
-                                     *  canvas: document.querySelector('.js-editorcanvas'),
-                                     *  preview: document.querySelector('.js-previewcanvas')
-                                     * });
-                                     *
-                                     * @param {object} options the parameters to be passed for instantiation
-                                     */
-                                    constructor(options) {
-                                        // Check the inputs
-                                        if (!options.size) {
-                                            throw 'Size field in options is required';
-                                        }
-                                        if (!options.canvas) {
-                                            throw 'Could not find image canvas element.';
-                                        }
-                                        if (!options.preview) {
-                                            throw 'Could not find preview canvas element.';
-                                        }
+    /** Class for cropping an image. */
+    class Cropper {
+        /**
+         * <p>Creates a Cropper instance with parameters passed as an object.</p>
+         * <p>Available parameters are:</p>
+         * <ul>
+         *  <li>size {object} (required): the dimensions of the cropped, resized image. Must have 'width' and 'height' fields. </li>
+         *  <li>limit {integer}: the longest side that the cropping area will be limited to, resizing any larger images.</li>
+         *  <li>canvas {HTMLElement} (required): the cropping canvas element. Instantiation fails if not provided.</li>
+         *  <li>preview {HTMLElement} (required): the preview canvas element. Instantiation fails if not provided.</li>
+         * </ul>
+         *
+         * @example
+         * var editor = new Cropper({
+         *  size: { width: 128, height: 128 },
+         *  limit: 600,
+         *  canvas: document.querySelector('.js-editorcanvas'),
+         *  preview: document.querySelector('.js-previewcanvas')
+         * });
+         *
+         * @param {object} options the parameters to be passed for instantiation
+         */
+        constructor(options) {
+            // Check the inputs
+            if (!options.size) {
+                throw 'Size field in options is required';
+            }
+            if (!options.canvas) {
+                throw 'Could not find image canvas element.';
+            }
+            if (!options.preview) {
+                throw 'Could not find preview canvas element.';
+            }
 
-                                        // Hold on to the values
-                                        this.imageCanvas = options.canvas;
-                                        this.previewCanvas = options.preview;
-                                        this.c = this.imageCanvas.getContext("2d");
+            // Hold on to the values
+            this.imageCanvas = options.canvas;
+            this.previewCanvas = options.preview;
+            this.c = this.imageCanvas.getContext("2d");
 
 
-                                        // Images larger than options.limit are resized
-                                        this.limit = options.limit || 600; // default to 600px
-                                        // Create the cropping square with the handle's size
-                                        this.crop = {
-                                            size: {x: options.size.width, y: options.size.height},
-                                            pos: {x: 0, y: 0},
-                                            handleSize: 10
-                                        };
+            // Images larger than options.limit are resized
+            this.limit = options.limit || 600; // default to 600px
+            // Create the cropping square with the handle's size
+            this.crop = {
+                size: {x: options.size.width, y: options.size.height},
+                pos: {x: 0, y: 0},
+                handleSize: 10
+            };
 
-                                        // Set the preview canvas size
-                                        this.previewCanvas.width = options.size.width;
-                                        this.previewCanvas.height = options.size.height;
+            // Set the preview canvas size
+            this.previewCanvas.width = options.size.width;
+            this.previewCanvas.height = options.size.height;
 
-                                        // Bind the methods, ready to be added and removed as events
-                                        this.boundDrag = this.drag.bind(this);
-                                        this.boundClickStop = this.clickStop.bind(this);
-                                    }
+            // Bind the methods, ready to be added and removed as events
+            this.boundDrag = this.drag.bind(this);
+            this.boundClickStop = this.clickStop.bind(this);
+        }
 
-                                    /**
-                                     * Set the source image data for the cropper.
-                                     *
-                                     * @param {String} source the source of the image to crop.
-                                     */
-                                    setImageSource(source) {
-                                        this.image = new Image();
-                                        this.image.src = source;
-                                        this.image.onload = (e) => {
-                                            // Perform an initial render
-                                            this.render();
-                                            // Listen for events on the canvas when the image is ready
-                                            this.imageCanvas.onmousedown = this.clickStart.bind(this);
-                                        }
-                                    }
+        /**
+         * Set the source image data for the cropper.
+         *
+         * @param {String} source the source of the image to crop.
+         */
+        setImageSource(source) {
+            this.image = new Image();
+            this.image.src = source;
+            this.image.onload = (e) => {
+                // Perform an initial render
+                this.render();
+                // Listen for events on the canvas when the image is ready
+                this.imageCanvas.onmousedown = this.clickStart.bind(this);
+            }
+        }
 
-                                    /**
-                                     * Export the result to a given image tag.
-                                     *
-                                     * @param {HTMLElement} img the image tag to export the result to.
-                                     */
-                                    export(img) {
+        /**
+         * Export the result to a given image tag.
+         *
+         * @param {HTMLElement} img the image tag to export the result to.
+         */
+        export(img) {
 //                                        img.setAttribute('src', this.previewCanvas.toDataURL());
-                                        $("#cropimg").val(this.previewCanvas.toDataURL());
-                                        var html = '<img src="' + this.previewCanvas.toDataURL() + '" style="width: 58px; height: 58px; border-radius: 2px;" alt="">';
-                                        $('#image_preview_div').html(html);
-                                    }
+            $("#cropimg").val(this.previewCanvas.toDataURL());
+            var html = '<img src="' + this.previewCanvas.toDataURL() + '" style="width: 58px; height: 58px; border-radius: 2px;" alt="">';
+            $('#image_preview_div').html(html);
+        }
 
-                                    /** @private */
-                                    render() {
-                                        this.c.clearRect(0, 0, this.imageCanvas.width, this.imageCanvas.height);
-                                        this.displayImage();
-                                        this.preview();
-                                        this.drawCropWindow();
-                                        $('.js-editorcanvas').show();
-                                        $('.js-export.img-export').show();
-                                    }
+        /** @private */
+        render() {
+            this.c.clearRect(0, 0, this.imageCanvas.width, this.imageCanvas.height);
+            this.displayImage();
+            this.preview();
+            this.drawCropWindow();
+            $('.js-editorcanvas').show();
+            $('.js-export.img-export').show();
+        }
 
-                                    /** @private */
-                                    clickStart(e) {
-                                        // Get the click position and hold onto it for the expected mousemove
-                                        const position = {x: e.offsetX, y: e.offsetY};
-                                        this.lastEvent = {
-                                            position: position,
-                                            resizing: this.isResizing(position),
-                                            moving: this.isMoving(position)
-                                        };
-                                        // Listen for mouse movement and mouse release
-                                        this.imageCanvas.addEventListener('mousemove', this.boundDrag);
-                                        this.imageCanvas.addEventListener('mouseup', this.boundClickStop);
-                                    }
+        /** @private */
+        clickStart(e) {
+            // Get the click position and hold onto it for the expected mousemove
+            const position = {x: e.offsetX, y: e.offsetY};
+            this.lastEvent = {
+                position: position,
+                resizing: this.isResizing(position),
+                moving: this.isMoving(position)
+            };
+            // Listen for mouse movement and mouse release
+            this.imageCanvas.addEventListener('mousemove', this.boundDrag);
+            this.imageCanvas.addEventListener('mouseup', this.boundClickStop);
+        }
 
-                                    /** @private */
-                                    clickStop(e) {
-                                        // Stop listening for mouse movement and mouse release
-                                        this.imageCanvas.removeEventListener("mousemove", this.boundDrag);
-                                        this.imageCanvas.removeEventListener("mouseup", this.boundClickStop);
-                                    }
+        /** @private */
+        clickStop(e) {
+            // Stop listening for mouse movement and mouse release
+            this.imageCanvas.removeEventListener("mousemove", this.boundDrag);
+            this.imageCanvas.removeEventListener("mouseup", this.boundClickStop);
+        }
 
-                                    /** @private */
-                                    isResizing(coord) {
-                                        const size = this.crop.handleSize;
-                                        const handle = {
-                                            pos: {
-                                                x: this.crop.pos.x + this.crop.size.x - size / 2,
-                                                y: this.crop.pos.y + this.crop.size.y - size / 2
-                                            },
-                                            size: {x: size, y: size}
-                                        };
-                                        return squareContains(handle, coord);
-                                    }
+        /** @private */
+        isResizing(coord) {
+            const size = this.crop.handleSize;
+            const handle = {
+                pos: {
+                    x: this.crop.pos.x + this.crop.size.x - size / 2,
+                    y: this.crop.pos.y + this.crop.size.y - size / 2
+                },
+                size: {x: size, y: size}
+            };
+            return squareContains(handle, coord);
+        }
 
-                                    /** @private */
-                                    isMoving(coord) {
-                                        return squareContains(this.crop, coord);
-                                    }
+        /** @private */
+        isMoving(coord) {
+            return squareContains(this.crop, coord);
+        }
 
-                                    /** @private */
-                                    drag(e) {
-                                        const position = {
-                                            x: e.offsetX,
-                                            y: e.offsetY
-                                        };
-                                        // Calculate the distance that the mouse has travelled
-                                        const dx = position.x - this.lastEvent.position.x;
-                                        const dy = position.y - this.lastEvent.position.y;
-                                        // Determine whether we are resizing, moving, or nothing
-                                        if (this.lastEvent.resizing) {
-                                            this.resize(dx, dy);
-                                        } else if (this.lastEvent.moving) {
-                                            this.move(dx, dy);
-                                        }
-                                        // Update the last position
-                                        this.lastEvent.position = position;
-                                        this.render();
-                                    }
+        /** @private */
+        drag(e) {
+            const position = {
+                x: e.offsetX,
+                y: e.offsetY
+            };
+            // Calculate the distance that the mouse has travelled
+            const dx = position.x - this.lastEvent.position.x;
+            const dy = position.y - this.lastEvent.position.y;
+            // Determine whether we are resizing, moving, or nothing
+            if (this.lastEvent.resizing) {
+                this.resize(dx, dy);
+            } else if (this.lastEvent.moving) {
+                this.move(dx, dy);
+            }
+            // Update the last position
+            this.lastEvent.position = position;
+            this.render();
+        }
 
-                                    /** @private */
-                                    resize(dx, dy) {
-                                        let handle = {
-                                            x: this.crop.pos.x + this.crop.size.x,
-                                            y: this.crop.pos.y + this.crop.size.y
-                                        };
-                                        // Maintain the aspect ratio
-                                        const amount = Math.abs(dx) > Math.abs(dy) ? dx : dy;
-                                        // Make sure that the handle remains within image bounds
-                                        if (this.inBounds(handle.x + amount, handle.y + amount)) {
-                                            this.crop.size.x += amount;
-                                            this.crop.size.y += amount;
-                                        }
-                                    }
+        /** @private */
+        resize(dx, dy) {
+            let handle = {
+                x: this.crop.pos.x + this.crop.size.x,
+                y: this.crop.pos.y + this.crop.size.y
+            };
+            // Maintain the aspect ratio
+            const amount = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+            // Make sure that the handle remains within image bounds
+            if (this.inBounds(handle.x + amount, handle.y + amount)) {
+                this.crop.size.x += amount;
+                this.crop.size.y += amount;
+            }
+        }
 
-                                    /** @private */
-                                    move(dx, dy) {
-                                        // Get the opposing coordinates
-                                        const tl = {
-                                            x: this.crop.pos.x,
-                                            y: this.crop.pos.y
-                                        };
-                                        const br = {
-                                            x: this.crop.pos.x + this.crop.size.x,
-                                            y: this.crop.pos.y + this.crop.size.y
-                                        };
-                                        // Make sure they are in bounds
-                                        if (this.inBounds(tl.x + dx, tl.y + dy) &&
-                                                this.inBounds(br.x + dx, tl.y + dy) &&
-                                                this.inBounds(br.x + dx, br.y + dy) &&
-                                                this.inBounds(tl.x + dx, br.y + dy)) {
-                                            this.crop.pos.x += dx;
-                                            this.crop.pos.y += dy;
-                                        }
-                                    }
+        /** @private */
+        move(dx, dy) {
+            // Get the opposing coordinates
+            const tl = {
+                x: this.crop.pos.x,
+                y: this.crop.pos.y
+            };
+            const br = {
+                x: this.crop.pos.x + this.crop.size.x,
+                y: this.crop.pos.y + this.crop.size.y
+            };
+            // Make sure they are in bounds
+            if (this.inBounds(tl.x + dx, tl.y + dy) &&
+                    this.inBounds(br.x + dx, tl.y + dy) &&
+                    this.inBounds(br.x + dx, br.y + dy) &&
+                    this.inBounds(tl.x + dx, br.y + dy)) {
+                this.crop.pos.x += dx;
+                this.crop.pos.y += dy;
+            }
+        }
 
-                                    /** @private */
-                                    displayImage() {
-                                        // Resize the original to the maximum allowed size
-                                        const ratio = this.limit / Math.max(this.image.width, this.image.height);
-                                        this.image.width *= ratio;
-                                        this.image.height *= ratio;
-                                        // Fit the image to the canvas
-                                        this.imageCanvas.width = this.image.width;
-                                        this.imageCanvas.height = this.image.height;
-                                        this.c.drawImage(this.image, 0, 0, this.image.width, this.image.height);
-                                    }
+        /** @private */
+        displayImage() {
+            // Resize the original to the maximum allowed size
+            const ratio = this.limit / Math.max(this.image.width, this.image.height);
+            this.image.width *= ratio;
+            this.image.height *= ratio;
+            // Fit the image to the canvas
+            this.imageCanvas.width = this.image.width;
+            this.imageCanvas.height = this.image.height;
+            this.c.drawImage(this.image, 0, 0, this.image.width, this.image.height);
+        }
 
-                                    /** @private */
-                                    drawCropWindow() {
-                                        const pos = this.crop.pos;
-                                        const size = this.crop.size;
-                                        const radius = this.crop.handleSize / 2;
-                                        this.c.strokeStyle = 'red';
-                                        this.c.fillStyle = 'red';
-                                        // Draw the crop window outline
-                                        this.c.strokeRect(pos.x, pos.y, size.x, size.y);
-                                        // Draw the draggable handle
-                                        const path = new Path2D();
-                                        path.arc(pos.x + size.x, pos.y + size.y, radius, 0, Math.PI * 2, true);
+        /** @private */
+        drawCropWindow() {
+            const pos = this.crop.pos;
+            const size = this.crop.size;
+            const radius = this.crop.handleSize / 2;
+            this.c.strokeStyle = 'red';
+            this.c.fillStyle = 'red';
+            // Draw the crop window outline
+            this.c.strokeRect(pos.x, pos.y, size.x, size.y);
+            // Draw the draggable handle
+            const path = new Path2D();
+            path.arc(pos.x + size.x, pos.y + size.y, radius, 0, Math.PI * 2, true);
 //                                        path.arc(100,75,50,0,2*Math.PI);
-                                        this.c.fill(path);
-                                    }
+            this.c.fill(path);
+        }
 
-                                    /** @private */
-                                    preview() {
-                                        const pos = this.crop.pos;
-                                        const size = this.crop.size;
-                                        // Fetch the image data from the canvas
-                                        const imageData = this.c.getImageData(pos.x, pos.y, size.x, size.y);
-                                        if (!imageData) {
-                                            return false;
-                                        }
-                                        // Prepare and clear the preview canvas
-                                        const ctx = this.previewCanvas.getContext('2d');
-                                        ctx.clearRect(0, 0, this.previewCanvas.width, this.previewCanvas.height);
-                                        // Draw the image to the preview canvas, resizing it to fit
-                                        ctx.drawImage(this.imageCanvas,
-                                                // Top left corner coordinates of image
-                                                pos.x, pos.y,
-                                                // Width and height of image
-                                                size.x, size.y,
-                                                // Top left corner coordinates of result in canvas
-                                                0, 0,
-                                                // Width and height of result in canvas
-                                                this.previewCanvas.width, this.previewCanvas.height);
-                                    }
+        /** @private */
+        preview() {
+            const pos = this.crop.pos;
+            const size = this.crop.size;
+            // Fetch the image data from the canvas
+            const imageData = this.c.getImageData(pos.x, pos.y, size.x, size.y);
+            if (!imageData) {
+                return false;
+            }
+            // Prepare and clear the preview canvas
+            const ctx = this.previewCanvas.getContext('2d');
+            ctx.clearRect(0, 0, this.previewCanvas.width, this.previewCanvas.height);
+            // Draw the image to the preview canvas, resizing it to fit
+            ctx.drawImage(this.imageCanvas,
+                    // Top left corner coordinates of image
+                    pos.x, pos.y,
+                    // Width and height of image
+                    size.x, size.y,
+                    // Top left corner coordinates of result in canvas
+                    0, 0,
+                    // Width and height of result in canvas
+                    this.previewCanvas.width, this.previewCanvas.height);
+        }
 
-                                    /** @private */
-                                    inBounds(x, y) {
-                                        return squareContains({
-                                            pos: {x: 0, y: 0},
-                                            size: {
-                                                x: this.imageCanvas.width,
-                                                y: this.imageCanvas.height
-                                            }
-                                        }, {x: x, y: y});
-                                    }
-                                }
+        /** @private */
+        inBounds(x, y) {
+            return squareContains({
+                pos: {x: 0, y: 0},
+                size: {
+                    x: this.imageCanvas.width,
+                    y: this.imageCanvas.height
+                }
+            }, {x: x, y: y});
+        }
+    }
 
-                                function exceptionHandler(message) {
-                                    console.log(message);
-                                }
+    function exceptionHandler(message) {
+        console.log(message);
+    }
 
 // Auto-resize the cropped image
-                                var dimensions = {width: 128, height: 128};
+    var dimensions = {width: 128, height: 128};
 
-                                try {
-                                    var uploader = new Uploader({
-                                        input: document.querySelector('.js-fileinput'),
-                                        types: ['gif', 'jpg', 'jpeg', 'png']
-                                    });
+    try {
+        var uploader = new Uploader({
+            input: document.querySelector('.js-fileinput'),
+            types: ['gif', 'jpg', 'jpeg', 'png']
+        });
 
-                                    var editor = new Cropper({
-                                        size: dimensions,
-                                        canvas: document.querySelector('.js-editorcanvas'),
-                                        preview: document.querySelector('.js-previewcanvas')
-                                    });
+        var editor = new Cropper({
+            size: dimensions,
+            canvas: document.querySelector('.js-editorcanvas'),
+            preview: document.querySelector('.js-previewcanvas')
+        });
 
-                                    // Make sure both were initialised correctly
-                                    if (uploader && editor) {
-                                        // Start the uploader, which will launch the editor
-                                        uploader.listen(editor.setImageSource.bind(editor), (error) => {
-                                            throw error;
-                                        });
-                                    }
-                                    // Allow the result to be exported as an actual image
-                                    var img = document.createElement('img');
-                                    document.body.appendChild(img);
-                                    document.querySelector('.js-export').onclick = (e) => editor.export(img);
+        // Make sure both were initialised correctly
+        if (uploader && editor) {
+            // Start the uploader, which will launch the editor
+            uploader.listen(editor.setImageSource.bind(editor), (error) => {
+                throw error;
+            });
+        }
+        // Allow the result to be exported as an actual image
+        var img = document.createElement('img');
+        document.body.appendChild(img);
+        document.querySelector('.js-export').onclick = (e) => editor.export(img);
 
-                                } catch (error) {
-                                    exceptionHandler(error.message);
-                                }
+    } catch (error) {
+        exceptionHandler(error.message);
+    }
 </script>
 
 <script type="text/javascript">
@@ -1172,6 +1220,20 @@
                 var html = '<img src="assets/admin/images/placeholder.jpg" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="preview_photo_img1" class="preview_images"><img src="' + e.target.result + '" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="preview_photo_img2" class="preview_images">';
                 $('#preview_photo_div').html(html);
                 img1.onload = start1;
+                img1.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    // Display the preview of frame image on image upload
+    function readframe_image(input) {
+        $('#addlogo_to_sharedimage_div').show();
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var html = '<img src="assets/admin/images/placeholder.jpg" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="preview_photo_img1" class="preview_images"><img src="' + e.target.result + '" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="preview_photo_img2" class="preview_images">';
+                $('#frame_image_div').html(html);
                 img1.src = e.target.result;
             }
             reader.readAsDataURL(input.files[0]);
@@ -1555,23 +1617,22 @@
             confirmButtonColor: "#FF7043",
             confirmButtonText: "Yes, delete it!"
         },
-        function (isConfirm) {
-            if (isConfirm) {
-                url = $(e).attr('data-href');
-                data_id = $(e).attr('data-id');
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    success: function (data) {
-                        $('#' + data_id).remove();
+                function (isConfirm) {
+                    if (isConfirm) {
+                        url = $(e).attr('data-href');
+                        data_id = $(e).attr('data-id');
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            success: function (data) {
+                                $('#' + data_id).remove();
+                            }
+                        });
+                        return true;
+                    } else {
+                        return false;
                     }
                 });
-                return true;
-            }
-            else {
-                return false;
-            }
-        });
         return false;
     }
 

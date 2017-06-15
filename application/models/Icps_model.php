@@ -70,7 +70,7 @@ class Icps_model extends CI_Model {
      */
     public function get_result($condition = NULL) {
 
-        $this->db->select('i.*,b.name as businessname,b.address1 as businessaddress,is.preview_photo,is.addlogo_to_sharedimage,is.is_low_image_free,is.is_high_image_free,'
+        $this->db->select('i.*,b.name as businessname,b.address1 as businessaddress,is.preview_photo,is.frame_image,is.addlogo_to_sharedimage,is.is_low_image_free,is.is_high_image_free,'
                 . 'is.lowfree_on_highpurchase,is.digital_free_on_physical_purchase,is.collection_point_delivery,is.local_hotel_delivery,is.domestic_shipping,'
                 . 'is.international_shipping,is.collection_address,is.collection_address_latitude,is.collection_address_longitude,'
                 . 'is.collection_address_instructions,is.local_hotel_delivery_free,is.local_hotel_delivery_price,is.domestic_shipping_free,'

@@ -26,14 +26,28 @@
     {
         z-index: 10;
     }
+    #frame_image_img1
+    {
+        z-index: 10;
+    }
     #preview_photo_img2
+    {
+        z-index: 20;
+    }
+     #frame_image_img2
     {
         z-index: 20;
     }
     #preview_photo_div{
         width: 90px;
     }
+    #frame_image_div{
+        width: 90px;
+    }
     #preview_photo_div +  .media-body{
+        width: 86%;
+    }
+    #frame_image_div +  .media-body{
         width: 86%;
     }
     @media(max-width:767px){
@@ -73,6 +87,9 @@
             width: 97%;
             display: block;
         }#preview_photo_div +  .media-body{
+            width: 100%;
+        }
+        #frame_image_div +  .media-body{
             width: 100%;
         }
     }
@@ -606,6 +623,37 @@
                                 </div>
                             </div>
                             <span id="spn-purchase_options_and_prices-error" class="validation-error-label"></span>
+                            <div class="form-group">
+                            <label class="col-lg-3 control-label">Upload Frame Image</label>
+                            <div class="col-lg-5">
+                                <div class="media no-margin-top preview_photo_div_wrapper">
+                                    <div class="media-left" id="frame_image_div">
+                                        <?php
+                                        if (isset($icp_data) && $icp_data['frame_image'] != '') {
+                                            ?>
+                                            <img src="assets/admin/images/placeholder.jpg" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="frame_image_img1" class="preview_images">
+                                            <img src="<?php echo ICP_FRAMES . $icp_data['frame_image'] ?>" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="frame_image_img2" class="preview_images">
+                                            <?php
+                                        } else {
+                                            ?>
+                                            <img src="assets/admin/images/placeholder.jpg" style="width: 58px; height: 58px; border-radius: 2px;" alt="" class="preview_images" id="frame_image_img1">
+                                        <?php } ?>
+                                    </div>
+                                    <div class="media-body">
+                                        <input type="file" name="frame_image" id="frame_image" class="previewfile-styled" onchange="readframe_image(this);" >
+                                        <span class="help-block">Accepted formats: png, jpg.</span>
+                                    </div>
+                                    <div style="opacity: 0;height: 0;">
+                                        <canvas id="canvas1" width="58" height="58" border="0"></canvas>
+                                    </div>
+                                </div>
+                                <?php
+                                if (isset($frame_image_validation))
+                                    echo '<label id="frame_image-error" class="validation-error-label" for="frame_image">' . $frame_image_validation . '</label>';
+                                ?>
+                                <span id="spn-frame_image-error" class="validation-error-label"></span>
+                            </div>
+                        </div>
                             <div class="form-group">
                                 <label class="col-lg-6 control-label">If the Guest buy's the Printed Souvenir product, do you want to offer both digital versions FREE?</label>
                                 <div class="col-lg-4">
@@ -1152,6 +1200,20 @@
                 var html = '<img src="assets/admin/images/placeholder.jpg" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="preview_photo_img1" class="preview_images"><img src="' + e.target.result + '" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="preview_photo_img2" class="preview_images">';
                 $('#preview_photo_div').html(html);
                 img1.onload = start1;
+                img1.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    // Display the preview of frame image on image upload
+    function readframe_image(input) {
+        $('#addlogo_to_sharedimage_div').show();
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var html = '<img src="assets/admin/images/placeholder.jpg" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="preview_photo_img1" class="preview_images"><img src="' + e.target.result + '" style="width: 58px; height: 58px; border-radius: 2px;" alt="" id="preview_photo_img2" class="preview_images">';
+                $('#frame_image_div').html(html);
                 img1.src = e.target.result;
             }
             reader.readAsDataURL(input.files[0]);
