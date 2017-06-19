@@ -131,6 +131,7 @@ define('BUSINESS_PROMO_IMAGES', 'uploads/business_promo_images/');
 define('ICP_IMAGES', 'uploads/icp_images/');
 define('ICP_BLUR_IMAGES', 'uploads/icp_blur_images/');
 define('ICP_SMALL_IMAGES', 'uploads/icp_small_images/');
+define('ICP_CROPPED_IMAGES', 'uploads/icp_cropped_images/');
 define('ICP_LOGO', 'uploads/icp_logo/');
 define('ICP_PREVIEW_IMAGES', 'uploads/icp_preview_images/');
 define('ICP_FRAMES', 'uploads/icp_frames/');
