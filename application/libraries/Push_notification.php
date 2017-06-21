@@ -44,11 +44,11 @@ class Push_notification {
 //        }
             
         
-        $apns_url = 'gateway.sandbox.push.apple.com';
-        $apns_cert = 'APNS_Dev.pem';
+//        $apns_url = 'gateway.sandbox.push.apple.com';
+//        $apns_cert = 'APNS_Dev.pem';
             
-//        $apns_url = 'gateway.push.apple.com';
-//        $apns_cert = 'APNS_Dis.pem';
+        $apns_url = 'gateway.push.apple.com';
+        $apns_cert = 'APNS_Dis.pem';
         
         $stream_context = stream_context_create();
 //        stream_context_set_option($stream_context, 'ssl', 'local_cert', $apns_cert);
