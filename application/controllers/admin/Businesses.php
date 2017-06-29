@@ -2058,7 +2058,7 @@ class Businesses extends CI_Controller {
                     $url = site_url() . 'login';
                     $configs = mail_config();
                     $this->load->library('email', $configs);
-                    $this->email->initialize($configs);
+//                    $this->email->initialize($configs);
                     $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
                     $this->email->to($user_email);
 
@@ -2066,6 +2066,7 @@ class Businesses extends CI_Controller {
                     $msg = $this->load->view('email_templates/invite_email', array('email' => $user_email, 'password' => $verification_code, 'url' => $url, 'business' => $this->input->post('name')), true);
                     $this->email->subject('Invitation - facetag');
                     $this->email->message($msg);
+                    $this->email->set_mailtype("html");
                     $this->email->send();
                     $this->email->print_debugger();
                     $this->session->set_userdata('invitation_success_msg', '"' . trim($this->input->post('name')) . '" business added successfully! and Invitation Email has been sent to ' . $user_email . ' Successfully');
