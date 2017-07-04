@@ -45,6 +45,31 @@ function qry($bool = false) {
  * @param string $image_path
  * @return array - Either name of the image if uploaded successfully or Array of errors if image is not uploaded successfully
  */
+//function upload_image($image_name, $image_path) {
+//    $CI = & get_instance();
+//    $extension = explode('/', $_FILES[$image_name]['type']);
+//    $randname = uniqid() . time() . '.' . end($extension);
+//    $config = array(
+//        'upload_path' => $image_path,
+//        'allowed_types' => "png|jpg|jpeg|gif",
+////        'max_size' => "2048",
+//        'max_size' => "10240",
+//        // 'max_height'      => "768",
+//        // 'max_width'       => "1024" ,
+//        'file_name' => $randname
+//    );
+//    //--Load the upload library
+//    $CI->load->library('upload');
+//    $CI->upload->initialize($config);
+//    if ($CI->upload->do_upload($image_name)) {
+//        $img_data = $CI->upload->data();
+//        $imgname = $img_data['file_name'];
+//    } else {
+//        $imgname = array('errors' => $CI->upload->display_errors());
+//    }
+//    return $imgname;
+//}
+
 function upload_image($image_name, $image_path) {
     $CI = & get_instance();
     $extension = explode('/', $_FILES[$image_name]['type']);
@@ -53,7 +78,7 @@ function upload_image($image_name, $image_path) {
         'upload_path' => $image_path,
         'allowed_types' => "png|jpg|jpeg|gif",
 //        'max_size' => "2048",
-        'max_size' => "10240",
+//        'max_size' => "10240",
         // 'max_height'      => "768",
         // 'max_width'       => "1024" ,
         'file_name' => $randname
@@ -64,6 +89,27 @@ function upload_image($image_name, $image_path) {
     if ($CI->upload->do_upload($image_name)) {
         $img_data = $CI->upload->data();
         $imgname = $img_data['file_name'];
+        $filename = $imgname;
+        $filePath = $image_path . '/' . $imgname;
+        $exif = exif_read_data($filePath);
+        if (!empty($exif['Orientation'])) {
+            $imageResource = imagecreatefromjpeg($filePath); // provided that the image is jpeg. Use relevant function otherwise
+            switch ($exif['Orientation']) {
+                case 3:
+                    $image = imagerotate($imageResource, 180, 0);
+                    break;
+                case 6:
+                    $image = imagerotate($imageResource, -90, 0);
+                    break;
+                case 8:
+                    $image = imagerotate($imageResource, 90, 0);
+                    break;
+                default:
+                    $image = $imageResource;
+            }
+        }
+        imagejpeg($image, $filePath);
+        imagedestroy($image);
     } else {
         $imgname = array('errors' => $CI->upload->display_errors());
     }
