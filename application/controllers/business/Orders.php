@@ -33,7 +33,6 @@ class Orders extends CI_Controller {
         if (is_numeric($order_id)) {
             $business_id = $this->session->userdata('facetag_admin')['business_id'];
             $order_detail = $this->orders_model->get_order_details($order_id, $business_id);
-//             p($order_detail);exit;
             if ($order_detail) {
                 $data['order'] = $order_detail;
                 $data['title'] = 'facetag | View Order Details';
