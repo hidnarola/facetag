@@ -602,8 +602,8 @@
                     data: "image",
                     visible: true,
                     render: function (data, type, full, meta) {
-                        return '<a href="<?php echo site_url() . 'admin/businesses/get_image?image=' ?>' + base_url + icp_image_path + data + '" data-popup="lightbox"><img src="<?php echo site_url() . 'admin/businesses/get_image?image=' ?>' + base_url + icp_image_path + data + '" alt="" class="img-rounded img-preview"></a>';
-//                        return '<a href="' + base_url + icp_image_path + data + '" data-popup="lightbox"><img src="' + base_url + icp_image_path + data + '" alt="" class="img-rounded img-preview"></a>';
+//                        return '<a href="<?php echo site_url() . 'admin/businesses/get_image?image=' ?>' + base_url + icp_image_path + data + '" data-popup="lightbox"><img src="<?php echo site_url() . 'admin/businesses/get_image?image=' ?>' + base_url + icp_image_path + data + '" alt="" class="img-rounded img-preview"></a>';
+                        return '<a href="' + base_url + icp_image_path + data + '" data-popup="lightbox"><img src="' + base_url + icp_image_path + data + '" alt="" class="img-rounded img-preview"></a>';
                     },
                     sortable: false,
                 },
