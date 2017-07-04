@@ -306,10 +306,10 @@ class Home extends CI_Controller {
         $data['title'] = 'facetag | Business Private Information';
 
         $business_id = $this->session->userdata('facetag_admin')['business_id'];
-        $this->form_validation->set_rules('is_gst_no', 'GST/VAT Number', 'trim|required', array('required' => 'This field is required'));
-        if ($this->input->post('is_gst_no') == 1) {
-            $this->form_validation->set_rules('gst_no', 'GST/VAT Number', 'trim|required');
-        }
+//        $this->form_validation->set_rules('is_gst_no', 'GST/VAT Number', 'trim|required', array('required' => 'This field is required'));
+//        if ($this->input->post('is_gst_no') == 1) {
+//            $this->form_validation->set_rules('gst_no', 'GST/VAT Number', 'trim|required');
+//        }
         $where = 'settings_key="purge_facerecogdb_time_type" OR settings_key="purge_facerecogdb_time_value" OR settings_key="creditcard_debitcard_processing_fees" OR settings_key="international_card_processing_fees" OR settings_key="transaction_fees"';
         $settings = $this->settings_model->get_settings($where);
 
@@ -340,8 +340,8 @@ class Home extends CI_Controller {
                     $update_array_business = array(
                         'name' => $this->input->post('name'),
                         'reg_no' => $this->input->post('reg_no'),
-                        'is_gst_registered' => $this->input->post('is_gst_no'),
-                        'gst_no' => $this->input->post('gst_no'),
+//                        'is_gst_registered' => $this->input->post('is_gst_no'),
+//                        'gst_no' => $this->input->post('gst_no'),
                         'modified' => date('Y-m-d H:i:s')
                     );
                     $this->businesses_model->update_record('id=' . $business_id, $update_array_business);
@@ -357,8 +357,8 @@ class Home extends CI_Controller {
                 } else { //-- If business id is not present then add new business details
                     $update_array_business = array(
                         'reg_no' => $this->input->post('reg_no'),
-                        'is_gst_registered' => $this->input->post('is_gst_no'),
-                        'gst_no' => $this->input->post('gst_no'),
+//                        'is_gst_registered' => $this->input->post('is_gst_no'),
+//                        'gst_no' => $this->input->post('gst_no'),
                         'modified' => date('Y-m-d H:i:s')
                     );
                     $this->businesses_model->update_record('id=' . $business_id, $update_array_business);

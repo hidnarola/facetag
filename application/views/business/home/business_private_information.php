@@ -86,7 +86,7 @@
                         $is_gst_no = 'checked="checked"';
                     }
                     ?>
-                    <div class="form-group">
+<!--                    <div class="form-group">
                         <label class="col-lg-3 control-label">Are you GST/VAT/Sales tax registered?<span class="text-danger">*</span></label>
                         <div class="col-lg-9">
                             <label class="radio-inline">
@@ -101,7 +101,7 @@
                             echo '<label id="is_gst_no-error" class="validation-error-label" for="is_gst_no">' . form_error('is_gst_no') . '</label>';
                             ?>
                         </div>
-                    </div>
+                    </div>-->
                     <?php
                     $style_gst_no = 'style="display:none"';
                     if ($this->input->post('is_gst_no') == 1) {
@@ -111,7 +111,7 @@
                     } elseif (isset($business_data) && $business_data['is_gst_registered'] == 1)
                         $style_gst_no = '';
                     ?>
-                    <div class="form-group" <?php echo $style_gst_no ?> id="gst_vat_no_div">
+<!--                    <div class="form-group" <?php echo $style_gst_no ?> id="gst_vat_no_div">
                         <label class="col-lg-3 control-label">GST/VAT Number<span class="text-danger">*</span></label>
                         <div class="col-lg-9">
                             <input type="text" name="gst_no" id="gst_no" placeholder="GST/VAT Number" class="form-control" value="<?php echo (isset($business_data)) ? $business_data['gst_no'] : set_value('gst_no'); ?>">
@@ -119,7 +119,7 @@
                             echo '<label id="gst_no-error" class="validation-error-label" for="gst_no">' . form_error('gst_no') . '</label>';
                             ?>
                         </div>
-                    </div>
+                    </div>-->
                 </fieldset>
 
                 <fieldset class="content-group">

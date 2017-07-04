@@ -100,7 +100,7 @@ class Orders_model extends CI_Model {
                 . "i.name as icp_name,i.address as icp_address,i.low_resolution_price,i.high_resolution_price,"
                 . "i.offer_printed_souvenir,i.printed_souvenir_price,is.is_low_image_free,is.is_high_image_free,"
                 . "is.lowfree_on_highpurchase,c.is_payment_done,c.payment_type,c.created,u.firstname,u.lastname,"
-                . "u.email,uimg.image as user_bioimage,od.is_delivered,"
+                . "u.email,uimg.image as user_bioimage,od.shipping_address_id,od.is_delivered,"
                 . "sa.company as shipping_company,sa.building_description,sa.post_code as shipping_post_code,sa.phone_no as shipping_phone_no");
         $this->db->join(TBL_ICP_IMAGE_TAG. ' imgtg', 'citem.selfie_id=imgtg.id');
         $this->db->join(TBL_ICP_IMAGES . ' img', 'imgtg.icp_image_id=img.id');
