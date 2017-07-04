@@ -110,7 +110,7 @@ class Orders_model extends CI_Model {
         $this->db->join(TBL_USERS . ' u', 'c.user_id=u.id');
         $this->db->join(TBL_USER_IMAGES . ' uimg', 'u.bio_selfie_id=uimg.id');
         $this->db->join(TBL_ORDER_DETAIL . ' od', 'citem.cart_id=od.cart_id');
-        $this->db->join(TBL_SHIPPING_ADDRESS . ' sa', 'od.hotel_id=sa.id');
+        $this->db->join(TBL_SHIPPING_ADDRESS . ' sa', 'od.shipping_hotel_id=sa.id');
 //        $this->db->where('i.business_id', $business_id);
         $this->db->where('citem.id', $order_id);
         $this->db->where('c.is_payment_done', 1);
