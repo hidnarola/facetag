@@ -96,7 +96,7 @@ class Orders_model extends CI_Model {
      * @param int $business_id
      */
     public function get_order_details($order_id, $business_id) {
-//        $this->db->select("citem.id,citem.cart_id,citem.is_small_photo,citem.is_large_photo,citem.is_frame,img.image,"
+        $this->db->select("citem.id,citem.cart_id,citem.is_small_photo,citem.is_large_photo,citem.is_frame");
 //                . "i.name as icp_name,i.address as icp_address,i.low_resolution_price,i.high_resolution_price,"
 //                . "i.offer_printed_souvenir,i.printed_souvenir_price,is.is_low_image_free,is.is_high_image_free,"
 //                . "is.lowfree_on_highpurchase,c.is_payment_done,c.payment_type,c.created,u.firstname,u.lastname,"
@@ -106,15 +106,15 @@ class Orders_model extends CI_Model {
 //        $this->db->join(TBL_ICP_IMAGES . ' img', 'imgtg.icp_image_id=img.id');
 //        $this->db->join(TBL_ICPS . ' i', 'img.icp_id=i.id');
 //        $this->db->join(TBL_ICP_SETTINGS . ' is', 'img.icp_id=is.icp_id');
-//        $this->db->join(TBL_CART . ' c', 'citem.cart_id=c.id');
+        $this->db->join(TBL_CART . ' c', 'citem.cart_id=c.id');
 //        $this->db->join(TBL_USERS . ' u', 'c.user_id=u.id');
 //        $this->db->join(TBL_USER_IMAGES . ' uimg', 'u.bio_selfie_id=uimg.id');
 //        $this->db->join(TBL_ORDER_DETAIL . ' od', 'citem.cart_id=od.cart_id');
 //        $this->db->join(TBL_SHIPPING_ADDRESS . ' sa', 'od.shipping_hotel_id=sa.id');
         $this->db->select("citem.*");
         $this->db->where('citem.id', $order_id);
-//        $this->db->where('c.is_payment_done', 1);
-//        $this->db->order_by('c.created', 'DESC');
+        $this->db->where('c.is_payment_done', 1);
+        $this->db->order_by('c.created', 'DESC');
         $query = $this->db->get(TBL_CART_ITEM . ' citem');
 //        echo $this->db->last_query();
 //        exit;
