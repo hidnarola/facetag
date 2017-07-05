@@ -91,25 +91,28 @@ function upload_image($image_name, $image_path) {
         $imgname = $img_data['file_name'];
         $filename = $imgname;
         $filePath = $image_path . '/' . $imgname;
-        $exif = exif_read_data($filePath);
-        if (!empty($exif['Orientation'])) {
-            $imageResource = imagecreatefromjpeg($filePath); // provided that the image is jpeg. Use relevant function otherwise
-            switch ($exif['Orientation']) {
-                case 3:
-                    $image = imagerotate($imageResource, 180, 0);
-                    break;
-                case 6:
-                    $image = imagerotate($imageResource, -90, 0);
-                    break;
-                case 8:
-                    $image = imagerotate($imageResource, 90, 0);
-                    break;
-                default:
-                    $image = $imageResource;
+        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+        if ($extension == 'jpg' || $extension == 'jpeg') {
+            $exif = exif_read_data($filePath);
+            if (!empty($exif['Orientation'])) {
+                $imageResource = imagecreatefromjpeg($filePath); // provided that the image is jpeg. Use relevant function otherwise
+                switch ($exif['Orientation']) {
+                    case 3:
+                        $image = imagerotate($imageResource, 180, 0);
+                        break;
+                    case 6:
+                        $image = imagerotate($imageResource, -90, 0);
+                        break;
+                    case 8:
+                        $image = imagerotate($imageResource, 90, 0);
+                        break;
+                    default:
+                        $image = $imageResource;
+                }
             }
+            imagejpeg($image, $filePath);
+            imagedestroy($image);
         }
-        imagejpeg($image, $filePath);
-        imagedestroy($image);
     } else {
         $imgname = array('errors' => $CI->upload->display_errors());
     }

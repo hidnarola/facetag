@@ -73,7 +73,7 @@
                             <td>
                                 <?php
                                 if ($order['user_bioimage'] != '') {
-                                    echo '<img src="assets/timthumb.php?src=' . base_url(). USER_IMAGE_SITE_PATH . $order['user_bioimage'] . '&w=60&h=60&q=100&zc=2" height="55px" width="55px" class="img-circle">';
+                                    echo '<img src="assets/timthumb.php?src=' . base_url(). USER_IMAGE_SITE_PATH . $order['user_bioimage'] . '&w=65&h=65&q=100&zc=2" class="">';
                                 } else {
                                     echo '<img src="assets/timthumb.php?src='.base_url().'assets/admin/images/no_logo.png&w=60&h=60&q=100&zc=2" height="55px" width="55px" alt="' . $order['firstname'] . ' ' . $order['lastname'] . '">';
                                 }
