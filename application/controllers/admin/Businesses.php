@@ -1901,7 +1901,7 @@ class Businesses extends CI_Controller {
                     }
                 }
                 $this->session->set_flashdata('success', 'Images uploaded successfully!');
-                 redirect('admin/businesses/icps/icp_images/' . $icp_id);
+                 redirect('admin/businesses/icp_images/' . $icp_id);
             }
         } else {
             show_404();
