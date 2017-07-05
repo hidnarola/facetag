@@ -55,15 +55,15 @@
         <table class="table datatable-basic">
             <thead>
                 <tr>
-                    <th>Sr No.</th>
-                    <th>Order By</th>
+                    <th style="width:6% !important">Sr No.</th>
+                    <th style="width:15% !important">Order By</th>
                     <th>ICP</th>
                     <th>ICP Image</th>
                     <th>Image Type</th>
                     <th>Amount</th>
                     <th>Is Delivered</th>
                     <th>Ordered On</th>
-                    <th style="width:13% !important">Action</th>
+                    <th style="width:7% !important">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,7 +78,7 @@
                                 <?php
                                 if ($order['user_bioimage'] != '') {
 //                                    echo '<img src="' . USER_IMAGE_SITE_PATH . $order['user_bioimage'] . '" height="55px" width="55px" class="img-circle">';
-                                    echo '<img src="'.base_url().'assets/timthumb.php?src='. base_url() . USER_IMAGE_SITE_PATH . $order['user_bioimage'] . '&w=65&h=65&q=100&zc=2" class="">';
+                                    echo '<img src="'.base_url().'assets/timthumb.php?src='. base_url() . USER_IMAGE_SITE_PATH . $order['user_bioimage'] . '&w=70&h=70&q=100&zc=2" class="">';
                                 } else {
                                     echo '<img src="assets/timthumb.php?src='.base_url().'assets/admin/images/no_logo.png&w=60&h=60&q=100&zc=2" height="55px" width="55px" alt="' . $order['firstname'] . ' ' . $order['lastname'] . '">';
                                 }
