@@ -172,7 +172,7 @@
             width: 'auto'
         });
 
-        $("#filtertable").change(function () {
+        $("#filtertable").change(function (e) {
 
 
             var currentDate = new Date();
