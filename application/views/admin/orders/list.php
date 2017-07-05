@@ -5,6 +5,9 @@
 <script type="text/javascript" src="assets/admin/js/plugins/forms/inputs/touchspin.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/forms/selects/select2.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/pages/form_validation.js"></script>
+<script type="text/javascript" src="assets/admin/js/plugins/ui/moment/moment.min.js"></script>
+<link href="assets/admin/css/bootstrap-datetimepicker.css">
+<script type="text/javascript" src="assets/admin/js/bootstrap-datetimepicker.js"></script>
 <div class="page-header page-header-default">
     <div class="page-header-content">
         <div class="page-title">
@@ -48,7 +51,25 @@
                         <option value="week">This Week</option>
                         <option value="month">This Month</option>
                         <option value="today">Today</option>
+                        <option value="custom" id="custom_range">Custom Range</option>
                     </select>
+                </div>
+            </div>
+            <div class="row row-list" id="custom_range_picker">
+                <div class="form-group col-xs-5">
+                    <div class='input-group date' id='datetimepicker1'>
+                        <span class="input-group-addon"><i class="icon-calendar3"></i></span>
+                        <input type='text' class="form-control" name="start_date" id="start_date" value=""/>
+                    </div>
+                </div>
+                <div class="form-group col-xs-5">
+                    <div class='input-group date' id='datetimepicker1'>
+                        <span class="input-group-addon"><i class="icon-calendar3"></i></span>
+                        <input type='text' class="form-control" name="end_date" id="end_date" value=""/>
+                    </div>
+                </div>
+                <div class="form-group col-xs-2">
+                    <a href="javascript:void(0);" class="btn btn-success apply-range">Apply</a>
                 </div>
             </div>
         </div>
@@ -73,15 +94,15 @@
                             <td>
                                 <?php
                                 if ($order['user_bioimage'] != '') {
-                                    echo '<img src="assets/timthumb.php?src=' . base_url(). USER_IMAGE_SITE_PATH . $order['user_bioimage'] . '&w=70&h=70&q=100&zc=2" class="">';
+                                    echo '<img src="assets/timthumb.php?src=' . base_url() . USER_IMAGE_SITE_PATH . $order['user_bioimage'] . '&w=70&h=70&q=100&zc=2" class="">';
                                 } else {
-                                    echo '<img src="assets/timthumb.php?src='.base_url().'assets/admin/images/no_logo.png&w=60&h=60&q=100&zc=2" height="55px" width="55px" alt="' . $order['firstname'] . ' ' . $order['lastname'] . '">';
+                                    echo '<img src="assets/timthumb.php?src=' . base_url() . 'assets/admin/images/no_logo.png&w=60&h=60&q=100&zc=2" height="55px" width="55px" alt="' . $order['firstname'] . ' ' . $order['lastname'] . '">';
                                 }
                                 echo '<br/>';
                                 echo $order['firstname'] . ' ' . $order['lastname'];
                                 ?>
                             </td>
-                            <td><?php echo $order['total_amount']?></td>
+                            <td><?php echo $order['total_amount'] ?></td>
                             <td>
                                 <?php echo $order['created']; ?>
                                 <?php // echo date('h:i A, d-M-Y', strtotime($order['created'])); ?>
@@ -116,18 +137,24 @@
             confirmButtonColor: "#FF7043",
             confirmButtonText: "Yes, delete it!"
         },
-        function (isConfirm) {
-            if (isConfirm) {
-                window.location.href = $(e).attr('href');
-                return true;
-            }
-            else {
-                return false;
-            }
-        });
+                function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = $(e).attr('href');
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
         return false;
     }
     $(function () {
+        $("#custom_range_picker").hide();
+        $('#start_date').datetimepicker({
+            maxDate: 'now'
+        });
+        $('#end_date').datetimepicker({
+            maxDate: 'now'
+        });
         var oTable = $('.datatable-basic').dataTable({
             "aoColumnDefs": [{"bSortable": false, "aTargets": [0, 4]}],
             "pageLength": 100,
@@ -144,32 +171,42 @@
             minimumResultsForSearch: Infinity,
             width: 'auto'
         });
-        
+
         $("#filtertable").change(function () {
 
 
             var currentDate = new Date();
 
             if ($(this).val() == 'week') {
-
+                $("#custom_range_picker").hide();
                 var weekDate = new Date();
                 var first = weekDate.getDate() - weekDate.getDay();
                 var firstDayofWeek = new Date(weekDate.setDate(first));
                 minDateFilter = firstDayofWeek.getTime();
-
+                maxDateFilter = currentDate.getTime();
+                oTable.fnDraw();
 
             } else if ($(this).val() == 'month') {
-
+                $("#custom_range_picker").hide();
                 var monthDate = new Date();
                 var firstDayOfMonth = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
                 minDateFilter = firstDayOfMonth.getTime();
+                maxDateFilter = currentDate.getTime();
+                oTable.fnDraw();
 
             } else if ($(this).val() == 'today') {
+                $("#custom_range_picker").hide();
                 var weekDate = new Date();
                 var first = weekDate.getDate();
                 var firstDayofWeek = new Date(weekDate.setDate(first));
                 minDateFilter = firstDayofWeek.getTime();
+                maxDateFilter = currentDate.getTime();
+                oTable.fnDraw();
+            } else if ($(this).val() == 'custom') {
+                e.preventDefault();
+                $("#custom_range_picker").show();
             } else {
+                $("#custom_range_picker").hide();
                 $("input:radio[name='filtertable']").each(function (i) {
                     this.checked = false;
                 });
@@ -178,10 +215,17 @@
                 oTable.fnDraw();
             }
 
-            maxDateFilter = currentDate.getTime();
+        });
+        $(".apply-range").on("click", function (e) {
+            var weekDate = new Date();
+            var first = $("#start_date").val();
+            var last = $("#end_date").val();
+            var firstDay = new Date(first);
+            var lastDay = new Date(last);
+            minDateFilter = firstDay.getTime();
+            maxDateFilter = lastDay.getTime();
             oTable.fnDraw();
         });
-
     });
 
 // Date range filter
@@ -194,7 +238,7 @@
 
                 if (typeof aData._date == 'undefined') {
                     var date = aData[3],
-                    values = date.split(/[^0-9]/),
+                            values = date.split(/[^0-9]/),
                             year = parseInt(values[0], 10),
                             month = parseInt(values[1], 10) - 1,
                             day = parseInt(values[2], 10),
