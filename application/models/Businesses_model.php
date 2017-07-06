@@ -251,6 +251,17 @@ class Businesses_model extends CI_Model {
             return 0;
         }
     }
+    
+    public function change_order($data, $id) {
+        $business_id = $this->session->userdata('facetag_admin')['business_id'];
+        $this->db->where('id', $id);
+        $this->db->where('business_id', $business_id);
+        if ($this->db->update(TBL_BUSINESS_PROMO_IMAGES, $data)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 
     /**
      * Get promoimage by promo image id

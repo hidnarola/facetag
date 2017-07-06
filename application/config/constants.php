@@ -128,6 +128,7 @@ define('HOTEL_IMAGES', 'uploads/hotel_images/');
 define('PROFILE_IMAGES', 'uploads/profile_images/');
 define('BUSINESS_LOGO_IMAGES', 'uploads/business_logo/');
 define('BUSINESS_PROMO_IMAGES', 'uploads/business_promo_images/');
+define('BUSINESS_SMALL_PROMO_IMAGES', 'uploads/business_small_promo_images/');
 define('ICP_AUTO_UPLOAD_IMAGES', 'uploads/automatic_upload/');
 define('ICP_IMAGES', 'uploads/icp_images/');
 define('ICP_BLUR_IMAGES', 'uploads/icp_blur_images/');

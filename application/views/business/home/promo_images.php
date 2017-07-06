@@ -1,8 +1,20 @@
+<style>
+    tr.details-control {
+        background: url('https://raw.githubusercontent.com/DataTables/DataTables/1.10.7/examples/resources/details_open.png') no-repeat center center;
+        cursor: pointer;
+    }
+
+    tr.shown td.details-control {
+        background: url('https://raw.githubusercontent.com/DataTables/DataTables/1.10.7/examples/resources/details_close.png') no-repeat center center;
+    }
+</style>
 <script type="text/javascript" src="assets/admin/js/plugins/media/fancybox.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/tables/datatables/datatables.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/forms/selects/select2.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/notifications/sweet_alert.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/uploaders/dropzone.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://mpryvkin.github.io/jquery-datatables-row-reordering/1.2.3/jquery.dataTables.rowReordering.js"></script>
 <!--<script type="text/javascript" src="assets/admin/js/pages/gallery_library.js"></script>-->
 <div class="page-header page-header-default">
     <div class="page-header-content">
@@ -75,11 +87,12 @@
 <script>
     //-- Initialize datatable
     $(function () {
-        $('.datatable-basic').dataTable({
+         var table = $('.datatable-basic').dataTable({
             bFilter: false,
             autoWidth: false,
             processing: true,
-            serverSide: true,
+//            serverSide: true,
+            rowReorder: true,    
             "pageLength": 100,
             language: {
                 search: '<span>Filter:</span> _INPUT_',
@@ -89,6 +102,10 @@
             dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
             order: [[2, "desc"]],
             ajax: site_url + 'business/home/get_promo_images',
+            createdRow: function (row, data, dataIndex) {
+                $(row).attr('id', 'row_' + data.id + '_' + dataIndex);
+                $(row).attr('data-id', data.id);
+            },
             columns: [
                 {
                     data: "sr_no",
@@ -131,7 +148,33 @@
                 }
             ]
         });
-
+        
+        table.rowReordering({
+            fnUpdateCallback: function (row) {
+//                $("#" + row.id).attr("data-id", row.toPosition);
+                var IDs = [];
+                IDs = $(".ui-sortable tr[id]") // find spans with ID attribute
+                        .map(function () {
+                            console.log($(this).data('id'));
+                            return $(this).data('id');
+                        }) // convert to set of IDs
+                        .get(); // convert to instance of Array (optional)
+                $.ajax({
+                    url: '<?php echo base_url() . "business/home/change_promo_images_order" ?>',
+                    type: 'POST',
+                    dataType: "json",
+                    data: {reorderlist: IDs},
+                    success: function (data) {
+                        if (data.result == "success") {
+                            swal("Done!", "You have successfully change order", "success");
+                        } else {
+                            swal("Oops...", "Please try again!", "error");
+                        }
+                    }
+                });
+            }
+        });
+        
         $('.dataTables_length select').select2({
             minimumResultsForSearch: Infinity,
             width: 'auto'
