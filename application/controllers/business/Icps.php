@@ -1219,6 +1219,9 @@ class Icps extends CI_Controller {
             if (!file_exists(ICP_SMALL_IMAGES . $biz_dir)) {
                 mkdir(ICP_SMALL_IMAGES . $biz_dir);
             }
+            if (!file_exists(ICP_CROPPED_IMAGES . $biz_dir)) {
+                mkdir(ICP_CROPPED_IMAGES . $biz_dir);
+            }
             $icp_dir = 'icp_' . $icp_id;
             //-- Create icp directory inside business directory if not exist
             if (!file_exists(ICP_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
@@ -1231,9 +1234,9 @@ class Icps extends CI_Controller {
                 mkdir(ICP_SMALL_IMAGES . $biz_dir . '/' . $icp_dir);
                 
             }
-            if (!file_exists(ICP_CROPPED_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
-                mkdir(ICP_CROPPED_IMAGES . $biz_dir . '/' . $icp_dir);
-                chmod(ICP_CROPPED_IMAGES . $biz_dir . '/' . $icp_dir, 0777);
+            if (!file_exists(ICP_CROPPED_IMAGES . '/' . $biz_dir)) {
+                mkdir(ICP_CROPPED_IMAGES . $biz_dir);
+                chmod(ICP_CROPPED_IMAGES . $biz_dir, 0777);
             }
             $image_name = upload_image('original_img', ICP_IMAGES . $biz_dir . '/' . $icp_dir);
             //-- If image is uploaded successfully
