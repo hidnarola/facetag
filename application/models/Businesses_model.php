@@ -213,6 +213,7 @@ class Businesses_model extends CI_Model {
     public function get_promo_images($business_id, $type = 'result') {
         $this->db->where('business_id', $business_id);
         $this->db->where('is_delete', 0);
+        $this->db->order_by('priority');
 
         if ($type == 'count') {
             $query = $this->db->get(TBL_BUSINESS_PROMO_IMAGES);
