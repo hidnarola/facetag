@@ -1,11 +1,6 @@
 <style>
-    tr.details-control {
-        background: url('https://raw.githubusercontent.com/DataTables/DataTables/1.10.7/examples/resources/details_open.png') no-repeat center center;
-        cursor: pointer;
-    }
-
-    tr.shown td.details-control {
-        background: url('https://raw.githubusercontent.com/DataTables/DataTables/1.10.7/examples/resources/details_close.png') no-repeat center center;
+    .ui-sortable-helper{
+        background: #ddd !important;
     }
 </style>
 <script type="text/javascript" src="assets/admin/js/plugins/media/fancybox.min.js"></script>
@@ -13,6 +8,7 @@
 <script type="text/javascript" src="assets/admin/js/plugins/forms/selects/select2.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/notifications/sweet_alert.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/uploaders/dropzone.min.js"></script>
+<script type="text/javascript" src="assets/js/notify.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <script type="text/javascript" src="https://mpryvkin.github.io/jquery-datatables-row-reordering/1.2.3/jquery.dataTables.rowReordering.js"></script>
 <!--<script type="text/javascript" src="assets/admin/js/pages/gallery_library.js"></script>-->
@@ -166,9 +162,9 @@
                     data: {reorderlist: IDs},
                     success: function (data) {
                         if (data.result == "success") {
-                            swal("Done!", "You have successfully change order", "success");
+                            $.notify("Promo feature images rearranged successfully!", "success");
                         } else {
-                            swal("Oops...", "Please try again!", "error");
+                            $.notify("Please try again!", "error");
                         }
                     }
                 });

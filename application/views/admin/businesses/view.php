@@ -1,9 +1,17 @@
+<style>
+    .ui-sortable-helper{
+        background: #ddd !important;
+    }
+</style>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry,places&key=AIzaSyBR_zVH9ks9bWwA-8AzQQyD6mkawsfF9AI"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/media/fancybox.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/tables/datatables/datatables.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/forms/selects/select2.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/notifications/sweet_alert.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/uploaders/dropzone.min.js"></script>
+<script type="text/javascript" src="assets/js/notify.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://mpryvkin.github.io/jquery-datatables-row-reordering/1.2.3/jquery.dataTables.rowReordering.js"></script>
 <div class="page-header page-header-default">
     <div class="page-header-content">
         <div class="page-title">
@@ -252,11 +260,12 @@
     }
     $(function () {
 //        if (business_promo_images_cnt > 0) {
-        $('.datatable-basic').dataTable({
+        var table = $('.datatable-basic').dataTable({
             bFilter: false,
             autoWidth: false,
             processing: true,
-            serverSide: true,
+//            serverSide: true,
+            rowReorder: true,
             "pageLength": 100,
             language: {
                 search: '<span>Filter:</span> _INPUT_',
@@ -266,6 +275,10 @@
             dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
             order: [[2, "desc"]],
             ajax: site_url + 'admin/businesses/get_promo_images/<?php echo $business_data['id'] ?>',
+            createdRow: function (row, data, dataIndex) {
+                $(row).attr('id', 'row_' + data.id + '_' + dataIndex);
+                $(row).attr('data-id', data.id);
+            },
             columns: [
                 {
                     data: "sr_no",
@@ -308,7 +321,34 @@
                 }
             ]
         });
-
+        
+        table.rowReordering({
+            fnUpdateCallback: function (row) {
+//                $("#" + row.id).attr("data-id", row.toPosition);
+                var IDs = [];
+                var business_id = <?php echo $business_data['id'] ?>;
+                IDs = $(".ui-sortable tr[id]") // find spans with ID attribute
+                        .map(function () {
+                            console.log($(this).data('id'));
+                            return $(this).data('id');
+                        }) // convert to set of IDs
+                        .get(); // convert to instance of Array (optional)
+                $.ajax({
+                    url: '<?php echo base_url() . "admin/businesses/change_promo_images_order" ?>',
+                    type: 'POST',
+                    dataType: "json",
+                    data: {reorderlist: IDs, business_id: business_id},
+                    success: function (data) {
+                        if (data.result == "success") {
+                            $.notify("Promo feature images rearranged successfully!", "success");
+                        } else {
+                            $.notify("Please try again!", "error");
+                        }
+                    }
+                });
+            }
+        });
+        
         $('.dataTables_length select').select2({
             minimumResultsForSearch: Infinity,
             width: 'auto'

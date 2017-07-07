@@ -27,7 +27,11 @@
                             echo '<img src="assets/admin/images/no_logo.png" alt="' . $order['firstname'] . ' ' . $order['lastname'] . '" class="img-rounded img-preview">';
                         }
                         echo '<br/>';
-                        echo $order['firstname'] . ' ' . $order['lastname'] . '[' . $order['email'] . ']';
+                        if ($order['is_frame'] == 1) {
+                            echo $order['firstname'] . ' ' . $order['lastname'] . '[' . $order['email'] . ']';
+                        } else {
+                            echo $order['firstname'] . ' ' . $order['lastname'];
+                        }
                         ?>
                     </div>
                 </div>

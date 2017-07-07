@@ -2301,6 +2301,21 @@ class Businesses extends CI_Controller {
             $this->businesses_model->insert_promo_images($insert_data);
         }
     }
+    
+    /* reorder promo images list */
+
+    public function change_promo_images_order() {
+        $business_id = $this->input->post('business_id');
+        $promo_images = $this->businesses_model->get_promo_images($business_id);
+        $reorderlist = $this->input->post('reorderlist');
+//        p($reorderlist);exit;
+        for ($i = 0; $i < count($reorderlist); $i++) {
+            $this->businesses_model->change_order(array("priority" => $i), $reorderlist[$i], $business_id);
+        }
+        $data['result'] = 'success';
+        print json_encode($data, JSON_NUMERIC_CHECK);
+        exit;
+    }
 
     /**
      * Activate/Deactive ICP

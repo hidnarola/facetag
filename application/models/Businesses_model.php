@@ -18,7 +18,7 @@ class Businesses_model extends CI_Model {
         $query = $this->db->get(TBL_BUSINESS_TYPES);
         return $query->result_array();
     }
-    
+
     /**
      * Get all business types
      */
@@ -27,7 +27,7 @@ class Businesses_model extends CI_Model {
         $query = $this->db->get(TBL_USER_HEAR_ABOUTS);
         return $query->result_array();
     }
-    
+
     /**
      * count rows of table
      * @return number of rows
@@ -115,7 +115,7 @@ class Businesses_model extends CI_Model {
             return 0;
         }
     }
-    
+
     public function update_business_settings($condition, $data) {
         $this->db->where($condition);
         if ($this->db->update(TBL_BUSINESSES_SETTINGS, $data)) {
@@ -137,8 +137,8 @@ class Businesses_model extends CI_Model {
             return 0;
         }
     }
-    
-     public function insert_business_settings($data) {
+
+    public function insert_business_settings($data) {
         if ($this->db->insert(TBL_BUSINESSES_SETTINGS, $data)) {
             return $this->db->insert_id();
         } else {
@@ -252,9 +252,13 @@ class Businesses_model extends CI_Model {
             return 0;
         }
     }
-    
-    public function change_order($data, $id) {
-        $business_id = $this->session->userdata('facetag_admin')['business_id'];
+
+    public function change_order($data, $id, $business_id = NULL) {
+        if (!empty($business_id)) {
+            $business_id = $business_id;
+        } else {
+            $business_id = $this->session->userdata('facetag_admin')['business_id'];
+        }
         $this->db->where('id', $id);
         $this->db->where('business_id', $business_id);
         if ($this->db->update(TBL_BUSINESS_PROMO_IMAGES, $data)) {
@@ -311,7 +315,7 @@ class Businesses_model extends CI_Model {
         $query = $this->db->get(TBL_BUSINESSES);
         return $query->row_array();
     }
-    
+
     /**
      * Get business settings details by its id
      * @param int $business_id
@@ -322,4 +326,5 @@ class Businesses_model extends CI_Model {
         $query = $this->db->get(TBL_BUSINESSES_SETTINGS);
         return $query->row_array();
     }
+
 }

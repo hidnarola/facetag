@@ -185,6 +185,7 @@
                             action += '<a href="' + site_url + 'admin/businesses/dashboard/' + full.id + '" title="View Dashboard"><i class="icon-home2"></i>View Dashboard</a>';
                             action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/edit/' + full.id + '" title="Edit Business"><i class="icon-pencil7"></i>Edit Business</a>';
                             action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/edit_private_information/' + full.id + '" title="Edit Business Private Information"><i class="icon-key"></i>Edit Business Private Information</a>';
+                            action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/icps/' + full.id + '" title="Manage ICPs"><i class="icon-lan2"></i>Manage Business ICPs</a>';
                             if (full.is_invite == 2) {
                                 action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/invite_mail/' + full.id + '" title="Invite Business" onclick="return invite_alert(this)" data-email="' + full.email + '"><i class="icon-mail5"></i>Invite Business</a>';
                             }
