@@ -99,7 +99,7 @@
                                     echo '<img src="assets/timthumb.php?src=' . base_url() . 'assets/admin/images/no_logo.png&w=60&h=60&q=100&zc=2" height="55px" width="55px" alt="' . $order['firstname'] . ' ' . $order['lastname'] . '">';
                                 }
                                 echo '<br/>';
-                                echo $order['firstname'] . ' ' . $order['lastname'];
+                                echo $order['firstname'];
                                 ?>
                             </td>
                             <td><?php echo $order['total_amount'] ?></td>
