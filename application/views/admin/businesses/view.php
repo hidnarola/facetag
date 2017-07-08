@@ -388,10 +388,10 @@
         $("#dropzone_remove").dropzone({
             paramName: "files", // The name that will be used to transfer the file
             dictDefaultMessage: 'Drop Images to upload <span>or CLICK</span>',
-            maxFilesize: 10, // MB
+            maxFilesize: 20, // MB
             addRemoveLinks: true,
             autoProcessQueue: false,
-//            maxFiles: 5,
+            maxFiles: 30,
             acceptedFiles: '.jpg, .png, .jpeg',
             init: function () {
                 var submitButton = document.querySelector("#btn_submit")

@@ -213,7 +213,7 @@
             maxFilesize: 20, // MB
             addRemoveLinks: true,
             autoProcessQueue: false,
-//            maxFiles: 5,
+            maxFiles: 30,
             acceptedFiles: '.jpg, .png, .jpeg',
             init: function () {
                 var submitButton = document.querySelector("#btn_submit")
