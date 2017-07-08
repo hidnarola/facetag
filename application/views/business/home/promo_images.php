@@ -2,7 +2,7 @@
     .ui-sortable-helper{
         background: #ddd !important;
     }
-    .dz-error-message{
+    .dz-error .dz-error-message{
         opacity: 1 !important;
     }
 </style>
