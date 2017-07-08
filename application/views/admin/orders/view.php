@@ -29,7 +29,7 @@
                                     <?php echo '<img src="' . USER_IMAGE_SITE_PATH . $cart_detail['user_bioimage'] . '" class="img-circle">'; ?>
                                 </a>
                             </div>
-                            <h6 class="text-semibold no-margin-top"><?php echo $cart_detail['firstname'] . ' ' . $cart_detail['lastname']; ?></h6>
+                            <h6 class="text-semibold no-margin-top"><?php echo $cart_detail['firstname']; ?></h6>
                             <ul class="list list-unstyled">
                                 <li>Email : &nbsp;<?php echo $cart_detail['email']; ?></li>
                                 <li>Ordered on: <span class="text-semibold"><?php echo date('h:i A, d-M-Y', strtotime($cart_detail['created'])); ?></span></li>
@@ -109,7 +109,7 @@
                                     echo '<img src="assets/admin/images/no_logo.png" height="55px" width="55px" alt="' . $order['firstname'] . ' ' . $order['lastname'] . '">';
                                 }
                                 echo '<br/>';
-                                echo $order['firstname'] . ' ' . $order['lastname'];
+                                echo $order['firstname'];
                                 ?>
                             </td>
                             <td><?php echo $order['icp_name']; ?></td>

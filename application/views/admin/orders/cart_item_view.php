@@ -27,7 +27,7 @@
                             echo '<img src="assets/admin/images/no_logo.png" alt="' . $order['firstname'] . ' ' . $order['lastname'] . '" class="img-rounded img-preview">';
                         }
                         echo '<br/>';
-                        echo $order['firstname'] . ' ' . $order['lastname'] . '[' . $order['email'] . ']';
+                        echo $order['firstname'] . '[' . $order['email'] . ']';
                         ?>
                     </div>
                 </div>

@@ -28,9 +28,9 @@
                         }
                         echo '<br/>';
                         if ($order['is_frame'] == 1) {
-                            echo $order['firstname'] . ' ' . $order['lastname'] . '[' . $order['email'] . ']';
+                            echo $order['firstname'] . '[' . $order['email'] . ']';
                         } else {
-                            echo $order['firstname'] . ' ' . $order['lastname'];
+                            echo $order['firstname'];
                         }
                         ?>
                     </div>
