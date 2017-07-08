@@ -2,6 +2,9 @@
     .ui-sortable-helper{
         background: #ddd !important;
     }
+    .dz-error-message{
+        opacity: 1 !important;
+    }
 </style>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry,places&key=AIzaSyBR_zVH9ks9bWwA-8AzQQyD6mkawsfF9AI"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/media/fancybox.min.js"></script>

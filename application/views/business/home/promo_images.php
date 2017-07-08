@@ -2,6 +2,9 @@
     .ui-sortable-helper{
         background: #ddd !important;
     }
+    .dz-error-message{
+        opacity: 1 !important;
+    }
 </style>
 <script type="text/javascript" src="assets/admin/js/plugins/media/fancybox.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/tables/datatables/datatables.min.js"></script>
