@@ -711,6 +711,13 @@
         });
     }
     $(document).ready(function () {
+        $("#address_text").change(function () {
+            if (this.checked) {
+                $(".address-text").show();
+            } else {
+                $(".address-text").hide();
+            }
+        });
         //Get states of particular country on country selection
         $('#country_id').on('change', function () {
             getStates();

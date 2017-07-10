@@ -1198,6 +1198,13 @@
     });
 
     $(document).ready(function () {
+        $("#address_text").change(function () {
+            if (this.checked) {
+                $(".address-text").show();
+            } else {
+                $(".address-text").hide();
+            }
+        });
         $("#business_info").submit(function (event) {
             event.preventDefault();
 
