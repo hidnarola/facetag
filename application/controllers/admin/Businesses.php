@@ -139,9 +139,9 @@ class Businesses extends CI_Controller {
             $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|callback_is_uniquemail');
             $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[5]|matches[repeat_password]');
             $this->form_validation->set_rules('repeat_password', 'Repeat Password', 'trim|required');
-            if($this->input->post('address_text')) {
-            $this->form_validation->set_rules('address_display_text', 'Address display text', 'trim|required');
-        }
+            if ($this->input->post('address_text')) {
+                $this->form_validation->set_rules('address_display_text', 'Address display text', 'trim|required');
+            }
         }
 
         if ($this->form_validation->run() == FALSE) {
@@ -205,9 +205,11 @@ class Businesses extends CI_Controller {
                     if ($_FILES['logo']['name'] != '') {
                         unlink(BUSINESS_LOGO_IMAGES . $data['business_data']['logo']);
                     }
-                     if($this->input->post('address_text') == 1) {
-                    $address = $this->input->post('address_display_text');
-                }
+                    if ($this->input->post('address_text') == 1) {
+                        $address = $this->input->post('address_display_text');
+                    } else {
+                        $address = $check_business[0]['address_text'];
+                    }
                     $update_array = array(
                         'logo' => $business_logo,
                         'name' => trim($this->input->post('name')),
@@ -823,7 +825,7 @@ class Businesses extends CI_Controller {
                         }
                         if ($this->input->post('digital_free_on_physical_purchase')) {
                             $digital_free_on_physical_purchase = 1;
-                        }else {
+                        } else {
                             $digital_free_on_physical_purchase = 0;
                         }
                         if ($this->input->post('collection_point_delivery') && $this->input->post('offer_printed_souvenir')) {
@@ -1699,7 +1701,7 @@ class Businesses extends CI_Controller {
             show_404();
         }
     }
-    
+
     public function upload_crop_image($icp_id) {
 //        p($_POST);
 //        p($_FILES);
@@ -1807,7 +1809,7 @@ class Businesses extends CI_Controller {
 
                     $business_id = $icp_data[0]['business_id'];
                     $icp_id = $icp_data[0]['id'];
-                //Get checked in users who have checked in to particualr icps/business
+                    //Get checked in users who have checked in to particualr icps/business
                     $business_users = $this->users_model->get_checkedinusers_by_business($business_id);
                     $icp_users = $this->users_model->get_checkedinusers_by_icp($icp_id);
                     //-- merge both users
@@ -1913,7 +1915,7 @@ class Businesses extends CI_Controller {
                     }
                 }
                 $this->session->set_flashdata('success', 'Images uploaded successfully!');
-                 redirect('admin/businesses/icp_images/' . $icp_id);
+                redirect('admin/businesses/icp_images/' . $icp_id);
             }
         } else {
             show_404();
@@ -2309,7 +2311,7 @@ class Businesses extends CI_Controller {
             $this->businesses_model->insert_promo_images($insert_data);
         }
     }
-    
+
     /* reorder promo images list */
 
     public function change_promo_images_order() {

@@ -258,6 +258,8 @@ class Home extends CI_Controller {
 //                }
                  if($this->input->post('address_text') == 1) {
                     $address = $this->input->post('address_display_text');
+                }else {
+                    $address = $business_profile[0]['address_text'];
                 }
                 $update_array = array(
                     'name' => $this->input->post('name'),
