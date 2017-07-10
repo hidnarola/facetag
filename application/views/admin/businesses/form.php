@@ -709,7 +709,10 @@
         });
     }
     $(document).ready(function () {
-        $(".address-text").hide();
+         var display_address = <?php echo $business_data["display_text"]; ?>;
+        if (display_address == 0) {
+            $(".address-text").hide();
+        }
         $("#address_text").change(function () {
             if (this.checked) {
                 $(".address-text").show();
