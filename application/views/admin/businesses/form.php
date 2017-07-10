@@ -140,7 +140,6 @@
                             <input type="checkbox" name="address_text" id="address_text" class="" onclick="$(this).val(this.checked ? 1 : 0)" value="<?php echo $check_val; ?>" <?php echo $checked; ?>/>&nbsp;
                             <span class="checkbox-checked"><b>Display text instead of google address</b></span>
                             </div>
-                            <?php if ($business_data['display_text'] == 1) { ?>
                             <div class="form-group address-text">
                                 <label class="col-lg-3 control-label">Address display text
                                     <a data-html="true" data-popup="popover-custom" data-trigger="hover" data-placement="right" data-content="If you check 'Display text instead of google address' option, this address will be display to user."><i class="icon-question4"></i></a>
@@ -152,7 +151,6 @@
                                     ?>
                                 </div>
                             </div>
-                            <?php } ?>
                             <!--                    <div class="form-group">
                                                     <label class="col-lg-1 control-label">Street Number<span class="text-danger">*</span></label>
                                                     <div class="col-lg-2">
@@ -711,6 +709,7 @@
         });
     }
     $(document).ready(function () {
+        $(".address-text").hide();
         $("#address_text").change(function () {
             if (this.checked) {
                 $(".address-text").show();
