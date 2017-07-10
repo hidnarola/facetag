@@ -125,6 +125,34 @@
                                     ?>
                                 </div>
                             </div>
+                            <?php
+                            $check_val = 0;
+                            $checked = '';
+                            if ($business_data['display_text'] == 1) {
+                                $check_val = 1;
+                                $checked = 'checked';
+                            } else {
+                                $check_val = 0;
+                                $checked = '';
+                            }
+                            ?>
+                            <div class="form-group">
+                            <input type="checkbox" name="address_text" id="address_text" class="" onclick="$(this).val(this.checked ? 1 : 0)" value="<?php echo $check_val; ?>" <?php echo $checked; ?>/>&nbsp;
+                            <span class="checkbox-checked"><b>Display text instead of google address</b></span>
+                            </div>
+                            <?php if ($business_data['display_text'] == 1) { ?>
+                            <div class="form-group address-text">
+                                <label class="col-lg-3 control-label">Address display text
+                                    <a data-html="true" data-popup="popover-custom" data-trigger="hover" data-placement="right" data-content="If you check 'Display text instead of google address' option, this address will be display to user."><i class="icon-question4"></i></a>
+                                </label>
+                                <div class="col-lg-9">
+                                    <input type="text" name="address_display_text" id="address_display_text" class="form-control" required="required" placeholder="Address Text" value="<?php echo (isset($business_data)) ? $business_data['address_text'] : set_value('address_text'); ?>"/>
+                                    <?php
+                                    echo '<label id="address_display_text-error" class="validation-error-label" for="address_display_text">' . form_error('address_display_text') . '</label>';
+                                    ?>
+                                </div>
+                            </div>
+                            <?php } ?>
                             <!--                    <div class="form-group">
                                                     <label class="col-lg-1 control-label">Street Number<span class="text-danger">*</span></label>
                                                     <div class="col-lg-2">

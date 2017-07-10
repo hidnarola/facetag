@@ -253,6 +253,11 @@ class Home extends CI_Controller {
 //                if ($_FILES['logo']['name'] != '') {
 //                    unlink(BUSINESS_LOGO_IMAGES . $data['business_data']['logo']);
 //                }
+                 if($this->input->post('address_text') == 1) {
+                    $address = $this->input->post('address_display_text');
+                }else {
+                    $address = "";
+                }
                 $update_array = array(
                     'name' => $this->input->post('name'),
                     'logo' => $business_logo,
@@ -261,6 +266,7 @@ class Home extends CI_Controller {
                     'contact_no' => $this->input->post('digits'),
                     'contact_email' => $this->input->post('contact_email'),
                     'address1' => $this->input->post('address1'),
+                    'address_text' => $address,
                     'latitude' => $this->input->post('latitude'),
                     'longitude' => $this->input->post('longitude'),
 //                    'address2' => $this->input->post('address2'),

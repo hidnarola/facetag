@@ -202,11 +202,17 @@ class Businesses extends CI_Controller {
                     if ($_FILES['logo']['name'] != '') {
                         unlink(BUSINESS_LOGO_IMAGES . $data['business_data']['logo']);
                     }
+                     if($this->input->post('address_text') == 1) {
+                    $address = $this->input->post('address_display_text');
+                }else {
+                    $address = "";
+                }
                     $update_array = array(
                         'logo' => $business_logo,
                         'name' => trim($this->input->post('name')),
                         'description' => $this->input->post('description'),
                         'address1' => $this->input->post('address1'),
+                        'address_text' => $address,
 //                        'street_no' => $this->input->post('street_no'),
 //                        'street_name' => $this->input->post('street_name'),
                         'address2' => $this->input->post('address2'),

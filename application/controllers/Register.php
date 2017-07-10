@@ -48,8 +48,6 @@ class Register extends CI_Controller {
         $this->form_validation->set_rules('visitor', 'Visitor Attendence', 'required', array('required' => 'Please Select Average daily visitor attendance'));
         $this->form_validation->set_rules('visitor_photo', 'Visitor photographs', 'required', array('required' => 'Please Select Average number of Visitor photographs taken daily'));
 //        $this->form_validation->set_rules('distribute', 'Distribute Photograph', 'required', array('required' => 'Please Select one'));
-
-
 //        if (($this->input->post('distribute') == 'forsale') || ($this->input->post('distribute') == 'both')) {
 //            $this->form_validation->set_rules('sale_value', 'Sale Price', 'trim|required', array('required' => 'Please Enter Sale Price!'));
 //        }
@@ -106,7 +104,17 @@ class Register extends CI_Controller {
                 $this->email->subject('Email Verification - facetag');
                 $this->email->message(stripslashes($msg));
                 $this->email->set_mailtype("html");
-                $this->email->send();
+                if ($this->email->send()) {
+                    $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
+                    $this->email->to("anp@narola.email");
+//                    $this->email->to("sales@facetag.com.au");
+
+                    $msg = $this->load->view('email_templates/registration_mail', array('firstname' => $this->input->post('firstname'), 'lastname' => $this->input->post('lastname'), 'email' => $this->input->post('email')), true);
+                    $this->email->subject('User Registration - facetag');
+                    $this->email->message(stripslashes($msg));
+                    $this->email->set_mailtype("html");
+                    $this->email->send();
+                }
                 $this->email->print_debugger();
             }
             $this->session->set_flashdata('success', 'Thank you, Please verify your email! we look forward to working with you soon');
