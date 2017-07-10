@@ -212,6 +212,7 @@ class Businesses extends CI_Controller {
                         'name' => trim($this->input->post('name')),
                         'description' => $this->input->post('description'),
                         'address1' => $this->input->post('address1'),
+                        'display_text' => $this->input->post('address_text'),
                         'address_text' => $address,
 //                        'street_no' => $this->input->post('street_no'),
 //                        'street_name' => $this->input->post('street_name'),

@@ -266,6 +266,7 @@ class Home extends CI_Controller {
                     'contact_no' => $this->input->post('digits'),
                     'contact_email' => $this->input->post('contact_email'),
                     'address1' => $this->input->post('address1'),
+                    'display_text' => $this->input->post('address_text'),
                     'address_text' => $address,
                     'latitude' => $this->input->post('latitude'),
                     'longitude' => $this->input->post('longitude'),
