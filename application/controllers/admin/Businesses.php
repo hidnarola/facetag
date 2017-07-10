@@ -139,6 +139,9 @@ class Businesses extends CI_Controller {
             $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|callback_is_uniquemail');
             $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[5]|matches[repeat_password]');
             $this->form_validation->set_rules('repeat_password', 'Repeat Password', 'trim|required');
+            if($this->input->post('address_text')) {
+            $this->form_validation->set_rules('address_display_text', 'Address display text', 'trim|required');
+        }
         }
 
         if ($this->form_validation->run() == FALSE) {
@@ -204,8 +207,6 @@ class Businesses extends CI_Controller {
                     }
                      if($this->input->post('address_text') == 1) {
                     $address = $this->input->post('address_display_text');
-                }else {
-                    $address = "";
                 }
                     $update_array = array(
                         'logo' => $business_logo,

@@ -175,6 +175,9 @@ class Home extends CI_Controller {
         $this->form_validation->set_rules('latitude', 'Latitiude', 'trim|required', array('required' => 'Latitude field is required. Please enter valid address!'));
         $this->form_validation->set_rules('longitude', 'Longitude', 'trim|required', array('required' => 'Longitude field is required. Please enter valid address!'));
         $this->form_validation->set_rules('contact_email', 'Contact Email', 'trim|valid_email');
+        if($this->input->post('address_text')) {
+            $this->form_validation->set_rules('address_display_text', 'Address display text', 'trim|required');
+        }
 
         if ($this->form_validation->run() == FALSE) {
 //            $this->form_validation->set_error_delimiters('<div class="alert alert-error alert-danger"><a class="close" data-dismiss="alert">×</a><strong>', '</strong></div>');
@@ -255,8 +258,6 @@ class Home extends CI_Controller {
 //                }
                  if($this->input->post('address_text') == 1) {
                     $address = $this->input->post('address_display_text');
-                }else {
-                    $address = "";
                 }
                 $update_array = array(
                     'name' => $this->input->post('name'),
