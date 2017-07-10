@@ -106,8 +106,8 @@ class Register extends CI_Controller {
                 $this->email->set_mailtype("html");
                 if ($this->email->send()) {
                     $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
-                    $this->email->to("anp@narola.email");
-//                    $this->email->to("sales@facetag.com.au");
+//                    $this->email->to("anp@narola.email");
+                    $this->email->to("sales@facetag.com.au");
 
                     $msg = $this->load->view('email_templates/registration_mail', array('firstname' => $this->input->post('firstname'), 'lastname' => $this->input->post('lastname'), 'email' => $this->input->post('email')), true);
                     $this->email->subject('User Registration - facetag');
