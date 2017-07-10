@@ -172,8 +172,8 @@
                             }
                             ?>
                             <div class="form-group">
-                            <input type="checkbox" name="address_text" id="address_text" class="" onclick="$(this).val(this.checked ? 1 : 0)" value="<?php echo $check_val; ?>" <?php echo $checked; ?>/>&nbsp;
-                            <span class="checkbox-checked"><b>Display text instead of google address</b></span>
+                                <input type="checkbox" name="address_text" id="address_text" class="" onclick="$(this).val(this.checked ? 1 : 0)" value="<?php echo $check_val; ?>" <?php echo $checked; ?>/>&nbsp;
+                                <span class="checkbox-checked"><b>Display text instead of google address</b></span>
                             </div>
                             <div class="form-group address-text">
                                 <label class="col-lg-3 control-label">Address display text
@@ -1196,7 +1196,10 @@
     });
 
     $(document).ready(function () {
-        $(".address-text").hide();
+        var display_address = <?php echo $business_data["display_text"]; ?>;
+        if (display_address == 0) {
+            $(".address-text").hide();
+        }
         $("#address_text").change(function () {
             if (this.checked) {
                 $(".address-text").show();
@@ -1230,10 +1233,10 @@
                                     if (!isConfirm) {
                                         // if later:
                                         window.location.href = 'business/promo_images';
-                                    }else{
-                                    // if yes:
-                                    window.location.href = 'business/icps/add';
-                                }
+                                    } else {
+                                        // if yes:
+                                        window.location.href = 'business/icps/add';
+                                    }
                                 });
                         return false;
                     }
