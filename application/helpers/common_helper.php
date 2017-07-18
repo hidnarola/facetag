@@ -110,7 +110,23 @@ function upload_image($image_name, $image_path) {
                         $image = $imageResource;
                 }
             }
-            imagejpeg($image, $filePath);
+            
+            // Get new dimensions
+            $percent = 0.5;
+            list($width, $height) = getimagesize($filename);
+            $new_width = $width;
+            $new_height = $height;
+
+            // Resample
+            $image_p = imagecreatetruecolor($new_width, $new_height);
+            $image = imagecreatefromjpeg($filename);
+            imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+
+            // Output
+            imagejpeg($image_p, $filePath, 100);
+            
+//            imagejpeg($image, $filePath);
+            imagedestroy($image_p);
             imagedestroy($image);
         }
     } else {
