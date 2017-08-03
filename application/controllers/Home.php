@@ -88,5 +88,23 @@ class Home extends CI_Controller {
         $data['title'] = 'Terms of Service';
         $this->template->load('frontend', 'terms', $data);
     }
+    
+    /**
+     * App Terms and condition page
+     * @author ANP
+     */
+    public function appterms() {
+        $data['title'] = 'Terms of Service';
+        $this->template->load('frontend', 'appterms', $data);
+    }
+    
+    /**
+     * Privacy policy page
+     * @author ANP
+     */
+    public function privacy() {
+        $data['title'] = 'Privacy Policy';
+        $this->template->load('frontend', 'privacy', $data);
+    }
 
 }
