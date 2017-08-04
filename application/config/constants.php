@@ -173,7 +173,8 @@ define('ANDROIDAPIKEY', 'AIzaSyBYLa5QEsiJRnCfRUejwOX7oPKnGhl_JFw');
 /**
  * FIREBASE FCM URL
  */
-define("FIREBASE_API_KEY", "AIzaSyCUSBFW6goHzhp_5OkaWyyySFoTbEhrE28");
+//define("FIREBASE_API_KEY", "AIzaSyCUSBFW6goHzhp_5OkaWyyySFoTbEhrE28");
+define("FIREBASE_API_KEY", "AIzaSyAVKKbHhJNOnZ4YuZXn54ZiTADn_fv2EAg");
 define("FIREBASE_FCM_URL", "https://fcm.googleapis.com/fcm/send");
 define("SUCCESS", "success");
 define("FAILED", "failed");
