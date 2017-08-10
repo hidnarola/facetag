@@ -40,7 +40,7 @@ class Reset_password extends CI_Controller {
             //--- valid email address
             $configs = mail_config();
             $this->load->library('email', $configs);
-            $this->email->initialize($configs);
+//            $this->email->initialize($configs);
             $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
             $this->email->to($email);
             $verification_code = $this->encrypt->encode($email_result['verification_code']);
@@ -51,6 +51,7 @@ class Reset_password extends CI_Controller {
             $message_text.='<a href="' . $url . '">' . $url . '</a>';
 
             $this->email->subject('Reset Password - facetag');
+            $this->email->set_mailtype("html");
             $this->email->message($message_text);
             $this->email->send();
             $this->email->print_debugger();
