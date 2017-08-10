@@ -2139,12 +2139,13 @@ class Businesses extends CI_Controller {
             $url = site_url() . 'login';
             $configs = mail_config();
             $this->load->library('email', $configs);
-            $this->email->initialize($configs);
+//            $this->email->initialize($configs);
             $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
             $this->email->to($business_data['email']);
 
             $msg = $this->load->view('email_templates/invite_email', array('email' => $business_data['email'], 'password' => $verification_code, 'url' => $url, 'business' => $business_data['name']), true);
             $this->email->subject('Invitation - facetag');
+            $this->email->set_mailtype("html");
             $this->email->message($msg);
             $this->email->send();
             $this->email->print_debugger();
