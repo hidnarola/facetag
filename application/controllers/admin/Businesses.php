@@ -2146,6 +2146,7 @@ class Businesses extends CI_Controller {
             $msg = $this->load->view('email_templates/invite_email', array('email' => $business_data['email'], 'password' => $verification_code, 'url' => $url, 'business' => $business_data['name']), true);
             $this->email->subject('Invitation - facetag');
             $this->email->set_mailtype("html");
+            
             $this->email->message($msg);
             $this->email->send();
             $this->email->print_debugger();
