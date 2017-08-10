@@ -16,9 +16,9 @@
             </div>
             <div class="col-sm-6 col-sm-offset-3"> 
                 <?php
-                if ($this->session->flashdata('success')) {
-                    echo '<div class="alert alert-success" id="msg_success">' . $this->session->flashdata('success') . '</div>';
-                }
+//                if ($this->session->flashdata('success')) {
+//                    echo '<div class="alert alert-success" id="msg_success">' . $this->session->flashdata('success') . '</div>';
+//                }
                 ?>
                 <?php
                 if ($this->session->flashdata('error')) {
