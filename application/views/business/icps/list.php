@@ -185,7 +185,7 @@
                             action = '<a href="' + site_url + 'business/icps/block/' + full.id + '" class="btn border-success text-success-600 btn-flat btn-icon btn-rounded btn-xs" title="Activate ICP" onclick="return block_alert(this,\'unblock\')" ><i class="icon-checkmark4"></i></a>';
                         }
                         action += '&nbsp;&nbsp;<a href="' + site_url + 'business/icps/delete/' + full.id + '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete Icp"><i class="icon-cross2"></i></a>';
-                        action += '&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#autoUploadImagesModal" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" title="Upload images automatically"><i class="icon-file-download2"></i></a>';
+                        action += '&nbsp;&nbsp;<a href="javascript:void(0)" onclick="show_popup(this)" data-id="' + full.id + '" data-target="#autoUploadImagesModal" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" title="Upload images automatically"><i class="icon-file-download2"></i></a>';
                         return action;
                     }
                 },
@@ -197,7 +197,13 @@
             width: 'auto'
         });
 
-        });
+    });
+    function show_popup(e) {
+        var icp_id = $(e).attr('data-id');
+        $('#icp_id').val(icp_id);
+        $('#autoUploadImagesModal').modal();
+
+    }
     function confirm_alert(e) {
         swal({
             title: "Are you sure?",

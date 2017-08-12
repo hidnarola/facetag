@@ -182,7 +182,7 @@
                     searchable: false,
                     sortable: false,
                     render: function (data, type, full, meta) {
-                    $("#icp_id").val(full.id);
+                        $("#icp_id").val(full.id);
                         if (full.is_active == 1) {
                             action = '<a href="' + site_url + 'admin/businesses/edit_icp/' + full.business_id + '/' + full.id + '" class="btn border-primary text-primary btn-flat btn-icon btn-rounded btn-xs" title="Edit Icp"><i class="icon-pencil3"></i></a>';
                             action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/icp_images/' + full.id + '" class="btn border-info text-info-600 btn-flat btn-icon btn-rounded btn-xs" title="Manage Images"><i class="icon-images2"></i></a>';
@@ -195,7 +195,7 @@
                             action = '<a href="' + site_url + 'admin/businesses/block_icp/' + full.id + '" class="btn border-success text-success-600 btn-flat btn-icon btn-rounded btn-xs" title="Activate ICP" onclick="return block_alert(this,\'unblock\')" ><i class="icon-checkmark4"></i></a>';
                         }
                         action += '&nbsp;&nbsp;<a href="' + site_url + 'admin/businesses/delete_icp/' + full.id + '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete Icp"><i class="icon-cross2"></i></a>';
-                        action += '&nbsp;&nbsp;<a href="#" data-toggle="modal" data-target="#autoUploadImagesModal" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" title="Upload images automatically"><i class="icon-file-download2"></i></a>';
+                        action += '&nbsp;&nbsp;<a href="javascript:void(0)" onclick="show_popup(this)" data-id="' + full.id + '" data-target="#autoUploadImagesModal" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" title="Upload images automatically"><i class="icon-file-download2"></i></a>';
                         return action;
                     }
                 },
@@ -208,6 +208,12 @@
         });
 
     });
+    function show_popup(e) {
+        var icp_id = $(e).attr('data-id');
+        $('#icp_id').val(icp_id);
+        $('#autoUploadImagesModal').modal();
+
+    }
     function confirm_alert(e) {
         swal({
             title: "Are you sure?",

@@ -443,15 +443,15 @@ class Businesses extends CI_Controller {
 
         fwrite($handle, "#!/bin/sh");
         fwrite($handle, $spacee);
-        fwrite($handle, "HOST='123.201.110.194'");
+        fwrite($handle, "HOST='13.54.170.29'");
         fwrite($handle, $spacee);
-        fwrite($handle, "USER='hd'");
+        fwrite($handle, "USER='narola'");
         fwrite($handle, $spacee);
-        fwrite($handle, "PASSWD='9DrICc179Tc1apg'");
+        fwrite($handle, "PASSWD='facetag123#'");
         fwrite($handle, $spacee);
         fwrite($handle, "FILE='" . $local_path . "'");
         fwrite($handle, $spacee);
-        fwrite($handle, "REMOTEPATH='/facetag/uploads/automatic_upload/'" . $biz_dir . "/" . $icp_dir);
+        fwrite($handle, "REMOTEPATH='/html/uploads/automatic_upload/" . $biz_dir . "/" . $icp_dir . "'");
         fwrite($handle, $spacee);
         fwrite($handle, 'cd $FILE');
         fwrite($handle, $spacee);
@@ -2146,7 +2146,7 @@ class Businesses extends CI_Controller {
             $msg = $this->load->view('email_templates/invite_email', array('email' => $business_data['email'], 'password' => $verification_code, 'url' => $url, 'business' => $business_data['name']), true);
             $this->email->subject('Invitation - facetag');
             $this->email->set_mailtype("html");
-            
+
             $this->email->message($msg);
             $this->email->send();
             $this->email->print_debugger();
