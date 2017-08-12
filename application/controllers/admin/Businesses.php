@@ -426,11 +426,13 @@ class Businesses extends CI_Controller {
         $icp_dir = 'icp_' . $icp_id;
         //-- Create business directory if not exist
         if (!file_exists(ICP_AUTO_UPLOAD_IMAGES . $biz_dir)) {
-            mkdir(ICP_AUTO_UPLOAD_IMAGES . $biz_dir, 0777);
+            mkdir(ICP_AUTO_UPLOAD_IMAGES . $biz_dir);
+            chmod(ICP_AUTO_UPLOAD_IMAGES . $biz_dir, 0777);
         }
         //-- Create icp directory inside business directory if not exist
         if (!file_exists(ICP_AUTO_UPLOAD_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
-            mkdir(ICP_AUTO_UPLOAD_IMAGES . $biz_dir . '/' . $icp_dir, 0777);
+            mkdir(ICP_AUTO_UPLOAD_IMAGES . $biz_dir . '/' . $icp_dir);
+            chmod(ICP_AUTO_UPLOAD_IMAGES . $biz_dir . '/' . $icp_dir, 0777);
         }
 
 
