@@ -607,6 +607,10 @@ class Cron extends CI_Controller {
         rmdir($dirPath);
     }
 
+    public function test() {
+        $this->db->insert('test', ['id' => 1]);
+    }
+
     public function store_images_in_API() {
         $icps = $this->icps_model->get_icps();
         foreach ($icps as $icp) {
