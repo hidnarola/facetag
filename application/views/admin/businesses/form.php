@@ -321,10 +321,15 @@
                         <div class="form-group">
                             <label class="col-lg-3 control-label required">Email Id<span class="text-danger">*</span></label>
                             <div class="col-lg-6">
-                                <input class="form-control" type="text" placeholder="User Email" id="user_email" name="user_email" value="<?php echo (isset($business_data['email'])) ? $business_data['email'] : set_value('email'); ?>" required="required">
-                                <?php
-                                echo '<label id="user_email-error" class="validation-error-label" for="user_email">' . form_error('user_email') . '</label>';
-                                ?>
+                                <input class="form-control" type="text" placeholder="User Email" id="user_email" name="user_email" value="<?php
+                                if (form_error('user_email') != '')
+                                    echo set_value('user_email');
+                                else if (isset($business_data['email']))
+                                    echo $business_data['email'];
+                                ?>" required="required">
+                                       <?php
+                                       echo '<label id="user_email-error" class="validation-error-label" for="user_email">' . form_error('user_email') . '</label>';
+                                       ?>
                             </div>
                         </div>
                     </fieldset>
