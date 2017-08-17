@@ -71,6 +71,7 @@ $route['business/hotels/add/(:any)'] = 'business/hotels/edit/$1'; //--- Edit Hot
 $route['legal/terms'] = 'home/terms'; //--- Terms route
 $route['legal/appterms'] = 'home/appterms'; //--- App Terms route
 $route['legal/privacy'] = 'home/privacy'; //--- Privacy route
+$route['set_password'] = 'reset_password/set_password'; //--- Set password route
 $route['logout'] = 'login/logout'; //--- Logout route
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

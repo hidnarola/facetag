@@ -130,4 +130,41 @@ class Reset_password extends CI_Controller {
         }
     }
 
+    /**
+     * Allow business user to set their own password for verification email sent by user
+     * @author KU
+     */
+    public function set_password() {
+        $data['title'] = 'facetag | Set Password';
+        $encoded_verification_code = $this->input->get_post('code');
+        $verification_code = urldecode($this->encrypt->decode($encoded_verification_code));
+        $this->form_validation->set_rules('password', 'Password', 'trim|required');
+        $this->form_validation->set_rules('con_password', 'Confirm password', 'trim|required|matches[password]');
+        $this->form_validation->set_error_delimiters('<span class="error-custom">', '</span>');
+        $result = $this->users_model->check_verification_code($verification_code);
+        if ($result) {
+            if ($this->form_validation->run() == FALSE) {
+                $this->template->load('frontend', 'set_password', $data);
+            } else {
+                //--- check again varification code is valid or not
+                //--- if valid then reset password and generate new verification code
+                //--- generate verification code
+                $new_verification_code = verification_code();
+                $id = $result['id'];
+                $data = array(
+                    'password' => md5($this->input->post('password')),
+                    'verification_code' => $new_verification_code
+                );
+                $this->users_model->update_record('id=' . $id, $data);
+                $this->session->set_flashdata('success', 'Your password has been set successfully!Now login and complete your Business Profile.');
+                redirect('login');
+            }
+        } else {
+
+            //--- if invalid verification code
+            $this->session->set_flashdata('error', 'Invalid request');
+            redirect('home');
+        }
+    }
+
 }

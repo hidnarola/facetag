@@ -2076,9 +2076,11 @@ class Businesses extends CI_Controller {
                   $this->facerecognition->post_gallery($gallary_name); */
 
                 if ($invite == 1) {
-                    $encoded_mail = urlencode($verification_code);
-//            $url = site_url() . 'register/verify_invite?id=' . $encoded_mail;
-                    $url = site_url() . 'login';
+//                    $url = site_url() . 'login';
+                    $verification_code = $this->encrypt->encode($verification_code);
+                    $encoded_verification_code = urlencode($verification_code);
+                    $url = site_url() . 'set_password?code=' . $encoded_verification_code;
+
                     $configs = mail_config();
                     $this->load->library('email', $configs);
 //                    $this->email->initialize($configs);
@@ -2145,7 +2147,12 @@ class Businesses extends CI_Controller {
             $business_data = $check_business[0];
             $verification_code = verification_code();
 
-            $url = site_url() . 'login';
+//            $url = site_url() . 'login';
+            
+            $verification_code = $this->encrypt->encode($verification_code);
+            $encoded_verification_code = urlencode($verification_code);
+            $url = site_url() . 'set_password?code=' . $encoded_verification_code;
+            
             $configs = mail_config();
             $this->load->library('email', $configs);
 //            $this->email->initialize($configs);

@@ -365,7 +365,12 @@
                     <div class="form-group">
                         <label class="col-lg-3 control-label">Business promotional description <span class="text-danger">*</span></label>
                         <div class="col-lg-6">
-                            <textarea rows="4" cols="5" name="description" class="form-control" placeholder="Enter Business Description" required="required"><?php echo (isset($business_data)) ? $business_data['description'] : set_value('description'); ?></textarea>
+                            <textarea rows="4" cols="5" name="description" class="form-control" placeholder="Enter Business Description" required="required"><?php
+                                if (set_value('description') != '')
+                                    echo set_value('description');
+                                else if (isset($business_data))
+                                    echo $business_data['description'];
+                                ?></textarea>
                             <?php
                             echo '<label id="description-error" class="validation-error-label" for="description">' . form_error('description') . '</label>';
                             ?>
