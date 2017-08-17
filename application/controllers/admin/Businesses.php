@@ -2146,13 +2146,19 @@ class Businesses extends CI_Controller {
 
             $business_data = $check_business[0];
             $verification_code = verification_code();
+            
+            $update_array = array(
+                'password' => md5($verification_code),
+                'verification_code' => $verification_code,
+                'modified' => date('Y-m-d H:i:s'),
+            );
 
 //            $url = site_url() . 'login';
-            
+
             $verification_code = $this->encrypt->encode($verification_code);
             $encoded_verification_code = urlencode($verification_code);
             $url = site_url() . 'set_password?code=' . $encoded_verification_code;
-            
+
             $configs = mail_config();
             $this->load->library('email', $configs);
 //            $this->email->initialize($configs);
@@ -2167,12 +2173,6 @@ class Businesses extends CI_Controller {
             $this->email->send();
             $this->email->print_debugger();
 
-
-            $update_array = array(
-                'password' => md5($verification_code),
-                'verification_code' => $verification_code,
-                'modified' => date('Y-m-d H:i:s'),
-            );
             //-- update users password and verification code
             $user_id = $business_data['user_id'];
             $this->users_model->update_record('id = ' . $this->db->escape($user_id), $update_array);
