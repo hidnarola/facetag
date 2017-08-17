@@ -163,7 +163,7 @@ class Reset_password extends CI_Controller {
 
             //--- if invalid verification code
             $this->session->set_flashdata('error', 'Invalid request');
-            redirect('home');
+            redirect('login');
         }
     }
 
