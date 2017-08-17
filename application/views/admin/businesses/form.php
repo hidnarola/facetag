@@ -145,7 +145,7 @@
                                     <a data-html="true" data-popup="popover-custom" data-trigger="hover" data-placement="right" data-content="If you check 'Display text instead of google address' option, this address will be display to user."><i class="icon-question4"></i></a>
                                 </label>
                                 <div class="col-lg-9">
-                                    <input type="text" name="address_display_text" id="address_display_text" class="form-control" required="required" placeholder="Address Text" value="<?php echo (isset($business_data)) ? $business_data['address_text'] : set_value('address_text'); ?>"/>
+                                    <input type="text" name="address_display_text" id="address_display_text" class="form-control" placeholder="Address Text" value="<?php echo (isset($business_data)) ? $business_data['address_text'] : set_value('address_text'); ?>"/>
                                     <?php
                                     echo '<label id="address_display_text-error" class="validation-error-label" for="address_display_text">' . form_error('address_display_text') . '</label>';
                                     ?>
