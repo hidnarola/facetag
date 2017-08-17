@@ -116,6 +116,12 @@ class Businesses extends CI_Controller {
             $check_business = $this->businesses_model->get_result($where);
             if ($check_business) {
                 $data['business_data'] = $check_business[0];
+                //-- IF business is saved then check user's email is uniquee or not
+                if ($check_business[0]['is_invite'] == 2) {
+                    if ($this->input->post('user_email') != $check_business[0]['email']) {
+                        $this->form_validation->set_rules('user_email', 'User Email', 'trim|required|valid_email|callback_is_uniquemail');
+                    }
+                }
                 $business_logo = $check_business[0]['logo'];
                 $data['title'] = 'facetag | Edit Business';
                 $data['heading'] = 'Edit ' . $check_business[0]['name'] . ' Business';
@@ -239,7 +245,8 @@ class Businesses extends CI_Controller {
                     $this->session->set_flashdata('success', '"' . trim($this->input->post('name')) . '" business updated successfully!');
                     //-- IF business is saved by admin and email is updated then update user's email also
                     if ($check_business[0]['is_invite'] == 2) {
-                        $this->users_model->update_record('id=' . $check_business[0]['user_id'], array('email' => trim($this->input->post('contact_email'))));
+//                        $this->users_model->update_record('id=' . $check_business[0]['user_id'], array('email' => trim($this->input->post('contact_email'))));
+                        $this->users_model->update_record('id=' . $check_business[0]['user_id'], array('email' => trim($this->input->post('user_email'))));
                     }
                 } else { //-- If business id is not present then add new business details
                     $password = $this->input->post('password');

@@ -137,8 +137,8 @@
                             }
                             ?>
                             <div class="form-group">
-                            <input type="checkbox" name="address_text" id="address_text" class="" onclick="$(this).val(this.checked ? 1 : 0)" value="<?php echo $check_val; ?>" <?php echo $checked; ?>/>&nbsp;
-                            <span class="checkbox-checked"><b>Display text instead of google address</b></span>
+                                <input type="checkbox" name="address_text" id="address_text" class="" onclick="$(this).val(this.checked ? 1 : 0)" value="<?php echo $check_val; ?>" <?php echo $checked; ?>/>&nbsp;
+                                <span class="checkbox-checked"><b>Display text instead of google address</b></span>
                             </div>
                             <div class="form-group address-text">
                                 <label class="col-lg-3 control-label">Address display text
@@ -248,7 +248,7 @@
                     <div class="col-md-4 col-sm-4">
                         <div class="app-profile-screen">
                             <h4>Business profile screen in App
-                            <a data-html="true" data-popup="popover-custom" data-trigger="hover" data-placement="top" data-content="This is the preview of business profile screen in App! Your business profile will look simillar like this"><i class="icon-question4"></i></a>
+                                <a data-html="true" data-popup="popover-custom" data-trigger="hover" data-placement="top" data-content="This is the preview of business profile screen in App! Your business profile will look simillar like this"><i class="icon-question4"></i></a>
                             </h4>
                             <img src="<?php echo base_url(); ?>assets/images/app_profile_screen.png">
                         </div>
@@ -315,6 +315,20 @@
                         </div>
                     </div>
                 </fieldset>
+                <?php if (isset($business_data) && $business_data['is_invite'] == 2) { ?>
+                    <fieldset class="content-group">
+                        <legend class="text-bold">User Details</legend>
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label required">Email Id<span class="text-danger">*</span></label>
+                            <div class="col-lg-6">
+                                <input class="form-control" type="text" placeholder="User Email" id="user_email" name="user_email" value="<?php echo (isset($business_data['email'])) ? $business_data['email'] : set_value('email'); ?>" required="required">
+                                <?php
+                                echo '<label id="user_email-error" class="validation-error-label" for="user_email">' . form_error('user_email') . '</label>';
+                                ?>
+                            </div>
+                        </div>
+                    </fieldset>
+                <?php } ?>
                 <fieldset class="content-group">
                     <legend class="text-bold">Contact (customer service/enquiry)<span class="text-danger">*</span> </legend>
                     <div class="form-group">
@@ -709,7 +723,7 @@
         });
     }
     $(document).ready(function () {
-         var display_address = <?php echo $business_data["display_text"]; ?>;
+        var display_address = <?php echo $business_data["display_text"]; ?>;
         if (display_address == 0) {
             $(".address-text").hide();
         }
