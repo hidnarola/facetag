@@ -325,7 +325,7 @@
     <?php $this->load->view('Templates/footer'); ?>
 </div>
 <script type="text/javascript" src="assets/js/cropper.js"></script>
-<script>
+<!--<script>
                                 /**
                                  * @file Allows uploading, cropping (with automatic resizing) and exporting
                                  * of images.
@@ -693,7 +693,7 @@
                                 } catch (error) {
                                     exceptionHandler(error.message);
                                 }
-</script>
+</script>-->
 <script type="text/javascript">
     //-- Start time and end time picker 
     $('.pickatime').pickatime({
