@@ -150,7 +150,7 @@
                     render: function (data, type, full, meta) {
                         status = '';
 //                        if (full.firstname == null && full.lastname == null && full.login_count == 0) {
-                        if (full.is_invite == 2 && full.login_count == 0) {
+                        if (full.is_invite == 2) {
                             status = '<span class="label bg-grey-400">Business Saved</span>';
                         } else if (full.is_invite == 1 && full.login_count == 0) {
                             status = '<span class="label bg-primary">Invitation sent</span>';
