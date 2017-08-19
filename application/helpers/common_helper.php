@@ -113,13 +113,13 @@ function upload_image($image_name, $image_path) {
             
             // Get new dimensions
             $percent = 0.5;
-            list($width, $height) = getimagesize($filename);
+            list($width, $height) = getimagesize($filePath);
             $new_width = $width;
             $new_height = $height;
 
             // Resample
             $image_p = imagecreatetruecolor($new_width, $new_height);
-            $image = imagecreatefromjpeg($filename);
+            $image = imagecreatefromjpeg($filePath);
             imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 
             // Output
