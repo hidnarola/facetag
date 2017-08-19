@@ -217,4 +217,16 @@ class Icp_images_model extends CI_Model {
         return $query->result_array();
     }
 
+    /**
+     * Get auto uploaded images by icp_id
+     * @param int $icp_id
+     * @author KU
+     */
+    public function get_auto_uploaded_images($icp_id) {
+        $this->db->select("image");
+        $this->db->where(['icp_id' => $icp_id, 'is_delete' => 0, 'upload_type' => 0]);
+        $query = $this->db->get(TBL_ICP_IMAGES);
+        return $query->result_array();
+    }
+
 }
