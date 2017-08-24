@@ -71,6 +71,7 @@ function qry($bool = false) {
 //}
 
 function upload_image($image_name, $image_path) {
+    ini_set('memory_limit', '512M');
     $CI = & get_instance();
     $extension = explode('/', $_FILES[$image_name]['type']);
     $randname = uniqid() . time() . '.' . end($extension);
