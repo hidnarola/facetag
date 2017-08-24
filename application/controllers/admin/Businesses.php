@@ -443,7 +443,8 @@ class Businesses extends CI_Controller {
         }
 
 
-        $file_namess = "business_autoscript";
+//        $file_namess = "business_autoscript";
+        $file_namess = uniqid() . time();
         $doc = ".sh";
         $name_for_file = $file_namess . $doc;
         $handle = fopen("shellscripts/" . $name_for_file, "w");
