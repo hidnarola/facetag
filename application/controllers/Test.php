@@ -1123,7 +1123,7 @@ class Test extends CI_Controller {
      */
     public function promo_images() {
         ini_set('max_execution_time', 0);
-        $res = $this->db->query('SELECT image,business_id from business_promo_images where is_delete=0 AND id BETWEEN 1 AND 500');
+        $res = $this->db->query('SELECT image,business_id from business_promo_images where is_delete=0 AND id BETWEEN 501 AND 1000');
         $result = $res->result_array();
         foreach ($result as $image) {
             $biz_dir = 'business_' . $image['business_id'];
