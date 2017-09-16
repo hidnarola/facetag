@@ -94,7 +94,7 @@ function upload_image($image_name, $image_path) {
         $filePath = $image_path . '/' . $imgname;
         $extension = pathinfo($filePath, PATHINFO_EXTENSION);
         if ($extension == 'jpg' || $extension == 'jpeg') {
-            $exif = exif_read_data($filePath);
+            $exif = @exif_read_data($filePath);
             if (!empty($exif['Orientation'])) {
                 $imageResource = imagecreatefromjpeg($filePath); // provided that the image is jpeg. Use relevant function otherwise
                 switch ($exif['Orientation']) {
@@ -248,7 +248,7 @@ function blur_image($image_name, $output_path) {
     $png_quality = 3;
     if ($extension == 'jpg' || $extension == 'jpeg') {
         $image = imagecreatefromjpeg($image_name);
-        $exif = exif_read_data($image_name);
+        $exif = @exif_read_data($image_name);
         $rotate = $image;
         if (isset($exif['Orientation'])) {
             switch ($exif['Orientation']) {
@@ -300,7 +300,7 @@ function crop_image($source_x, $source_y, $width, $height, $image_name, $icp_ima
     if ($extension == 'jpg' || $extension == 'jpeg') {
         $image = imagecreatefromjpeg($image_name);
 
-        $exif = exif_read_data($image_name);
+        $exif = @exif_read_data($image_name);
         $rotate = $image;
         if (isset($exif['Orientation'])) {
             switch ($exif['Orientation']) {
@@ -341,7 +341,7 @@ function thumbnail_image($src, $dest) {
     if ($extension == 'jpg' || $extension == 'jpeg') {
         $image = imagecreatefromjpeg($src);
 //          $source = imagecreatefromjpeg($filename);
-        $exif = exif_read_data($src);
+        $exif = @exif_read_data($src);
         $rotate = $image;
         if (isset($exif['Orientation'])) {
             switch ($exif['Orientation']) {
@@ -472,7 +472,7 @@ function resizeImage($file, $destination, $crop = FALSE) {
         $function = 'imagepng';
     }
 
-    $exif = exif_read_data($file);
+    $exif = @exif_read_data($file);
     $rotate = $src;
     switch ($exif['Orientation']) {
         case 3:
