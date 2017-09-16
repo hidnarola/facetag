@@ -111,7 +111,7 @@ function upload_image($image_name, $image_path) {
                         $image = $imageResource;
                 }
             }
-            
+
             // Get new dimensions
             $percent = 0.5;
             list($width, $height) = getimagesize($filePath);
@@ -125,7 +125,7 @@ function upload_image($image_name, $image_path) {
 
             // Output
             imagejpeg($image_p, $filePath, 100);
-            
+
 //            imagejpeg($image, $filePath);
             imagedestroy($image_p);
             imagedestroy($image);
@@ -335,6 +335,7 @@ function crop_image($source_x, $source_y, $width, $height, $image_name, $icp_ima
  * @param type $dest - Destination of the image
  */
 function thumbnail_image($src, $dest) {
+    ini_set('memory_limit', '512M');
     $extension = pathinfo($src, PATHINFO_EXTENSION);
 
     if ($extension == 'jpg' || $extension == 'jpeg') {
