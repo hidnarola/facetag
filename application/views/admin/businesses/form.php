@@ -667,13 +667,13 @@
                 $('#spn_ticket_url-error').html('');
             }
         }
-        if ($("#ch_description").val().match(/[\u3002\uff0c\uff1b]/)) {
-            $('#ch_description-error').html('');
-        } else {
-            $('#ch_description').focus();
-            $('#ch_description-error').html('Please enter valid chinese description');
-            flag = 1;
-        }
+//        if ($("#ch_description").val().match(/[\u3002\uff0c\uff1b]/)) {
+//            $('#ch_description-error').html('');
+//        } else {
+//            $('#ch_description').focus();
+//            $('#ch_description-error').html('Please enter valid chinese description');
+//            flag = 1;
+//        }
         var days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
         $.each(days, function (i, item) {
             if ($('#' + item + '_active').is(':checked')) {

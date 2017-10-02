@@ -1080,14 +1080,14 @@
         } else {
             $('#spn_description-error').html('');
         }
-        var ch_desc = $("#ch_description").val();
-        if (!ch_desc.match(/[\u3002\uff0c\uff1b]/)) {
-            $('#ch_description').focus();
-            $('#ch_description-error').html('Please enter valid chinese description');
-            flag = 1;
-        } else {
-            $('#ch_description-error').html('');
-        }
+//        var ch_desc = $("#ch_description").val();
+//        if (!ch_desc.match(/[\u3002\uff0c\uff1b]/)) {
+//            $('#ch_description').focus();
+//            $('#ch_description-error').html('Please enter valid chinese description');
+//            flag = 1;
+//        } else {
+//            $('#ch_description-error').html('');
+//        }
 
         /*
          if ($('#ticket_url').val() != '') {
