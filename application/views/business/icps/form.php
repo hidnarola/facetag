@@ -753,6 +753,14 @@
                         </div>
                     </div>
                 </fieldset>
+                <fieldset>
+                    <legend class="text-bold">#haashtags <a data-popup="popover-custom" data-trigger="hover" data-placement="top" data-content="Disclaimer: Businesses can enter their #hashtags in each ICP and whenever an image from that ICP is shared on a social platform that facilitates #hastagging they are automatically populated in each post"><i class="icon-question4"></i></a>
+                    </legend>
+                    <div class="form-group">
+                        <label>Hashtags</label>
+                        <input data-role="tagsinput" type="text" name="hashtags" id="hashtags" class="form-control tokenfield" value="<?php echo (isset($icp_data)) ? $icp_data['hashtags'] : set_value('hashtags'); ?>">
+                    </div>
+                </fieldset>
                 <div>
                     <button class="btn btn-success" type="submit" id="btn_submit">Save <i class="icon-arrow-right14 position-right"></i></button>
                 </div>

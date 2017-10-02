@@ -34,6 +34,9 @@
 <script type="text/javascript" src="assets/admin/js/plugins/ui/moment/moment.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/pickers/daterangepicker.js"></script>
 
+<script type="text/javascript" src="assets/admin/js/plugins/forms/tags/tagsinput.min.js"></script>
+<script type="text/javascript" src="assets/admin/js/plugins/forms/tags/tokenfield.min.js"></script>
+
 <script type="text/javascript" src="assets/admin/js/core/app.js"></script>
 <!--<script type="text/javascript" src="assets/admin/js/pages/dashboard.js"></script>--> 
 

@@ -376,6 +376,20 @@
                             ?>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Business promotional description (in chinese)</label>
+                        <div class="col-lg-6 ch_description">
+                            <textarea rows="4" cols="5" name="ch_description" id="ch_description" class="form-control" placeholder="Enter Business Description in chinese"><?php
+                                if (set_value('ch_description') != '')
+                                    echo set_value('ch_description');
+                                else if (isset($business_data))
+                                    echo $business_data['ch_description'];
+                                ?></textarea>
+                            <?php
+                            echo '<span id="ch_description-error" class="validation-error-label" for="ch_description">' . form_error('ch_description') . '</span>';
+                            ?>
+                        </div>
+                    </div>
                     <div class='form-group'>
                         <label class='col-lg-3 control-label' for='open_times'>Open times</label>
                         <div class="col-lg-7 open_times_div">
@@ -652,6 +666,13 @@
             } else {
                 $('#spn_ticket_url-error').html('');
             }
+        }
+        if ($("#ch_description").val().match(/[\u3002\uff0c\uff1b]/)) {
+            $('#ch_description-error').html('');
+        } else {
+            $('#ch_description').focus();
+            $('#ch_description-error').html('Please enter valid chinese description');
+            flag = 1;
         }
         var days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
         $.each(days, function (i, item) {

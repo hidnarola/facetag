@@ -108,7 +108,7 @@ class Icps extends CI_Controller {
 //            $this->form_validation->set_error_delimiters('<div class="alert alert-error alert-danger"><a class="close" data-dismiss="alert">×</a><strong>', '</strong></div>');
 //            $this->form_validation->set_error_delimiters('<label class="validation-error-label">', '</label>');
         } else {
-
+            $hashtags = NULL;
             $flag = $flag1 = $flag2 = 0;
 
             //-- Upload icp logo
@@ -310,6 +310,9 @@ class Icps extends CI_Controller {
                     $collection_address_longitude = $this->input->post('collection_address_longitude');
                     $collection_address_instructions = $this->input->post('collection_address_instructions');
                 }
+                if ($this->input->post('hashtags')) {
+                    $hashtags = str_replace(' ', '', $this->input->post('hashtags'));
+                }
                 $update_settings = array(
                     'preview_photo' => $icp_preview_image,
                     'frame_image' => $icp_frame_image,
@@ -350,6 +353,7 @@ class Icps extends CI_Controller {
                         'high_resolution_price' => $high_resolution_price,
                         'offer_printed_souvenir' => $offer_printed_souvenir,
                         'printed_souvenir_price' => $printed_souvenir_price,
+                        'hashtags' => $hashtags,
                         'modified' => date('Y-m-d H:i:s')
                     );
                     $this->icps_model->update_record('id=' . $icp_id, $update_array);
@@ -368,6 +372,7 @@ class Icps extends CI_Controller {
                         'high_resolution_price' => $high_resolution_price,
                         'offer_printed_souvenir' => $offer_printed_souvenir,
                         'printed_souvenir_price' => $this->input->post('printed_souvenir_price'),
+                        'hashtags' => $hashtags,
                         'is_active' => 1,
                         'created' => date('Y-m-d H:i:s'),
                         'modified' => date('Y-m-d H:i:s')

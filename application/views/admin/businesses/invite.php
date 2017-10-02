@@ -256,6 +256,15 @@
                             ?>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Business promotional description (in chinese)<br>(max 3000 (or 4000? Can't remember) characters)</label>
+                        <div class="col-lg-6">
+                            <textarea rows="3" cols="5" name="ch_description" class="form-control" placeholder="Enter Business Description in chinese"><?php echo (isset($business_data)) ? $business_data['ch_description'] : set_value('ch_description'); ?></textarea>
+                            <?php
+                            echo '<label id="ch_description-error" class="validation-error-label" for="ch_description">' . form_error('ch_description') . '</label>';
+                            ?>
+                        </div>
+                    </div>
                     <div class='form-group'>
                         <label class='col-lg-3 control-label' for='open_times'>Open times</label>
                         <div class="col-lg-7">
