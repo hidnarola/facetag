@@ -314,6 +314,16 @@
                             <span id="spn_ticket_url-error" class="validation-error-label" for="ticket_url"></span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Buy Ticket URL (For Chinese App)</label>
+                        <div class="col-lg-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="icon-ticket"></i></span>
+                                <input type="text" name="chinese_ticket_url" id="chinese_ticket_url" placeholder="Buy Ticket URL for chinese app version" class="form-control" value="<?php echo (isset($business_data)) ? $business_data['chinese_ticket_url'] : set_value('chinese_ticket_url'); ?>">
+                            </div>
+                            <span id="spn_chinese_ticket_url-error" class="validation-error-label" for="chinese_ticket_url"></span>
+                        </div>
+                    </div>
                 </fieldset>
                 <?php if (isset($business_data) && $business_data['is_invite'] == 2) { ?>
                     <fieldset class="content-group">
@@ -665,6 +675,15 @@
                 flag = 1;
             } else {
                 $('#spn_ticket_url-error').html('');
+            }
+        }
+        if ($('#chinese_ticket_url').val() != '') {
+            if (!checkURL($('#chinese_ticket_url').val())) {
+                $('#chinese_ticket_url').focus();
+                $('#spn_chinese_ticket_url-error').html('Please enter valid Ticket URL');
+                flag = 1;
+            } else {
+                $('#spn_chinese_ticket_url-error').html('');
             }
         }
 //        if ($("#ch_description").val().match(/[\u3002\uff0c\uff1b]/)) {

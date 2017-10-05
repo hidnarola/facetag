@@ -223,6 +223,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Buy Ticket URL (For Chinese App)</label>
+                        <div class="col-lg-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="icon-ticket"></i></span>
+                                <input type="text" name="chinese_ticket_url" id="chinese_ticket_url" placeholder="Buy Ticket URL for chinese app version" class="form-control" value="<?php echo (isset($business_data)) ? $business_data['chinese_ticket_url'] : set_value('chinese_ticket_url'); ?>">
+                            </div>
+                        </div>
+                    </div>
                 </fieldset>
                 <fieldset class="content-group">
                     <legend class="text-bold">Contact (customer service/enquiry)</legend>
@@ -874,6 +883,7 @@
                 instagram_url: "url",
                 website_url: "url",
                 ticket_url: "url",
+                chinese_ticket_url: "url",
                 digits: {
                     digits: true,
                     minlength: 6,
