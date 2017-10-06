@@ -271,5 +271,12 @@ class Icp_images_model extends CI_Model {
         $query = $this->db->get("connect_network" . ' c');
         return $query->row_array();
     }
+    
+     public function get_hashtags($icpid) {
+        $this->db->select('i.hashtags');
+        $this->db->where(array('i.id' => $icpid));
+        $query = $this->db->get(TBL_ICPS . ' i');
+        return $query->row_array();
+    }
 
 }

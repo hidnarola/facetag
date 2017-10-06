@@ -164,6 +164,12 @@ class Fb extends CI_Controller {
 //        exit;
         $icpid = $this->input->post('connect_icp_id');
         $accesstoken = $this->icp_images_model->get_icp_access_token($icpid);
+        $hashtags = $this->icp_images_model->get_hashtags($icpid);
+        $arr = explode(",",$hashtags['hashtags']);
+        $hashtag = '';
+        foreach ($arr as $tag) {
+            $hashtag .= '#'.$tag.' ';
+        }
         $this->facebook->setDefaultAccessToken($accesstoken['access_token']);
         $path = base_url() . 'uploads/icp_images/';
         $icpid = $this->input->post('connect_icp_id');
@@ -171,7 +177,7 @@ class Fb extends CI_Controller {
         $share_images = $this->icp_images_model->get_icp_selected_images($selected_images);
         $batch = array();
         foreach ($share_images as $k => $v) {
-            $batch[$k][$v['id']] = $this->facebook->request('POST', '/me/photos', array('source' => $this->facebook->fileToUpload($path . $v['image'])));
+            $batch[$k][$v['id']] = $this->facebook->request('POST', '/me/photos', array('message' => $hashtag,'source' => $this->facebook->fileToUpload($path . $v['image'])));
         }
 
         try {
