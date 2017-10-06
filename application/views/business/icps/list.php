@@ -174,18 +174,38 @@
                     sortable: false,
                     render: function (data, type, full, meta) {
                         $("#icp_id").val(full.id);
+                        action = '';
+                        action += '<ul class="icons-list">';
+                        action += '<li class="dropdown">';
+                        action += '<a href="#" class="dropdown-toggle" data-toggle="dropdown">';
+                        action += '<i class="icon-menu9"></i>';
+                        action += '</a>';
+                        action += '<ul class="dropdown-menu dropdown-menu-right">';
+                        action += '<li>';
                         if (full.is_active == 1) {
-                            action = '<a href="' + site_url + 'business/icps/edit/' + full.id + '" class="btn border-primary text-primary btn-flat btn-icon btn-rounded btn-xs" title="Edit Icp"><i class="icon-pencil3"></i></a>';
-                            action += '&nbsp;&nbsp;<a href="' + site_url + 'business/icps/icp_images/' + full.id + '" class="btn border-info text-info-600 btn-flat btn-icon btn-rounded btn-xs" title="Manage Images"><i class="icon-images2"></i></a>';
+                            action += '<a href="' + site_url + 'business/icps/edit/' + full.id + '" title="Edit Icp"><i class="icon-pencil3"></i>Edit Icp</a>';
+                            action += '&nbsp;&nbsp;<a href="' + site_url + 'business/icps/icp_images/' + full.id + '" title="Manage Images"><i class="icon-images2"></i>Manage Images</a>';
                             if (full.local_hotel_delivery == 1 && full.offer_printed_souvenir == 1) {
-                                action += '&nbsp;&nbsp;<a href="' + site_url + 'business/hotels/index/' + full.id + '" class="btn border-success text-success-600 btn-flat btn-icon btn-rounded btn-xs" title="Manange Hotels"><i class="icon-city"></i></a>';
+                                action += '&nbsp;&nbsp;<a href="' + site_url + 'business/hotels/index/' + full.id + '" title="Manange Hotels"><i class="icon-city"></i>Manange Hotels</a>';
                             }
-                            action += '&nbsp;&nbsp;<a href="' + site_url + 'business/icps/block/' + full.id + '" class="btn border-warning text-warning-600 btn-flat btn-icon btn-rounded btn-xs" onclick="return block_alert(this,\'block\')" title="Deactivate ICP"><i class="icon-blocked"></i></a>';
+                            action += '&nbsp;&nbsp;<a href="' + site_url + 'business/icps/block/' + full.id + '" onclick="return block_alert(this,\'block\')" title="Deactivate ICP"><i class="icon-blocked"></i>Deactivate ICP</a>';
                         } else {
-                            action = '<a href="' + site_url + 'business/icps/block/' + full.id + '" class="btn border-success text-success-600 btn-flat btn-icon btn-rounded btn-xs" title="Activate ICP" onclick="return block_alert(this,\'unblock\')" ><i class="icon-checkmark4"></i></a>';
+                            action = '<a href="' + site_url + 'business/icps/block/' + full.id + '" title="Activate ICP" onclick="return block_alert(this,\'unblock\')" ><i class="icon-checkmark4"></i>Activate ICP</a>';
                         }
-                        action += '&nbsp;&nbsp;<a href="' + site_url + 'business/icps/delete/' + full.id + '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete Icp"><i class="icon-cross2"></i></a>';
-                        action += '&nbsp;&nbsp;<a href="javascript:void(0)" onclick="show_popup(this)" data-id="' + full.id + '" data-target="#autoUploadImagesModal" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" title="Upload images automatically"><i class="icon-file-download2"></i></a>';
+                        action += '&nbsp;&nbsp;<a href="' + site_url + 'business/icps/delete/' + full.id + '" onclick="return confirm_alert(this)" title="Delete Icp"><i class="icon-cross2"></i>Delete Icp</a>';
+                        action += '&nbsp;&nbsp;<a href="javascript:void(0)" onclick="show_popup(this)" data-target="#autoUploadImagesModal" data-id="' + full.id + '" title="Upload images automatically"><i class="icon-file-download2"></i>Upload images automatically</a>';
+                        
+                        if(full.image_url) {
+                            action += '&nbsp;&nbsp;<a onclick="return disconnect_alert(this)" href="' + site_url + 'business/icps/disconnect_fb/' + full.id + '" title="' + full.account_name + ' is connected"><i class="icon-facebook"></i>Disconnect Facebook</a>';
+                        }else {
+                        action += '&nbsp;&nbsp;<a href="' + site_url + 'business/icps/connect_fb/' + full.id + '" title="Connect to Facebook"><i class="icon-facebook"></i>Connect to Facebook</a>';
+                            }
+                        action += '</li>';
+                        action += '</ul>';
+                        action += '</li>';
+                        action += '</ul>';
+
+//                        action='<ul class="icons-list"><li class="text-teal-600"><a href="" id="edit" class="edit"><i class="icon-pencil7"></i></a></li><li class="text-purple-700"><a href="" id="view_" data-record="" class="view"><i class="icon-eye"></i></a></li><li class="text-danger-600"><a id="delete_" data-record="" class="delete"><i class="icon-trash"></i></a></li></ul>'
                         return action;
                     }
                 },
@@ -222,6 +242,25 @@
                 return false;
             }
         });
+        return false;
+    }
+    function disconnect_alert(e) {
+        swal({
+            title: "Are you sure?",
+            text: "You are about to disconnect this ICP from connected facebook account!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#FF7043",
+            confirmButtonText: "Yes, disconnect it!"
+        },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = $(e).attr('href');
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
         return false;
     }
     function block_alert(e, type) {

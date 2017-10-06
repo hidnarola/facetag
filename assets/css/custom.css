@@ -20,6 +20,11 @@
     margin-right: 20px;
     margin-bottom: -15px;
 }
+.share-img{min-height: 125px; max-height: 125px;}
+.share-thumbnail{
+    border: 1px solid #ddd !important;
+    border-radius: 5px;
+}
 .popover{width: 100%;}
 .btn-icon.btn-xs, .input-group-xs > .input-group-btn > .btn.btn-icon{margin-top: 2px;}
 .app-profile-screen img{height: 100%;width: 100%;}

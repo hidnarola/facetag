@@ -15,6 +15,7 @@ class Icps extends CI_Controller {
         $this->load->model('icps_model');
         $this->load->model('location_model');
         $this->load->model('icp_images_model');
+        $this->load->model('social_media_model');
         $this->load->model('icp_imagetag_model');
         $this->load->model('hotels_model');
         $this->load->library('facerecognition');
@@ -29,6 +30,24 @@ class Icps extends CI_Controller {
         $data['title'] = 'facetag | ICPs';
         $data['heading'] = 'ICPs';
         $this->template->load('default', 'business/icps/list', $data);
+    }
+    
+    /*@ANP : connect FB.*/
+    public function connect_fb($icp_id) {
+        $this->session->set_userdata('assign_network_to_icp', ['icp_id' => $icp_id]);
+        redirect('fb/connect');
+    }
+    
+    /* @ANP : Disconnect FB. */
+
+    public function disconnect_fb($icp_id) {
+
+        if ($this->social_media_model->disconnect_from_fb($icp_id)) {
+            $this->session->set_flashdata('success', 'Disconnect from facebook account successfully!');
+        } else {
+            $this->session->set_flashdata('error', 'Please try again!');
+        }
+        redirect('business/icps');
     }
 
     /**

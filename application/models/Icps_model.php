@@ -33,12 +33,12 @@ class Icps_model extends CI_Model {
      * @return array
      */
     public function get_all_icps($business_id = NULL, $type = 'result') {
-        $columns = ['i.id', 'i.icp_logo', 'i.name', 'i.description', 'icp_images', 'matched_images', 'i.created'];
+        $columns = ['i.id', 'i.icp_logo', 'i.name', 'i.description', 'icp_images', 'matched_images', 'i.created', 'c.image_url', 'c.social_id', 'c.access_token'];
 
         $keyword = $this->input->get('search');
 
         $select = '(SELECT count(m.id) FROM ' . TBL_ICP_IMAGE_TAG . ' m LEFT JOIN ' . TBL_ICP_IMAGES . ' img on m.icp_image_id=img.id WHERE img.icp_id=i.id) as matched_images';
-        $this->db->select('i.*,is.local_hotel_delivery,(SELECT count(id) FROM ' . TBL_ICP_IMAGES . ' WHERE icp_id=i.id and is_delete=0) as icp_images,' . $select);
+        $this->db->select('i.*,c.account_name,c.image_url,c.social_id,c.access_token,is.local_hotel_delivery,(SELECT count(id) FROM ' . TBL_ICP_IMAGES . ' WHERE icp_id=i.id and is_delete=0) as icp_images,' . $select);
 
         if (!is_null($business_id)) {
             $this->db->where('i.business_id', $business_id);

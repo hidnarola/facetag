@@ -228,5 +228,12 @@ class Icp_images_model extends CI_Model {
         $query = $this->db->get(TBL_ICP_IMAGES);
         return $query->result_array();
     }
+    
+    public function get_icp_access_token($icpid) {
+        $this->db->select('c.access_token');
+        $this->db->where(array('c.icp_id' => $icpid));
+        $query = $this->db->get("connect_network" . ' c');
+        return $query->row_array();
+    }
 
 }
