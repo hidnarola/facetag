@@ -50,6 +50,7 @@ class Icps_model extends CI_Model {
 
         $this->db->where('i.is_delete', 0);
         $this->db->join(TBL_ICP_SETTINGS . ' is', 'i.id=is.icp_id', 'left');
+        $this->db->join('connect_network' . ' c', 'i.id=c.icp_id', 'left');
         $this->db->order_by($columns[$this->input->get('order')[0]['column']], $this->input->get('order')[0]['dir']);
 
         if ($type == 'count') {
