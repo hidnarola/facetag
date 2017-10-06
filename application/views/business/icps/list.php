@@ -193,7 +193,7 @@
                             action = '<a href="' + site_url + 'business/icps/block/' + full.id + '" title="Activate ICP" onclick="return block_alert(this,\'unblock\')" ><i class="icon-checkmark4"></i>Activate ICP</a>';
                         }
                         action += '&nbsp;&nbsp;<a href="' + site_url + 'business/icps/delete/' + full.id + '" onclick="return confirm_alert(this)" title="Delete Icp"><i class="icon-cross2"></i>Delete Icp</a>';
-                        action += '&nbsp;&nbsp;<a href="javascript:void(0)" onclick="show_popup(this)" data-target="#autoUploadImagesModal" data-id="' + full.id + '" title="Upload images automatically"><i class="icon-file-download2"></i>Upload images automatically</a>';
+                        action += '&nbsp;&nbsp;<a href="javascript:void(0);" onclick="show_popup(this)" data-target="#autoUploadImagesModal" data-id="' + full.id + '" title="Upload images automatically"><i class="icon-file-download2"></i>Upload images automatically</a>';
                         
                         if(full.image_url) {
                             action += '&nbsp;&nbsp;<a onclick="return disconnect_alert(this)" href="' + site_url + 'business/icps/disconnect_fb/' + full.id + '" title="' + full.account_name + ' is connected"><i class="icon-facebook"></i>Disconnect Facebook</a>';
