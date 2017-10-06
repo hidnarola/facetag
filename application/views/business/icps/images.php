@@ -160,7 +160,7 @@
                     <a href="<?php echo site_url('business/icps/add_image/' . $icp_data['id']); ?>" class="btn btn-success btn-labeled"><b><i class="icon-image2"></i></b> Add ICP Image</a>
                 </div>-->
         <div class="panel-heading text-right">
-            <a href="javascript:void(0);" data-backdrop="static" data-toggle="modal" data-target="#modal_share_images" class="btn btn-primary btn-labeled"><b><i class="icon-facebook"></i></b> Post images on Facebook</a>
+            <a href="#" data-backdrop="static" data-toggle="modal" data-target="#modal_share_images" class="btn btn-primary btn-labeled"><b><i class="icon-facebook"></i></b> Post images on Facebook</a>
         </div>
         <table class="table datatable-basic">
             <thead>
