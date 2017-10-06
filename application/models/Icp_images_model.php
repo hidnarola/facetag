@@ -237,6 +237,21 @@ class Icp_images_model extends CI_Model {
             return $query->result_array();
         }
     }
+    
+    public function get_icp_selected_images($selected_images) {
+        $columns = ['id', 'image', 'created', 'icp_images', 'image_capture_time', 'created'];
+
+        $keyword = $this->input->get('search');
+
+        $this->db->select('*');
+
+        $this->db->where('is_delete', 0);
+        $this->db->where_in('id', $selected_images);
+
+
+            $query = $this->db->get(TBL_ICP_IMAGES);
+            return $query->result_array();
+    }
 
     /**
      * Get auto uploaded images by icp_id
