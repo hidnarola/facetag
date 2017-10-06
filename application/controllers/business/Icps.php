@@ -75,6 +75,20 @@ class Icps extends CI_Controller {
         }
         echo json_encode($final);
     }
+    
+    public function get_icp_images_to_post($icp_id = NULL) {
+
+        $final = array();
+        if ($icp_id != '') {
+            $final['recordsTotal'] = $this->icp_images_model->get_icp_images_to_post($icp_id, 'count');
+            $final['redraw'] = 1;
+            $final['recordsFiltered'] = $final['recordsTotal'];
+            $icp_images = $this->icp_images_model->get_icp_images_to_post($icp_id, 'result');
+
+            $final['data'] = $icp_images;
+        }
+        echo json_encode($final);
+    }
 
     /**
      * Add/Edit Business ICP
