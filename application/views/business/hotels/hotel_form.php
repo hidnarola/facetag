@@ -117,6 +117,7 @@
                     echo '<i class="icon-plus-circle2"></i>';
                 ?> 
                 <span class="text-semibold"><?php echo $heading; ?></span>
+                
             </h4>
         </div>
     </div>
