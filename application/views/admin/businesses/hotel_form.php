@@ -104,6 +104,7 @@
 <script type="text/javascript" src="assets/admin/js/plugins/forms/selects/select2.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/uploaders/fileinput.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/pages/form_validation.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry,places&key=AIzaSyBR_zVH9ks9bWwA-8AzQQyD6mkawsfF9AI"></script>
 <div class="page-header page-header-default">
     <div class="page-header-content">
         <div class="page-title">
@@ -158,24 +159,24 @@
                             <div class="media no-margin-top preview_photo_div_wrapper">
                                 <div class="media-left" id="preview_photo_div">
                                     <?php
-                                if (isset($hotel_data) && $hotel_data['hotel_pic'] != '') {
-                                    $required = '';
-                                    ?>
-                                    <img src="<?php echo HOTEL_IMAGES . $hotel_data['hotel_pic'] ?>" style="width: 58px; height: 58px; border-radius: 2px;" alt="">
-                                    <?php
-                                } else {
-                                    $required = 'required="required"';
-                                    ?>
-                                    <img src="assets/admin/images/placeholder.jpg" style="width: 58px; height: 58px; border-radius: 2px;" alt="">
-                                <?php } ?>
+                                    if (isset($hotel_data) && $hotel_data['hotel_pic'] != '') {
+                                        $required = '';
+                                        ?>
+                                        <img src="<?php echo HOTEL_IMAGES . $hotel_data['hotel_pic'] ?>" style="width: 58px; height: 58px; border-radius: 2px;" alt="">
+                                        <?php
+                                    } else {
+                                        $required = 'required="required"';
+                                        ?>
+                                        <img src="assets/admin/images/placeholder.jpg" style="width: 58px; height: 58px; border-radius: 2px;" alt="">
+                                    <?php } ?>
                                 </div>
                                 <div class="media-body">
                                     <input type="file" name="preview_photo" id="preview_photo" class="previewfile-styled" onchange="readpreview_photo(this);" <?php echo $required; ?>>
                                     <span class="help-block">Accepted formats: png, jpg. Max file size 2Mb</span>
                                 </div>
                                 <div style="opacity: 0;height: 0;">
-                                <canvas id="canvas1" width="58" height="58" border="0"></canvas>
-                            </div>
+                                    <canvas id="canvas1" width="58" height="58" border="0"></canvas>
+                                </div>
                             </div>
                             <?php
                             if (isset($preview_photo_validation))
@@ -193,12 +194,31 @@
                             ?>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-lg-2 control-label">Hotel Address<span class="text-danger">*</span></label>
+                    <div class="form-group address1">
+                        <label class="col-lg-2 control-label">Hotel Address
+                            <span class="text-danger">*</span></label>
                         <div class="col-lg-5">
-                            <textarea name="address" id="address" placeholder="Enter Hotel Address" required="required" class="form-control" rows="3"><?php echo (isset($hotel_data)) ? $hotel_data['address'] : set_value('address'); ?></textarea>
+                            <input type="text" name="address" id="address" class="form-control" required="required" placeholder="Enter Hotel Address" value="<?php echo (isset($hotel_data)) ? $hotel_data['address'] : set_value('address'); ?>"/>
                             <?php
                             echo '<label id="address-error" class="validation-error-label" for="address">' . form_error('address') . '</label>';
+                            ?>
+                        </div>
+                    </div>
+                    <div class="form-group" id="mapContainer">
+                        <div id="map-canvas" style="height:350px;display: none"></div>
+                    </div>
+
+                    <div class="form-group" style="display: none" id="lat-lng-div">
+                        <div class="col-sm-6">
+                            <input class="form-control" type="text" placeholder="Latitude" id="latitude" name="latitude" value="<?php echo (isset($hotel_data)) ? $hotel_data['latitude'] : set_value('latitude'); ?>" readonly>
+                            <?php
+                            echo '<label id="latitude-error" class="validation-error-label" for="latitude">' . form_error('latitude') . '</label>';
+                            ?>
+                        </div>
+                        <div class="col-sm-6">
+                            <input class="form-control" type="text" placeholder="Longitude" id="longitude" name="longitude" value="<?php echo (isset($hotel_data)) ? $hotel_data['longitude'] : set_value('longitude'); ?>" readonly>
+                            <?php
+                            echo '<label id="longitude-error" class="validation-error-label" for="longitude">' . form_error('longitude') . '</label>';
                             ?>
                         </div>
                     </div>
@@ -220,6 +240,122 @@
     $('[data-popup=popover-custom]').popover({
         template: '<div class="popover border-teal-400"><div class="arrow"></div><h3 class="popover-title bg-teal-400"></h3><div class="popover-content"></div></div>'
     });
+
+    var infowindow = new google.maps.InfoWindow();
+    var map = new google.maps.Map(document.getElementById("map-canvas"));
+    var hotel_address = "";
+<?php if (isset($hotel_data) && $hotel_data['latitude'] != '' && $hotel_data['longitude'] != '') { ?>
+        lat = '<?php echo $hotel_data['latitude'] ?>';
+        long = '<?php echo $hotel_data['longitude'] ?>';
+        hotel_address = '<?php echo $hotel_data['address'] ?>';
+        generateMap(lat, long);
+<?php } ?>
+    //Google auotocomplete for hotel address
+    google.maps.event.addDomListener(window, 'load', function () {
+        var options = {
+            types: ['establishment'],
+        };
+        var hotelAddress = new google.maps.places.Autocomplete(document.getElementById('address'));
+        google.maps.event.addListener(hotelAddress, 'place_changed', function () {
+            var place = hotelAddress.getPlace();
+            var address = place.formatted_address;
+            /*Use to get latitude and longitude */
+
+            var latitude = place.geometry.location.lat();
+            var longitude = place.geometry.location.lng();
+
+            var mesg = "Address: " + address;
+            mesg += "\nLatitude: " + latitude;
+            mesg += "\nLongitude: " + longitude;
+
+            $("#latitude").val(latitude);
+            $("#longitude").val(longitude);
+            hotel_address = $("#address").val();
+            generateMap(latitude, longitude);
+//            setAddressFromPlace(place);
+        });
+    });
+
+    //Generates the map from latitude and longitude
+    function generateMap(latitude, longitude) {
+        $('#map-canvas').show();
+        $('#lat-lng-div').show();
+        var latlngPos = new google.maps.LatLng(latitude, longitude);
+        //var infowindow = new google.maps.InfoWindow();
+        var geocoder = new google.maps.Geocoder();
+        map = new google.maps.Map(document.getElementById("map-canvas"), {
+            center: new google.maps.LatLng(latitude, longitude),
+            zoom: 13,
+            mapTypeId: 'roadmap'
+        });
+        marker = new google.maps.Marker({
+            map: map,
+            position: latlngPos,
+            draggable: true
+        });
+        geocoder.geocode({'latLng': latlngPos}, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    infowindow.setContent(results[0].formatted_address);
+                    infowindow.open(map, marker);
+                }
+            }
+        });
+        google.maps.event.addListener(marker, 'dragend', function () {
+            geocoder.geocode({
+                latLng: marker.getPosition()
+            }, function (responses) {
+                if (responses && responses.length > 0) {
+                    $('#address').val(responses[0].formatted_address);
+                    infowindow.setContent(responses[0].formatted_address);
+                    $("#latitude").val(marker.getPosition().lat());
+                    $("#longitude").val(marker.getPosition().lng());
+                    setAddressFromPlace(responses[0]);
+                    //updateMarkerAddress(responses[0].formatted_address);
+                } else {
+                    $('#address').val('');
+                    infowindow.setContent('');
+                    $("#latitude").val('');
+                    $("#longitude").val('');
+                    //updateMarkerAddress('Cannot determine address at this location.');
+                }
+            });
+        });
+    }
+    //--Foucs out event of address textbox
+    $("#address").focusout(function () {
+        window.setTimeout(function () {
+            if ($("#latitude").val() == '' && $("#longitude").val() == '') {
+                if ($("#address").val() != "") {
+                    getLatLongForAdd($("#address").val());
+                }
+            } else if (hotel_address != $("#address").val()) {
+                if ($("#address").val() != "") {
+                    getLatLongForAdd($("#address").val());
+                }
+            }
+        }, 3000);
+    });
+    //-- Gets the latitude and longitude from the address if its not selected from google autocomplete
+    function getLatLongForAdd(address) {
+        var replaced = address.split(' ').join('+');
+        var replaced = replaced.split(',').join('');
+        var url = "http://maps.google.com/maps/api/geocode/json?address=" + replaced + "&sensor=false";
+        $.ajax({
+            url: url,
+            success: function (data) {
+                if (data.results && data.results.length > 0) {
+                    var latitude = data.results[0].geometry.location.lat;
+                    var longitude = data.results[0].geometry.location.lng;
+                    if (latitude && longitude) {
+                        $("#latitude").val(latitude);
+                        $("#longitude").val(longitude);
+                        generateMap(latitude, longitude);
+                    }
+                }
+            }
+        });
+    }
 
     // File input
     $(".previewfile-styled").uniform({
