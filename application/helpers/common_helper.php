@@ -71,6 +71,7 @@ function qry($bool = false) {
 //}
 
 function upload_image($image_name, $image_path) {
+    ini_set('memory_limit', '512M');
     $CI = & get_instance();
     $extension = explode('/', $_FILES[$image_name]['type']);
     $randname = uniqid() . time() . '.' . end($extension);
@@ -93,7 +94,7 @@ function upload_image($image_name, $image_path) {
         $filePath = $image_path . '/' . $imgname;
         $extension = pathinfo($filePath, PATHINFO_EXTENSION);
         if ($extension == 'jpg' || $extension == 'jpeg') {
-            $exif = exif_read_data($filePath);
+            $exif = @exif_read_data($filePath);
             if (!empty($exif['Orientation'])) {
                 $imageResource = imagecreatefromjpeg($filePath); // provided that the image is jpeg. Use relevant function otherwise
                 switch ($exif['Orientation']) {
@@ -110,21 +111,21 @@ function upload_image($image_name, $image_path) {
                         $image = $imageResource;
                 }
             }
-            
+
             // Get new dimensions
             $percent = 0.5;
-            list($width, $height) = getimagesize($filename);
+            list($width, $height) = getimagesize($filePath);
             $new_width = $width;
             $new_height = $height;
 
             // Resample
             $image_p = imagecreatetruecolor($new_width, $new_height);
-            $image = imagecreatefromjpeg($filename);
+            $image = imagecreatefromjpeg($filePath);
             imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
 
             // Output
             imagejpeg($image_p, $filePath, 100);
-            
+
 //            imagejpeg($image, $filePath);
             imagedestroy($image_p);
             imagedestroy($image);
@@ -247,7 +248,7 @@ function blur_image($image_name, $output_path) {
     $png_quality = 3;
     if ($extension == 'jpg' || $extension == 'jpeg') {
         $image = imagecreatefromjpeg($image_name);
-        $exif = exif_read_data($image_name);
+        $exif = @exif_read_data($image_name);
         $rotate = $image;
         if (isset($exif['Orientation'])) {
             switch ($exif['Orientation']) {
@@ -299,7 +300,7 @@ function crop_image($source_x, $source_y, $width, $height, $image_name, $icp_ima
     if ($extension == 'jpg' || $extension == 'jpeg') {
         $image = imagecreatefromjpeg($image_name);
 
-        $exif = exif_read_data($image_name);
+        $exif = @exif_read_data($image_name);
         $rotate = $image;
         if (isset($exif['Orientation'])) {
             switch ($exif['Orientation']) {
@@ -334,12 +335,13 @@ function crop_image($source_x, $source_y, $width, $height, $image_name, $icp_ima
  * @param type $dest - Destination of the image
  */
 function thumbnail_image($src, $dest) {
+    ini_set('memory_limit', '512M');
     $extension = pathinfo($src, PATHINFO_EXTENSION);
 
     if ($extension == 'jpg' || $extension == 'jpeg') {
         $image = imagecreatefromjpeg($src);
 //          $source = imagecreatefromjpeg($filename);
-        $exif = exif_read_data($src);
+        $exif = @exif_read_data($src);
         $rotate = $image;
         if (isset($exif['Orientation'])) {
             switch ($exif['Orientation']) {
@@ -470,7 +472,7 @@ function resizeImage($file, $destination, $crop = FALSE) {
         $function = 'imagepng';
     }
 
-    $exif = exif_read_data($file);
+    $exif = @exif_read_data($file);
     $rotate = $src;
     switch ($exif['Orientation']) {
         case 3:

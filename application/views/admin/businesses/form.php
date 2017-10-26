@@ -137,15 +137,15 @@
                             }
                             ?>
                             <div class="form-group">
-                            <input type="checkbox" name="address_text" id="address_text" class="" onclick="$(this).val(this.checked ? 1 : 0)" value="<?php echo $check_val; ?>" <?php echo $checked; ?>/>&nbsp;
-                            <span class="checkbox-checked"><b>Display text instead of google address</b></span>
+                                <input type="checkbox" name="address_text" id="address_text" class="" onclick="$(this).val(this.checked ? 1 : 0)" value="<?php echo $check_val; ?>" <?php echo $checked; ?>/>&nbsp;
+                                <span class="checkbox-checked"><b>Display text instead of google address</b></span>
                             </div>
                             <div class="form-group address-text">
                                 <label class="col-lg-3 control-label">Address display text
                                     <a data-html="true" data-popup="popover-custom" data-trigger="hover" data-placement="right" data-content="If you check 'Display text instead of google address' option, this address will be display to user."><i class="icon-question4"></i></a>
                                 </label>
                                 <div class="col-lg-9">
-                                    <input type="text" name="address_display_text" id="address_display_text" class="form-control" required="required" placeholder="Address Text" value="<?php echo (isset($business_data)) ? $business_data['address_text'] : set_value('address_text'); ?>"/>
+                                    <input type="text" name="address_display_text" id="address_display_text" class="form-control" placeholder="Address Text" value="<?php echo (isset($business_data)) ? $business_data['address_text'] : set_value('address_text'); ?>"/>
                                     <?php
                                     echo '<label id="address_display_text-error" class="validation-error-label" for="address_display_text">' . form_error('address_display_text') . '</label>';
                                     ?>
@@ -248,7 +248,7 @@
                     <div class="col-md-4 col-sm-4">
                         <div class="app-profile-screen">
                             <h4>Business profile screen in App
-                            <a data-html="true" data-popup="popover-custom" data-trigger="hover" data-placement="top" data-content="This is the preview of business profile screen in App! Your business profile will look simillar like this"><i class="icon-question4"></i></a>
+                                <a data-html="true" data-popup="popover-custom" data-trigger="hover" data-placement="top" data-content="This is the preview of business profile screen in App! Your business profile will look simillar like this"><i class="icon-question4"></i></a>
                             </h4>
                             <img src="<?php echo base_url(); ?>assets/images/app_profile_screen.png">
                         </div>
@@ -314,7 +314,36 @@
                             <span id="spn_ticket_url-error" class="validation-error-label" for="ticket_url"></span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Buy Ticket URL (For Chinese App)</label>
+                        <div class="col-lg-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="icon-ticket"></i></span>
+                                <input type="text" name="chinese_ticket_url" id="chinese_ticket_url" placeholder="Buy Ticket URL for chinese app version" class="form-control" value="<?php echo (isset($business_data)) ? $business_data['chinese_ticket_url'] : set_value('chinese_ticket_url'); ?>">
+                            </div>
+                            <span id="spn_chinese_ticket_url-error" class="validation-error-label" for="chinese_ticket_url"></span>
+                        </div>
+                    </div>
                 </fieldset>
+                <?php if (isset($business_data) && $business_data['is_invite'] == 2) { ?>
+                    <fieldset class="content-group">
+                        <legend class="text-bold">User Details</legend>
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label required">Email Id<span class="text-danger">*</span></label>
+                            <div class="col-lg-6">
+                                <input class="form-control" type="text" placeholder="User Email" id="user_email" name="user_email" value="<?php
+                                if (form_error('user_email') != '')
+                                    echo set_value('user_email');
+                                else if (isset($business_data['email']))
+                                    echo $business_data['email'];
+                                ?>" required="required">
+                                       <?php
+                                       echo '<label id="user_email-error" class="validation-error-label" for="user_email">' . form_error('user_email') . '</label>';
+                                       ?>
+                            </div>
+                        </div>
+                    </fieldset>
+                <?php } ?>
                 <fieldset class="content-group">
                     <legend class="text-bold">Contact (customer service/enquiry)<span class="text-danger">*</span> </legend>
                     <div class="form-group">
@@ -346,9 +375,28 @@
                     <div class="form-group">
                         <label class="col-lg-3 control-label">Business promotional description <span class="text-danger">*</span></label>
                         <div class="col-lg-6">
-                            <textarea rows="4" cols="5" name="description" class="form-control" placeholder="Enter Business Description" required="required"><?php echo (isset($business_data)) ? $business_data['description'] : set_value('description'); ?></textarea>
+                            <textarea rows="4" cols="5" name="description" class="form-control" placeholder="Enter Business Description" required="required"><?php
+                                if (set_value('description') != '')
+                                    echo set_value('description');
+                                else if (isset($business_data))
+                                    echo $business_data['description'];
+                                ?></textarea>
                             <?php
                             echo '<label id="description-error" class="validation-error-label" for="description">' . form_error('description') . '</label>';
+                            ?>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Business promotional description (in chinese)</label>
+                        <div class="col-lg-6 ch_description">
+                            <textarea rows="4" cols="5" name="ch_description" id="ch_description" class="form-control" placeholder="Enter Business Description in chinese"><?php
+                                if (set_value('ch_description') != '')
+                                    echo set_value('ch_description');
+                                else if (isset($business_data))
+                                    echo $business_data['ch_description'];
+                                ?></textarea>
+                            <?php
+                            echo '<span id="ch_description-error" class="validation-error-label" for="ch_description">' . form_error('ch_description') . '</span>';
                             ?>
                         </div>
                     </div>
@@ -629,6 +677,22 @@
                 $('#spn_ticket_url-error').html('');
             }
         }
+        if ($('#chinese_ticket_url').val() != '') {
+            if (!checkURL($('#chinese_ticket_url').val())) {
+                $('#chinese_ticket_url').focus();
+                $('#spn_chinese_ticket_url-error').html('Please enter valid Ticket URL');
+                flag = 1;
+            } else {
+                $('#spn_chinese_ticket_url-error').html('');
+            }
+        }
+//        if ($("#ch_description").val().match(/[\u3002\uff0c\uff1b]/)) {
+//            $('#ch_description-error').html('');
+//        } else {
+//            $('#ch_description').focus();
+//            $('#ch_description-error').html('Please enter valid chinese description');
+//            flag = 1;
+//        }
         var days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
         $.each(days, function (i, item) {
             if ($('#' + item + '_active').is(':checked')) {
@@ -709,7 +773,7 @@
         });
     }
     $(document).ready(function () {
-         var display_address = <?php echo $business_data["display_text"]; ?>;
+        var display_address = <?php echo $business_data["display_text"]; ?>;
         if (display_address == 0) {
             $(".address-text").hide();
         }

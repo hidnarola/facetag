@@ -216,5 +216,67 @@ class Icp_images_model extends CI_Model {
         $query = $this->db->get(TBL_ICP_IMAGE_TAG . ' imgtag');
         return $query->result_array();
     }
+    public function get_icp_images_to_post($icp_id = NULL, $type = 'result') {
+        $columns = ['id', 'image', 'created', 'icp_images', 'image_capture_time', 'created'];
+
+        $keyword = $this->input->get('search');
+
+        $this->db->select('*,(select count(id) from ' . TBL_ICP_IMAGES . ' where icp_id=id) as icp_images');
+
+        if (!is_null($icp_id)) {
+            $this->db->where('icp_id', $icp_id);
+        }
+
+        $this->db->where('is_delete', 0);
+
+        if ($type == 'count') {
+            $query = $this->db->get(TBL_ICP_IMAGES);
+            return $query->num_rows();
+        } else {
+            $query = $this->db->get(TBL_ICP_IMAGES);
+            return $query->result_array();
+        }
+    }
+    
+    public function get_icp_selected_images($selected_images) {
+        $columns = ['id', 'image', 'created', 'icp_images', 'image_capture_time', 'created'];
+
+        $keyword = $this->input->get('search');
+
+        $this->db->select('*');
+
+        $this->db->where('is_delete', 0);
+        $this->db->where_in('id', $selected_images);
+
+
+            $query = $this->db->get(TBL_ICP_IMAGES);
+            return $query->result_array();
+    }
+
+    /**
+     * Get auto uploaded images by icp_id
+     * @param int $icp_id
+     * @author KU
+     */
+    public function get_auto_uploaded_images($icp_id) {
+        $this->db->select("image");
+        $this->db->where(['icp_id' => $icp_id, 'is_delete' => 0, 'upload_type' => 0]);
+        $query = $this->db->get(TBL_ICP_IMAGES);
+        return $query->result_array();
+    }
+    
+    public function get_icp_access_token($icpid) {
+        $this->db->select('c.access_token');
+        $this->db->where(array('c.icp_id' => $icpid));
+        $query = $this->db->get("connect_network" . ' c');
+        return $query->row_array();
+    }
+    
+     public function get_hashtags($icpid) {
+        $this->db->select('i.hashtags');
+        $this->db->where(array('i.id' => $icpid));
+        $query = $this->db->get(TBL_ICPS . ' i');
+        return $query->row_array();
+    }
 
 }

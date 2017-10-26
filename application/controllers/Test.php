@@ -1118,4 +1118,25 @@ class Test extends CI_Controller {
 //        die;
     }
 
+    /**
+     * Upload small promo images to the folder
+     */
+    public function promo_images() {
+        ini_set('max_execution_time', 0);
+        $res = $this->db->query('SELECT image,business_id from business_promo_images where is_delete=0 AND id BETWEEN 501 AND 1000');
+        $result = $res->result_array();
+        foreach ($result as $image) {
+            $biz_dir = 'business_' . $image['business_id'];
+
+            if (!file_exists(BUSINESS_SMALL_PROMO_IMAGES . $biz_dir)) {
+                mkdir(BUSINESS_SMALL_PROMO_IMAGES . $biz_dir);
+            }
+            $src = BUSINESS_PROMO_IMAGES . $image['image'];
+            if (!file_exists(BUSINESS_SMALL_PROMO_IMAGES . $image['image'])) {
+                $thumb_dest = BUSINESS_SMALL_PROMO_IMAGES . $image['image'];
+                thumbnail_image($src, $thumb_dest);
+                echo 'image is ..' . $image['image'];
+            }
+        }
+    }
 }

@@ -159,6 +159,9 @@
         <!--        <div class="panel-heading text-right">
                     <a href="<?php echo site_url('business/icps/add_image/' . $icp_data['id']); ?>" class="btn btn-success btn-labeled"><b><i class="icon-image2"></i></b> Add ICP Image</a>
                 </div>-->
+        <div class="panel-heading text-right">
+            <a href="#" data-backdrop="static" data-toggle="modal" data-target="#modal_share_images" class="btn btn-primary btn-labeled"><b><i class="icon-facebook"></i></b> Post images on Facebook</a>
+        </div>
         <table class="table datatable-basic">
             <thead>
                 <tr>
@@ -172,6 +175,29 @@
             </thead>
         </table>
     </div>
+    <!-- share images modal -->
+    <div id="modal_share_images" class="modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title">Post images</h6>
+                </div>
+                <form name="share_images_frm" method="post" action="<?php echo base_url().'fb/post_images/'?>">
+                    <div class="modal-body">
+                        <div class="row share_images">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Post</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- /share images modal -->
     <?php $this->load->view('Templates/footer'); ?>
 </div>
 <style>
@@ -575,6 +601,41 @@
 <script>
     //-- Initialize datatable
     $(function () {
+        $("#modal_share_images").on('shown.bs.modal', function () {
+            $.ajax({
+                type: 'POST',
+//                data: {view_type_val: view_type_val, search_term: searchterm},
+                dataType: 'json',
+                url: site_url + 'business/icps/get_icp_images_to_post/<?php echo $icp_data['id'] ?>',
+                success: function (response) {
+                    console.log(response.data);
+                    var html = '';
+                    $.each(response.data, function (i, item) {
+                        console.log(response.data[i]);
+                        html += '<div class="col-lg-3 col-sm-6">';
+                        html += '<div class="thumbnail share-thumbnail">';
+                        html += '<div class="thumb">';
+                        html += '<img src="' + base_url + icp_image_path + response.data[i].image + '" alt="" class="img-rounded img-preview share-img">';
+                        html += '<div class="caption-overflow">';
+                        html += '<span>';
+                        html += '<a href="' + base_url + icp_image_path + response.data[i].image + '" data-popup="lightbox" rel="gallery" class="btn border-white text-white btn-flat btn-icon btn-rounded"><i class="icon-plus3"></i></a>';
+                        html += '</span>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '<div class="text-right">';
+                        html += '<input type="checkbox" name="shareimages[]" value="' + response.data[i].id + '">';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '</div>';
+                    });
+                    html += '<input type="hidden" name="connect_icp_id" value="<?php echo $icp_data['id'] ?>">';
+                    $(".share_images").html(html);
+                },
+                error: function (request, status, error) {
+                    console.log(error);
+                }
+            });
+        });
         $('.datatable-basic').dataTable({
             bFilter: false,
             autoWidth: false,

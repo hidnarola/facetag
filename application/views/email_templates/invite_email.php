@@ -19,10 +19,12 @@
             <div style="padding:30px;margin:0; display: block;vertical-align:top; text-align:left;">
                 <p style='margin: 1em 0; '>
                     Hello there ! <?php // echo $firstname . " " . $lastname;    ?><br><br>
-                    You have been registered with facetag! Following are credentials for login<br><br>
-                    <b>Email   </b> : <?php echo $email ?><br>
+                    You have been registered with facetag!<br><br>
+                    <!--You have been registered with facetag! Following are credentials for login<br><br>-->
+<!--                    <b>Email   </b> : <?php echo $email ?><br>
                     <b>Password</b> : <?php echo $password ?><br><br>
-                    Please click on the link below to login for your Business "<b><?php echo $business ?></b>" and complete your Business Profile.<br><br>
+                    Please click on the link below to login for your Business "<b><?php echo $business ?></b>" and complete your Business Profile.<br><br>-->
+                    Please click on the link below to set password for your Business "<b><?php echo $business ?></b>" and complete your Business Profile.<br><br>
                 </p>
                 <hr>
                 <p style='margin: 1em 0; '>

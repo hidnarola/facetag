@@ -265,6 +265,7 @@ class Home extends CI_Controller {
                     'name' => $this->input->post('name'),
                     'logo' => $business_logo,
                     'description' => $this->input->post('description'),
+                    'ch_description' => $this->input->post('ch_description'),
                     'open_times' => $open_times_json,
                     'contact_no' => $this->input->post('digits'),
                     'contact_email' => $this->input->post('contact_email'),

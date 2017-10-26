@@ -103,7 +103,7 @@
                         if (full.logo != '' && full.logo != null) {
                             business_img = '<a href="' + business_logo_path + full.logo + '" data-popup="lightbox"><img src="assets/timthumb.php?src=' + site_url + business_logo_path + full.logo + '&w=60&h=60&q=100&zc=2"></a>';
                         } else {
-                            business_img = '<a href="assets/admin/images/no_logo.png" data-popup="lightbox"><img src="assets/timthumb.php?src='+site_url+'assets/admin/images/no_logo.png&w=55&h=55&q=100&zc=2" height="55px" width="55px" alt="' + full.name + '"></a>';
+                            business_img = '<a href="assets/admin/images/no_logo.png" data-popup="lightbox"><img src="assets/timthumb.php?src=' + site_url + 'assets/admin/images/no_logo.png&w=55&h=55&q=100&zc=2" height="55px" width="55px" alt="' + full.name + '"></a>';
                         }
                         return business_img;
                     }
@@ -150,7 +150,9 @@
                     render: function (data, type, full, meta) {
                         status = '';
 //                        if (full.firstname == null && full.lastname == null && full.login_count == 0) {
-                        if (full.is_invite == 1 && full.login_count == 0) {
+                        if (full.is_invite == 2) {
+                            status = '<span class="label bg-grey-400">Business Saved</span>';
+                        } else if (full.is_invite == 1 && full.login_count == 0) {
                             status = '<span class="label bg-primary">Invitation sent</span>';
                         } else if (full.user_verified == 0) {
                             status = '<span class="label bg-warning">Mail not verified by User</span>';
@@ -201,7 +203,7 @@
                         action += '</ul>';
                         action += '</li>';
                         action += '</ul>';
-                        
+
 //                        action='<ul class="icons-list"><li class="text-teal-600"><a href="" id="edit" class="edit"><i class="icon-pencil7"></i></a></li><li class="text-purple-700"><a href="" id="view_" data-record="" class="view"><i class="icon-eye"></i></a></li><li class="text-danger-600"><a id="delete_" data-record="" class="delete"><i class="icon-trash"></i></a></li></ul>'
                         return action;
                     }

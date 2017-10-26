@@ -15,6 +15,7 @@ class Icps extends CI_Controller {
         $this->load->model('icps_model');
         $this->load->model('location_model');
         $this->load->model('icp_images_model');
+        $this->load->model('social_media_model');
         $this->load->model('icp_imagetag_model');
         $this->load->model('hotels_model');
         $this->load->library('facerecognition');
@@ -29,6 +30,24 @@ class Icps extends CI_Controller {
         $data['title'] = 'facetag | ICPs';
         $data['heading'] = 'ICPs';
         $this->template->load('default', 'business/icps/list', $data);
+    }
+    
+    /*@ANP : connect FB.*/
+    public function connect_fb($icp_id) {
+        $this->session->set_userdata('assign_network_to_icp', ['icp_id' => $icp_id]);
+        redirect('fb/connect');
+    }
+    
+    /* @ANP : Disconnect FB. */
+
+    public function disconnect_fb($icp_id) {
+
+        if ($this->social_media_model->disconnect_from_fb($icp_id)) {
+            $this->session->set_flashdata('success', 'Disconnect from facebook account successfully!');
+        } else {
+            $this->session->set_flashdata('error', 'Please try again!');
+        }
+        redirect('business/icps');
     }
 
     /**
@@ -53,6 +72,20 @@ class Icps extends CI_Controller {
                 $icps[$key]['created'] = date('d,M Y', strtotime($val['created']));
             }
             $final['data'] = $icps;
+        }
+        echo json_encode($final);
+    }
+    
+    public function get_icp_images_to_post($icp_id = NULL) {
+
+        $final = array();
+        if ($icp_id != '') {
+            $final['recordsTotal'] = $this->icp_images_model->get_icp_images_to_post($icp_id, 'count');
+            $final['redraw'] = 1;
+            $final['recordsFiltered'] = $final['recordsTotal'];
+            $icp_images = $this->icp_images_model->get_icp_images_to_post($icp_id, 'result');
+
+            $final['data'] = $icp_images;
         }
         echo json_encode($final);
     }
@@ -108,7 +141,7 @@ class Icps extends CI_Controller {
 //            $this->form_validation->set_error_delimiters('<div class="alert alert-error alert-danger"><a class="close" data-dismiss="alert">×</a><strong>', '</strong></div>');
 //            $this->form_validation->set_error_delimiters('<label class="validation-error-label">', '</label>');
         } else {
-
+            $hashtags = NULL;
             $flag = $flag1 = $flag2 = 0;
 
             //-- Upload icp logo
@@ -263,7 +296,7 @@ class Icps extends CI_Controller {
                 }
                 if ($this->input->post('digital_free_on_physical_purchase')) {
                     $digital_free_on_physical_purchase = 1;
-                }else {
+                } else {
                     $digital_free_on_physical_purchase = 0;
                 }
                 if ($this->input->post('collection_point_delivery') && $this->input->post('offer_printed_souvenir')) {
@@ -310,6 +343,9 @@ class Icps extends CI_Controller {
                     $collection_address_longitude = $this->input->post('collection_address_longitude');
                     $collection_address_instructions = $this->input->post('collection_address_instructions');
                 }
+                if ($this->input->post('hashtags')) {
+                    $hashtags = str_replace(' ', '', $this->input->post('hashtags'));
+                }
                 $update_settings = array(
                     'preview_photo' => $icp_preview_image,
                     'frame_image' => $icp_frame_image,
@@ -350,6 +386,7 @@ class Icps extends CI_Controller {
                         'high_resolution_price' => $high_resolution_price,
                         'offer_printed_souvenir' => $offer_printed_souvenir,
                         'printed_souvenir_price' => $printed_souvenir_price,
+                        'hashtags' => $hashtags,
                         'modified' => date('Y-m-d H:i:s')
                     );
                     $this->icps_model->update_record('id=' . $icp_id, $update_array);
@@ -368,6 +405,7 @@ class Icps extends CI_Controller {
                         'high_resolution_price' => $high_resolution_price,
                         'offer_printed_souvenir' => $offer_printed_souvenir,
                         'printed_souvenir_price' => $this->input->post('printed_souvenir_price'),
+                        'hashtags' => $hashtags,
                         'is_active' => 1,
                         'created' => date('Y-m-d H:i:s'),
                         'modified' => date('Y-m-d H:i:s')
@@ -449,14 +487,17 @@ class Icps extends CI_Controller {
         //-- Create business directory if not exist
         if (!file_exists(ICP_AUTO_UPLOAD_IMAGES . $biz_dir)) {
             mkdir(ICP_AUTO_UPLOAD_IMAGES . $biz_dir);
+            chmod(ICP_AUTO_UPLOAD_IMAGES . $biz_dir, 0777);
         }
         //-- Create icp directory inside business directory if not exist
         if (!file_exists(ICP_AUTO_UPLOAD_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
             mkdir(ICP_AUTO_UPLOAD_IMAGES . $biz_dir . '/' . $icp_dir);
+            chmod(ICP_AUTO_UPLOAD_IMAGES . $biz_dir . '/' . $icp_dir, 0777);
         }
 
 
-        $file_namess = "business_autoscript";
+//        $file_namess = "business_autoscript";
+        $file_namess = uniqid() . time();
         $doc = ".sh";
         $name_for_file = $file_namess . $doc;
         $handle = fopen("shellscripts/" . $name_for_file, "w");
@@ -465,15 +506,15 @@ class Icps extends CI_Controller {
 
         fwrite($handle, "#!/bin/sh");
         fwrite($handle, $spacee);
-        fwrite($handle, "HOST='123.201.110.194'");
+        fwrite($handle, "HOST='13.54.170.29'");
         fwrite($handle, $spacee);
-        fwrite($handle, "USER='hd'");
+        fwrite($handle, "USER='narola'");
         fwrite($handle, $spacee);
-        fwrite($handle, "PASSWD='9DrICc179Tc1apg'");
+        fwrite($handle, "PASSWD='facetag123#'");
         fwrite($handle, $spacee);
         fwrite($handle, "FILE='" . $local_path . "'");
         fwrite($handle, $spacee);
-        fwrite($handle, "REMOTEPATH='/facetag/uploads/automatic_upload/'" . $biz_dir . "/" . $icp_dir);
+        fwrite($handle, "REMOTEPATH='/html/uploads/automatic_upload/" . $biz_dir . "/" . $icp_dir . "'");
         fwrite($handle, $spacee);
         fwrite($handle, 'cd $FILE');
         fwrite($handle, $spacee);
@@ -1199,7 +1240,7 @@ class Icps extends CI_Controller {
             show_404();
         }
     }
-    
+
     public function upload_crop_image($icp_id) {
 //        p($_POST);
 //        p($_FILES);
@@ -1232,7 +1273,6 @@ class Icps extends CI_Controller {
             }
             if (!file_exists(ICP_SMALL_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
                 mkdir(ICP_SMALL_IMAGES . $biz_dir . '/' . $icp_dir);
-                
             }
             if (!file_exists(ICP_CROPPED_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
                 mkdir(ICP_CROPPED_IMAGES . $biz_dir . '/' . $icp_dir);
@@ -1307,7 +1347,7 @@ class Icps extends CI_Controller {
 
                     $business_id = $icp_data[0]['business_id'];
                     $icp_id = $icp_data[0]['id'];
-                //Get checked in users who have checked in to particualr icps/business
+                    //Get checked in users who have checked in to particualr icps/business
                     $business_users = $this->users_model->get_checkedinusers_by_business($business_id);
                     $icp_users = $this->users_model->get_checkedinusers_by_icp($icp_id);
                     //-- merge both users
@@ -1413,7 +1453,7 @@ class Icps extends CI_Controller {
                     }
                 }
                 $this->session->set_flashdata('success', 'Images uploaded successfully!');
-                 redirect('business/icps/icp_images/' . $icp_id);
+                redirect('business/icps/icp_images/' . $icp_id);
             }
         } else {
             show_404();

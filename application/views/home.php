@@ -271,8 +271,8 @@
                 </div>
             </div>
             <ul class="store-img">
-                <li><a href="#"><img src="<?php echo base_url(); ?>assets/images/apple-store.png" alt=""></a></li>
-                <li><a href="#"><img class="play-store-img" src="<?php echo base_url(); ?>assets/images/google-store.png" alt=""></a></li>
+                <li><a href="https://itunes.apple.com/in/app/facetag/id1180477988?mt=8"><img src="<?php echo base_url(); ?>assets/images/apple-store.png" alt=""></a></li>
+                <li><a href="https://play.google.com/store/apps/details?id=com.facetag&hl=en"><img class="play-store-img" src="<?php echo base_url(); ?>assets/images/google-store.png" alt=""></a></li>
             </ul>
 
 

@@ -116,6 +116,12 @@ class Businesses extends CI_Controller {
             $check_business = $this->businesses_model->get_result($where);
             if ($check_business) {
                 $data['business_data'] = $check_business[0];
+                //-- IF business is saved then check user's email is uniquee or not
+                if ($check_business[0]['is_invite'] == 2) {
+                    if ($this->input->post('user_email') != $check_business[0]['email']) {
+                        $this->form_validation->set_rules('user_email', 'User Email', 'trim|required|valid_email|callback_is_uniquemail');
+                    }
+                }
                 $business_logo = $check_business[0]['logo'];
                 $data['title'] = 'facetag | Edit Business';
                 $data['heading'] = 'Edit ' . $check_business[0]['name'] . ' Business';
@@ -214,6 +220,7 @@ class Businesses extends CI_Controller {
                         'logo' => $business_logo,
                         'name' => trim($this->input->post('name')),
                         'description' => $this->input->post('description'),
+                        'ch_description' => $this->input->post('ch_description'),
                         'address1' => $this->input->post('address1'),
                         'display_text' => $this->input->post('address_text'),
                         'address_text' => $address,
@@ -225,6 +232,7 @@ class Businesses extends CI_Controller {
                         'instagram_url' => $this->input->post('instagram_url'),
                         'website_url' => $this->input->post('website_url'),
                         'ticket_url' => $this->input->post('ticket_url'),
+                        'chinese_ticket_url' => $this->input->post('chinese_ticket_url'),
                         'contact_no' => $this->input->post('digits'),
                         'contact_email' => trim($this->input->post('contact_email')),
                         'open_times' => $open_times_json,
@@ -239,7 +247,8 @@ class Businesses extends CI_Controller {
                     $this->session->set_flashdata('success', '"' . trim($this->input->post('name')) . '" business updated successfully!');
                     //-- IF business is saved by admin and email is updated then update user's email also
                     if ($check_business[0]['is_invite'] == 2) {
-                        $this->users_model->update_record('id=' . $check_business[0]['user_id'], array('email' => trim($this->input->post('contact_email'))));
+//                        $this->users_model->update_record('id=' . $check_business[0]['user_id'], array('email' => trim($this->input->post('contact_email'))));
+                        $this->users_model->update_record('id=' . $check_business[0]['user_id'], array('email' => trim($this->input->post('user_email'))));
                     }
                 } else { //-- If business id is not present then add new business details
                     $password = $this->input->post('password');
@@ -264,6 +273,7 @@ class Businesses extends CI_Controller {
                         'user_id' => $user_id,
                         'name' => $this->input->post('name'),
                         'description' => $this->input->post('description'),
+                        'ch_description' => $this->input->post('ch_description'),
                         'address1' => $this->input->post('address1'),
 //                        'street_no' => $this->input->post('street_no'),
 //                        'street_name' => $this->input->post('street_name'),
@@ -427,14 +437,17 @@ class Businesses extends CI_Controller {
         //-- Create business directory if not exist
         if (!file_exists(ICP_AUTO_UPLOAD_IMAGES . $biz_dir)) {
             mkdir(ICP_AUTO_UPLOAD_IMAGES . $biz_dir);
+            chmod(ICP_AUTO_UPLOAD_IMAGES . $biz_dir, 0777);
         }
         //-- Create icp directory inside business directory if not exist
         if (!file_exists(ICP_AUTO_UPLOAD_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
             mkdir(ICP_AUTO_UPLOAD_IMAGES . $biz_dir . '/' . $icp_dir);
+            chmod(ICP_AUTO_UPLOAD_IMAGES . $biz_dir . '/' . $icp_dir, 0777);
         }
 
 
-        $file_namess = "business_autoscript";
+//        $file_namess = "business_autoscript";
+        $file_namess = uniqid() . time();
         $doc = ".sh";
         $name_for_file = $file_namess . $doc;
         $handle = fopen("shellscripts/" . $name_for_file, "w");
@@ -443,15 +456,15 @@ class Businesses extends CI_Controller {
 
         fwrite($handle, "#!/bin/sh");
         fwrite($handle, $spacee);
-        fwrite($handle, "HOST='123.201.110.194'");
+        fwrite($handle, "HOST='13.54.170.29'");
         fwrite($handle, $spacee);
-        fwrite($handle, "USER='hd'");
+        fwrite($handle, "USER='narola'");
         fwrite($handle, $spacee);
-        fwrite($handle, "PASSWD='9DrICc179Tc1apg'");
+        fwrite($handle, "PASSWD='facetag123#'");
         fwrite($handle, $spacee);
         fwrite($handle, "FILE='" . $local_path . "'");
         fwrite($handle, $spacee);
-        fwrite($handle, "REMOTEPATH='/facetag/uploads/automatic_upload/'" . $biz_dir . "/" . $icp_dir);
+        fwrite($handle, "REMOTEPATH='/html/uploads/automatic_upload/" . $biz_dir . "/" . $icp_dir . "'");
         fwrite($handle, $spacee);
         fwrite($handle, 'cd $FILE');
         fwrite($handle, $spacee);
@@ -672,6 +685,7 @@ class Businesses extends CI_Controller {
 //            $this->form_validation->set_error_delimiters('<div class="alert alert-error alert-danger"><a class="close" data-dismiss="alert">×</a><strong>', '</strong></div>');
 //            $this->form_validation->set_error_delimiters('<label class="validation-error-label">', '</label>');
                 } else {
+                    $hashtags = NULL;
                     $flag = $flag1 = $flag2 = 0;
 
                     //-- Upload icp logo
@@ -872,6 +886,9 @@ class Businesses extends CI_Controller {
                             $collection_address_longitude = $this->input->post('collection_address_longitude');
                             $collection_address_instructions = $this->input->post('collection_address_instructions');
                         }
+                         if ($this->input->post('hashtags')) {
+                            $hashtags = str_replace(' ', '', $this->input->post('hashtags'));
+                        }
                         $update_settings = array(
                             'preview_photo' => $icp_preview_image,
                             'frame_image' => $icp_frame_image,
@@ -912,6 +929,7 @@ class Businesses extends CI_Controller {
                                 'high_resolution_price' => $high_resolution_price,
                                 'offer_printed_souvenir' => $offer_printed_souvenir,
                                 'printed_souvenir_price' => $printed_souvenir_price,
+                                'hashtags' => $hashtags,
                                 'modified' => date('Y-m-d H:i:s')
                             );
 
@@ -931,6 +949,7 @@ class Businesses extends CI_Controller {
                                 'high_resolution_price' => $high_resolution_price,
                                 'offer_printed_souvenir' => $offer_printed_souvenir,
                                 'printed_souvenir_price' => $this->input->post('printed_souvenir_price'),
+                                'hashtags' => $hashtags,
                                 'is_active' => 1,
                                 'created' => date('Y-m-d H:i:s'),
                                 'modified' => date('Y-m-d H:i:s')
@@ -2052,9 +2071,11 @@ class Businesses extends CI_Controller {
                     'instagram_url' => $this->input->post('instagram_url'),
                     'website_url' => $this->input->post('website_url'),
                     'ticket_url' => $this->input->post('ticket_url'),
+                    'chinese_ticket_url' => $this->input->post('chinese_ticket_url'),
                     'contact_no' => $this->input->post('digits'),
                     'contact_email' => $this->input->post('contact_email'),
                     'description' => $this->input->post('description'),
+                    'ch_description' => $this->input->post('ch_description'),
                     'open_times' => $open_times_json,
                     'is_invite' => $invite,
                     'created' => date('Y-m-d H:i:s'),
@@ -2067,9 +2088,11 @@ class Businesses extends CI_Controller {
                   $this->facerecognition->post_gallery($gallary_name); */
 
                 if ($invite == 1) {
-                    $encoded_mail = urlencode($verification_code);
-//            $url = site_url() . 'register/verify_invite?id=' . $encoded_mail;
-                    $url = site_url() . 'login';
+//                    $url = site_url() . 'login';
+                    $verification_code = $this->encrypt->encode($verification_code);
+                    $encoded_verification_code = urlencode($verification_code);
+                    $url = site_url() . 'set_password?code=' . $encoded_verification_code;
+
                     $configs = mail_config();
                     $this->load->library('email', $configs);
 //                    $this->email->initialize($configs);
@@ -2135,26 +2158,33 @@ class Businesses extends CI_Controller {
 
             $business_data = $check_business[0];
             $verification_code = verification_code();
-
-            $url = site_url() . 'login';
-            $configs = mail_config();
-            $this->load->library('email', $configs);
-            $this->email->initialize($configs);
-            $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
-            $this->email->to($business_data['email']);
-
-            $msg = $this->load->view('email_templates/invite_email', array('email' => $business_data['email'], 'password' => $verification_code, 'url' => $url, 'business' => $business_data['name']), true);
-            $this->email->subject('Invitation - facetag');
-            $this->email->message($msg);
-            $this->email->send();
-            $this->email->print_debugger();
-
-
+            
             $update_array = array(
                 'password' => md5($verification_code),
                 'verification_code' => $verification_code,
                 'modified' => date('Y-m-d H:i:s'),
             );
+
+//            $url = site_url() . 'login';
+
+            $verification_code = $this->encrypt->encode($verification_code);
+            $encoded_verification_code = urlencode($verification_code);
+            $url = site_url() . 'set_password?code=' . $encoded_verification_code;
+
+            $configs = mail_config();
+            $this->load->library('email', $configs);
+//            $this->email->initialize($configs);
+            $this->email->from(EMAIL_FROM, EMAIL_FROM_NAME);
+            $this->email->to($business_data['email']);
+
+            $msg = $this->load->view('email_templates/invite_email', array('email' => $business_data['email'], 'password' => $verification_code, 'url' => $url, 'business' => $business_data['name']), true);
+            $this->email->subject('Invitation - facetag');
+            $this->email->set_mailtype("html");
+
+            $this->email->message($msg);
+            $this->email->send();
+            $this->email->print_debugger();
+
             //-- update users password and verification code
             $user_id = $business_data['user_id'];
             $this->users_model->update_record('id = ' . $this->db->escape($user_id), $update_array);

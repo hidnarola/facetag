@@ -379,6 +379,13 @@
                             <span id="spn_description-error" class="validation-error-label" for="description"></span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Business promotional description (in chinese) </label>
+                        <div class="col-lg-9">
+                            <textarea rows="3" cols="5" name="ch_description" id="ch_description" class="form-control" placeholder="Enter Business Description in chinese"><?php echo (isset($business_data)) ? $business_data['ch_description'] : set_value('ch_description'); ?></textarea>
+                            <span id="ch_description-error" class="validation-error-label"></span>
+                        </div>
+                    </div>
                     <div class='form-group'>
                         <label class='col-lg-3 control-label' for='open_times'>Open times</label>
                         <div class="col-lg-9">
@@ -1073,6 +1080,14 @@
         } else {
             $('#spn_description-error').html('');
         }
+//        var ch_desc = $("#ch_description").val();
+//        if (!ch_desc.match(/[\u3002\uff0c\uff1b]/)) {
+//            $('#ch_description').focus();
+//            $('#ch_description-error').html('Please enter valid chinese description');
+//            flag = 1;
+//        } else {
+//            $('#ch_description-error').html('');
+//        }
 
         /*
          if ($('#ticket_url').val() != '') {
@@ -1108,6 +1123,39 @@
         });
         if (flag == 1) {
             return false;
+        } else {
+            $.ajax({
+                url: '<?php echo base_url(); ?>business/profile',
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: "json",
+                success: function (result) {
+//                    alert(result.icpexist);
+                    if (result.icpexist == 1) {
+                        window.location.href = 'business/home';
+                    } else {
+                        swal({
+                            title: "Would you like to create your facetag photo store?",
+                            text: "It only takes a few minutes and its FREE!",
+                            type: "info",
+                            showCancelButton: true,
+                            cancelButtonText: 'Later',
+                            confirmButtonColor: "#297DCE",
+                            confirmButtonText: "Yes"
+                        },
+                                function (isConfirm) {
+                                    if (!isConfirm) {
+                                        // if later:
+                                        window.location.href = 'business/promo_images';
+                                    } else {
+                                        // if yes:
+                                        window.location.href = 'business/icps/add';
+                                    }
+                                });
+                        return false;
+                    }
+                }
+            });
         }
     }
     //Generates the map from latitude and longitude
@@ -1206,42 +1254,6 @@
             } else {
                 $(".address-text").hide();
             }
-        });
-        $("#business_info").submit(function (event) {
-            event.preventDefault();
-
-            $.ajax({
-                url: '<?php echo base_url(); ?>business/profile',
-                type: 'POST',
-                data: $(this).serialize(),
-                dataType: "json",
-                success: function (result) {
-//                    alert(result.icpexist);
-                    if (result.icpexist == 1) {
-                        window.location.href = 'business/home';
-                    } else {
-                        swal({
-                            title: "Would you like to create your facetag photo store?",
-                            text: "It only takes a few minutes and its FREE!",
-                            type: "info",
-                            showCancelButton: true,
-                            cancelButtonText: 'Later',
-                            confirmButtonColor: "#297DCE",
-                            confirmButtonText: "Yes"
-                        },
-                                function (isConfirm) {
-                                    if (!isConfirm) {
-                                        // if later:
-                                        window.location.href = 'business/promo_images';
-                                    } else {
-                                        // if yes:
-                                        window.location.href = 'business/icps/add';
-                                    }
-                                });
-                        return false;
-                    }
-                }
-            });
         });
         //Get states of particular country on country selection
         $('#country_id').on('change', function () {

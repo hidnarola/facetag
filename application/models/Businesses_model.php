@@ -56,7 +56,7 @@ class Businesses_model extends CI_Model {
         $columns = ['b.id', 'b.logo', 'b.name', 'b.address1', 'u.firstname', 'icp', 'b.created'];
 
         $keyword = $this->input->get('search');
-        $this->db->select('b.*,u.firstname,u.lastname,u.email,(select count(id) from ' . TBL_ICPS . ' where business_id=b.id AND is_delete=0) as icp,u.is_verified as user_verified,u.is_active as user_active,u.password');
+        $this->db->select('b.*,u.login_count,u.firstname,u.lastname,u.email,(select count(id) from ' . TBL_ICPS . ' where business_id=b.id AND is_delete=0) as icp,u.is_verified as user_verified,u.is_active as user_active,u.password');
         $this->db->join(TBL_USERS . ' u', 'b.user_id=u.id', 'left');
 
         if (!empty($keyword['value'])) {
