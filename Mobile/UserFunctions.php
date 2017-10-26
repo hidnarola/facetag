@@ -76,6 +76,12 @@ class UserFunctions
                 return $this->getAllUserVerifiedSelfie($postData);
             }
                 break;
+            case "GetAllUserVerifiedSelfieClone":
+            {
+                return $this->getAllUserVerifiedSelfieClone($postData);
+            }
+                break;
+
             case "GetAllUserVerifiedSelfieTemp":
             {
                 return $this->getAllUserVerifiedSelfieTemp($postData);
@@ -88,7 +94,12 @@ class UserFunctions
                 break;
             case "SearchSelfie":
             {
-                return $this->searchSelfie($postData);
+                return $this->SearchSelfie($postData);
+            }
+                break;
+            case "searchSelfieNew":
+            {
+                return $this->searchSelfieNew($postData);
             }
                 break;
             case "LogoutUser":
@@ -100,7 +111,194 @@ class UserFunctions
                 return $this->forgotPassword($postData);
             }
                 break;
+            case "GetAllNonExpireSelfie": {
+                return $this->getAllNonExpireSelfie($postData);
+            }
+                break;
+            case "sendEmailVerificatoinMail": {
+                return $this->sendEmailVerificatoinMail($postData);
+            }
+                break;
+            case "ReSendEmailVerificatoinMail": {
+                return $this->reSendEmailVerificatoinMail($postData);
+            }
+                break;
 
+        }
+    }
+
+
+    public  function reSendEmailVerificatoinMail($postdata)
+    {
+
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+        $userid = validateObject($postdata, 'userId', "");
+        $userid = addslashes($userid);
+
+        $username = validateObject($postdata, 'username', "");
+        $username = addslashes($username);
+
+        $email = validateObject($postdata, 'email', "");
+        $email = addslashes($email);
+
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+        include_once 'SendEmailFunction.php';
+        $objMail = new SendEmailFunction();
+
+
+        $verifyPageUrl=VERIFYPAGE.base64_encode($userid);
+        $body = "Hi ". $username . "</br> <br/> Please <b><a href='".$verifyPageUrl."'>Click to Verify</a></b> your facetag account </br> <br/>Thanks,<br/>Facetag Team";
+        $to = $email;
+        $subject = "Account Verification";
+        $objMail->sendEmail($body,$to,$subject);
+
+        $status = 1;
+        $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+        $data['message'] = "Please check your mail";
+        return $data;
+
+    }
+
+
+
+    public  function sendEmailVerificatoinMail($postdata)
+    {
+
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+        $userid = validateObject($postdata, 'userId', "");
+        $userid = addslashes($userid);
+
+        $username = validateObject($postdata, 'username', "");
+        $username = addslashes($username);
+
+        $emailId = validateObject($postdata, 'emailId', "");
+        $emailId = addslashes($emailId);
+
+        include_once 'SendEmailFunction.php';
+        $objMail = new SendEmailFunction();
+
+
+        $verifyPageUrl=VERIFYPAGE.base64_encode($userid);
+        $body = "Hi ". $username . "</br> <br/> Please <b><a href='".$verifyPageUrl."'>Click to Verify</a></b> your facetag account </br> <br/>Thanks,<br/>Facetag Team";
+        $to = $emailId;
+        $subject = "Account Verification";
+        $objMail->sendEmail($body,$to,$subject);
+
+        $status = 1;
+        $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+        $data['message'] = "Please check your mail";
+        return $data;
+
+    }
+
+    public  function sendEmailVerificatoin($userid,$username,$emailId)
+    {
+
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+        include_once 'SendEmailFunction.php';
+        $objMail = new SendEmailFunction();
+
+
+        $verifyPageUrl=VERIFYPAGE.base64_encode($userid);
+        $body = "Hi ". $username . "</br> <br/> Please <b><a href='".$verifyPageUrl."'>Click to Verify</a></b> your facetag account </br> <br/>Thanks,<br/>Facetag Team";
+        $to = $emailId;
+        $subject = "Account Verification";
+        $objMail->sendEmail($body,$to,$subject);
+
+        $status = 1;
+        $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+        $data['message'] = "Please check your mail";
+        return $data;
+
+    }
+
+    public  function getAllNonExpireSelfie($postdata)
+    {
+
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+        $userid = validateObject($postdata, 'userId', "");
+        $userid = addslashes($userid);
+
+
+        $select_selfie_query = "select selfie.id as selfieid,
+                                selfie.created as detectedtime,
+                                selfie.closingtime as closingtime,
+                                selfie.verifiedtime as verifiedtime,
+                                imgselfie.image as selfieimg,
+                                icps.id as icpid,
+                                icps.name as icpname ,
+                                icps.icp_logo,
+                                business.id as businessid,
+                                business.name as businessname
+                                from " . TABLE_ICP_IMAGE_TAG . " as selfie
+                                left join
+                                (select * from " . TABLE_ICP_IMAGE . ") as imgselfie on imgselfie.id = selfie.icp_image_id
+                                left join
+                                (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id
+                                left join
+                                (select * from " . TABLE_BUSINESS . ") as business on business.id  = icps.business_id
+                                where selfie.user_id = ? and selfie.is_currentuser = ? and selfie.is_delete = ?  and selfie.is_purchased = ?
+                                and selfie.closingtime is not null and selfie.closingtime > CURDATE()";//" and selfie.closingtime >= CURDATE()";
+
+
+        //echo $select_selfie_query;exit;
+        $select_selfie_stmt = $connection->prepare($select_selfie_query);
+        $iscurrentuser = "1";
+        $isdelete = "0";
+        $ispurchase = "0";
+        $currentdate = date("Y-m-d H:i:s");
+        $select_selfie_stmt->bind_param("isss",$userid,$iscurrentuser,$isdelete,$ispurchase);
+
+        if($select_selfie_stmt->execute())
+        {
+            $select_selfie_stmt->store_result();
+            if ($select_selfie_stmt->num_rows > 0)
+            {
+                $canpurchage = 0;
+                while($selfie = fetch_assoc_all_values($select_selfie_stmt))
+                {
+                    $posts[] = $selfie;
+                }
+                $status = 1;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "List of non expire photos...";
+                $data['photos'] = $posts;
+                return $data;
+            }
+            else
+            {
+                $status = 1;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "Selfie not found ...";
+                return $data;
+            }
+        }
+        else
+        {
+            $status = 2;
+            $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+            $data['message'] = "Some thing went wrong please try again...";
+            return $data;
         }
     }
 
@@ -217,7 +415,7 @@ class UserFunctions
 
     function delete_face($userID) {
         $user_id = 306;
-        $access_token = "7fd6d7c1bdcd3a58455810d0ff76b2a1";
+        $access_token = "Ug2-NOC3O86aadLQzbOBLvYFt2Rymyay";
         $param = 'user_' . $userID;
         $URL = 'https://api.findface.pro/v0/face/meta/' . urlencode($param);
         $ch = curl_init();
@@ -248,7 +446,7 @@ class UserFunctions
 
         $param_type = 'application/json';
         $URL = 'https://api.findface.pro/v0/face';
-        $access_token = "7fd6d7c1bdcd3a58455810d0ff76b2a1";
+        $access_token = "Ug2-NOC3O86aadLQzbOBLvYFt2Rymyay";
 
         $data = json_encode($data);
         $ch = curl_init();
@@ -265,6 +463,161 @@ class UserFunctions
             $response = json_decode($result, 1);
         }
         return $response;
+    }
+
+    public function searchSelfieNew($userData)
+    {
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+        $userid = validateObject($userData, 'userId', "");
+        $userid = addslashes($userid);
+
+        $businessId = validateObject($userData, 'businessid', "");
+        $businessId = addslashes($businessId);
+
+        $icpId = validateObject($userData, 'icpid', "");
+        $icpId = addslashes($icpId);
+
+        $startdate = validateObject($userData, 'startdate', "");
+        $startdate = addslashes($startdate);
+
+        $enddate = validateObject($userData, 'enddate', "");
+        $enddate = addslashes($enddate);
+
+        $currentuser = "1";
+        $select_selfie_query = "select selfie.id as selfieid,
+                                selfie.is_purchased,
+                                selfie.is_small_purchase,
+                                selfie.is_large_purchase,
+                                selfie.is_printed_purchase,
+                                selfie.created as detectedtime,
+                                selfie.closingtime as closingtime,
+                                selfie.verifiedtime as verifiedtime,
+                                selfie.icp_image_id as icpimgid,
+                                selfie.user_id as userid,
+                                imgselfie.image as selfieimg,
+                                imgselfie.id as icpimgid,
+                                icps.id as icpid,
+                                icps.name as icpname ,
+                                icps.icp_logo,
+                                business.id as businessid,
+                                business.name as businessname,
+                                business.logo as businesslogo,
+                                business.address1 as address1,
+                                business.address2 as address2,
+                                icpsettings.preview_photo ,
+                                icpsettings.addlogo_to_sharedimage ,
+                                icpsettings.is_low_image_free ,
+                                icpsettings.is_high_image_free ,
+                                icpsettings.lowfree_on_highpurchase ,
+                                icpsettings.digital_free_on_physical_purchase,
+                                icpsettings.is_image_timelimited,
+                                icpsettings.image_availabilty_time_limit,
+                                icpsettings.local_hotel_delivery_free,
+                                icpsettings.local_hotel_delivery_price,
+                                icpsettings.domestic_shipping_free ,
+                                icpsettings.domestic_shipping_price,
+                                icpsettings.international_shipping_free,
+                                icpsettings.international_shipping_price,
+                                icps.low_resolution_price,
+                                icps.high_resolution_price,
+                                icps.offer_printed_souvenir,
+                                icps.printed_souvenir_price
+                                from " . TABLE_ICP_IMAGE . " as imgselfie left join (select * from " . TABLE_ICP_IMAGE_TAG . ") as selfie on imgselfie.id = selfie.icp_image_id
+                                left join (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id left join (select * from " . TABLE_ICP_SETTING . ")
+                                as icpsettings on icps.id = icpsettings.icp_id
+                                left join (select * from " . TABLE_BUSINESS . ") as business on business.id  = icps.business_id
+                                where ";
+
+
+        $isFirstCriteria = 1;
+
+        if(strlen($businessId) > 0)
+        {
+            if($isFirstCriteria == 1)
+            {
+                $select_selfie_query = $select_selfie_query . " business.id = '". $businessId ."'";
+                $isFirstCriteria = 0;
+            }
+            else
+            {
+                $select_selfie_query = $select_selfie_query . " and business.id = '". $businessId ."'";
+            }
+        }
+
+        if(strlen($icpId) > 0)
+        {
+            if($isFirstCriteria == 1)
+            {
+                $select_selfie_query = $select_selfie_query . "  icps.id in  (" . $icpId. ")";
+                $isFirstCriteria = 0;
+            }
+            else
+            {
+                $select_selfie_query = $select_selfie_query . " and  icps.id in  (" . $icpId. ")";
+            }
+        }
+
+        if(strlen($startdate) > 0)
+        {
+            if($isFirstCriteria == 1)
+            {
+                $select_selfie_query = $select_selfie_query . "  imgselfie.created > '" . $startdate . "' AND imgselfie.created < '". $enddate ."'";
+                $isFirstCriteria = 0;
+            }
+            else
+            {
+                $select_selfie_query = $select_selfie_query . " and  imgselfie.created > '" . $startdate . "' AND imgselfie.created < '". $enddate ."'";
+            }
+        }
+        $isdelete = 0;
+        $select_selfie_query = $select_selfie_query ." and imgselfie.is_delete = " . $isdelete . "
+             order by imgselfie.created desc";
+
+//            and (selfie.closingtime > ? or selfie.closingtime is null or selfie.closingtime = '') order by imgselfie.created desc";
+//            echo $select_selfie_query;
+//            exit;
+
+
+        $select_selfie_stmt = $connection->prepare($select_selfie_query);
+        $currentdate = date("Y-m-d H:i:s");
+
+        if($select_selfie_stmt->execute())
+        {
+            $select_selfie_stmt->store_result();
+
+            if($select_selfie_stmt->num_rows > 0)
+            {
+                while ($selfie = fetch_assoc_all_values($select_selfie_stmt))
+                {
+                    $posts[] = $selfie;
+                }
+                $status = 1;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "Search selfie !!!";
+                $data['searchselfie'] =  $posts;
+                return $data;
+            }
+            else
+            {
+
+                $status = 1;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "No selfie found !!!";
+                return $data;
+            }
+        }
+        else
+        {
+            //echo $select_selfie_query->error;
+            $status = 2;
+            $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+            $data['message'] = "Please try again !!!";
+            return $data;
+        }
     }
 
     public function searchSelfie($userData)
@@ -293,14 +646,14 @@ class UserFunctions
 
         $currentuser = "1";
         $select_selfie_query = "select selfie.id as selfieid,
-                                selfie.is_purchased,
+                                selfie.is_purchased as is_purchased,
                                 selfie.is_small_purchase,
-                                     selfie.is_large_purchase,
-                                     selfie.is_printed_purchase,
+                                selfie.is_large_purchase,
+                                selfie.is_printed_purchase,
                                 selfie.created as detectedtime,
                                 selfie.closingtime as closingtime,
                                 selfie.verifiedtime as verifiedtime,
-                                selfie.icp_image_id as icpimgid,
+                                imgselfie.id as icpimgid,
                                 selfie.user_id as userid,
                                 imgselfie.image as selfieimg,
                                 icps.id as icpid,
@@ -316,6 +669,7 @@ class UserFunctions
                                 icpsettings.is_low_image_free ,
                                 icpsettings.is_high_image_free ,
                                 icpsettings.lowfree_on_highpurchase ,
+                                icpsettings.digital_free_on_physical_purchase,
                                 icpsettings.is_image_timelimited,
                                 icpsettings.image_availabilty_time_limit,
                                 icpsettings.local_hotel_delivery_free,
@@ -328,8 +682,10 @@ class UserFunctions
                                 icps.high_resolution_price,
                                 icps.offer_printed_souvenir,
                                 icps.printed_souvenir_price
-                                from " . TABLE_ICP_IMAGE_TAG . " as selfie left join (select * from " . TABLE_ICP_IMAGE . ") as imgselfie on imgselfie.id = selfie.icp_image_id
-                                left join (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id left join (select * from " . TABLE_ICP_SETTING . ") as icpsettings on icps.id = icpsettings.icp_id
+
+                                from " . TABLE_ICP_IMAGE . " as imgselfie left join (select * from " . TABLE_ICP_IMAGE_TAG . ") as selfie on imgselfie.id = selfie.icp_image_id
+                                left join (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id left join (select * from " . TABLE_ICP_SETTING . ")
+                                as icpsettings on icps.id = icpsettings.icp_id
                                 left join (select * from " . TABLE_BUSINESS . ") as business on business.id  = icps.business_id
                                 where ";
 
@@ -366,23 +722,25 @@ class UserFunctions
              {
                  if($isFirstCriteria == 1)
                  {
-                     $select_selfie_query = $select_selfie_query . "  selfie.created BETWEEN '" . $startdate . "' AND '". $enddate ."'";
+                     $select_selfie_query = $select_selfie_query . "  imgselfie.created > '" . $startdate . "' AND imgselfie.created < '". $enddate ."'";
                      $isFirstCriteria = 0;
                  }
                  else
                  {
-                     $select_selfie_query = $select_selfie_query . " and  selfie.created BETWEEN '" . $startdate . "' AND '". $enddate ."'";
+                     $select_selfie_query = $select_selfie_query . " and  imgselfie.created > '" . $startdate . "' AND imgselfie.created < '". $enddate ."'";
                  }
              }
              $isdelete = 0;
              $select_selfie_query = $select_selfie_query ." and imgselfie.is_delete = " . $isdelete . "
-             and (selfie.closingtime > ? or selfie.closingtime is null or selfie.closingtime = '') order by selfie.verifiedtime desc";
-          // echo $select_selfie_query;exit;
+             order by imgselfie.created desc";
+
+//            and (selfie.closingtime > ? or selfie.closingtime is null or selfie.closingtime = '') order by imgselfie.created desc";
+//            echo $select_selfie_query;
+//            exit;
 
 
             $select_selfie_stmt = $connection->prepare($select_selfie_query);
             $currentdate = date("Y-m-d H:i:s");
-            $select_selfie_stmt->bind_param("s",$currentdate);
 
             if($select_selfie_stmt->execute())
             {
@@ -392,8 +750,24 @@ class UserFunctions
                 {
                     while ($selfie = fetch_assoc_all_values($select_selfie_stmt))
                     {
+                        if($selfie['userid'] == null || $selfie['userid'] == 'null')
+                        {
+                            $selfie['is_purchased'] = "0";
+                        }
+
+                        if($selfie['userid'] != $userid)
+                        {
+                            $selfie['is_purchased'] = "0";
+                        }
+
+                        if($selfie['selfieid'] != null && $selfie['userid'] != $userid)
+                        {
+                            $selfie['selfieid'] = null;
+                        }
+
                         $posts[] = $selfie;
                     }
+
                     $status = 1;
                     $data['status'] = ($status > 1) ? FAILED : SUCCESS;
                     $data['message'] = "Search selfie !!!";
@@ -411,7 +785,7 @@ class UserFunctions
             }
         else
         {
-            echo $select_selfie_query->error;
+            //echo $select_selfie_query->error;
             $status = 2;
             $data['status'] = ($status > 1) ? FAILED : SUCCESS;
             $data['message'] = "Please try again !!!";
@@ -520,7 +894,8 @@ class UserFunctions
                         //Post Face
                         $this->post_face($selfi_image_name,$userid);
 
-                        $update_pic_query = "Update " . TABLE_USER_IMAGES . " set image = '" . $selfi_image_name . "' ,modified = '" . date("Y-m-d H:i:s")  . "'  where id = '" . $user['bio_selfie_id'] . "'";
+                        $update_pic_query = "Update " . TABLE_USER_IMAGES . " set image = '" . $selfi_image_name . "' ,modified = '" . date("Y-m-d H:i:s")  . "'
+                        where id = '" . $user['bio_selfie_id'] . "'";
                         $update_user_pic = mysqli_query($connection, $update_pic_query) or $errorMsg = mysqli_error($connection);
 
                         if(!$update_user_pic)
@@ -533,7 +908,9 @@ class UserFunctions
                         }
                         else
                         {
-                            $select_query = "Select user.*,imguser.image from " . TABLE_USER . " as user JOIN " . TABLE_USER_IMAGES . " as imguser on imguser.id =  user.profile_image_id where user.id = ?";
+                            $select_query = "Select user.*,imguser.image from " . TABLE_USER . " as user JOIN " . TABLE_USER_IMAGES . " as
+                            imguser on imguser.id =  user.profile_image_id where user.id = ?";
+
                             if ($select_query_stmt = $connection->prepare($select_query)) {
                                 $select_query_stmt->bind_param("i", $userid);
 
@@ -591,6 +968,7 @@ class UserFunctions
                                 selfie.closingtime as closingtime,
                                 selfie.verifiedtime as verifiedtime,
                                 imgselfie.image as selfieimg,
+                                imgselfie.id  as icpimgid,
                                 icps.id as icpid,
                                 icps.name as icpname ,
                                 icps.icp_logo,
@@ -604,6 +982,7 @@ class UserFunctions
                                 icpsettings.is_low_image_free ,
                                 icpsettings.is_high_image_free ,
                                 icpsettings.lowfree_on_highpurchase ,
+                                icpsettings.digital_free_on_physical_purchase,
                                 icpsettings.is_image_timelimited,
                                 icpsettings.image_availabilty_time_limit,
                                 icpsettings.local_hotel_delivery_free,
@@ -619,7 +998,7 @@ class UserFunctions
                                 from " . TABLE_ICP_IMAGE_TAG . " as selfie left join (select * from " . TABLE_ICP_IMAGE . ") as imgselfie on imgselfie.id = selfie.icp_image_id
                                 left join (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id left join (select * from " . TABLE_ICP_SETTING . ") as icpsettings on icps.id = icpsettings.icp_id
                                 left join (select * from " . TABLE_BUSINESS . ") as business on business.id  = icps.business_id
-                                where selfie.user_id = ? and selfie.is_currentuser = ? and imgselfie.is_delete = ? order by selfie.verifiedtime desc ";
+                                where selfie.user_id = ? and selfie.is_currentuser = ? and selfie.is_delete = ? order by selfie.verifiedtime desc ";
 
 
 
@@ -689,6 +1068,241 @@ class UserFunctions
         }
     }
 
+    public  function getAllUserVerifiedSelfieClone($postdata)
+    {
+
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+        $userid = validateObject($postdata, 'userId', "");
+        $userid = addslashes($userid);
+
+        $noofrecord = validateObject($postdata, 'noofrecord', "");
+        $noofrecord = addslashes($noofrecord);
+
+        $offset = validateObject($postdata, 'offset', "");
+        $offset = addslashes($offset);
+
+        $select_selfie_query = "select  selfie.id as selfieid,
+                                selfie.is_purchased,
+
+                                selfie.is_small_purchase,
+                                selfie.is_large_purchase,
+                                selfie.is_printed_purchase,
+
+                                selfie.created as detectedtime,
+                                selfie.closingtime as closingtime,
+                                selfie.verifiedtime as verifiedtime,
+                                imgselfie.image as selfieimg,
+                                imgselfie.id as icpimgid,
+                                icps.id as icpid,
+                                icps.name as icpname ,
+                                icps.icp_logo,
+                                business.id as businessid,
+                                business.name as businessname,
+                                business.logo as businesslogo,
+                                business.address1 as address1,
+                                business.address2 as address2,
+                                icpsettings.preview_photo ,
+                                icpsettings.addlogo_to_sharedimage ,
+                                icpsettings.is_low_image_free ,
+                                icpsettings.is_high_image_free ,
+                                icpsettings.lowfree_on_highpurchase ,
+                                icpsettings.digital_free_on_physical_purchase,
+                                icpsettings.is_image_timelimited,
+                                icpsettings.image_availabilty_time_limit,
+                                icpsettings.local_hotel_delivery_free,
+                                icpsettings.local_hotel_delivery_price,
+                                icpsettings.domestic_shipping_free ,
+                                icpsettings.domestic_shipping_price,
+                                icpsettings.international_shipping_free,
+                                icpsettings.international_shipping_price,
+                                icps.low_resolution_price,
+                                icps.high_resolution_price,
+                                icps.offer_printed_souvenir,
+                                icps.printed_souvenir_price
+                                from " . TABLE_ICP_IMAGE_TAG . " as selfie left join (select * from " . TABLE_ICP_IMAGE . ") as imgselfie on imgselfie.id = selfie.icp_image_id
+                                left join (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id
+                                left join (select * from " . TABLE_ICP_SETTING . ") as icpsettings on icps.id = icpsettings.icp_id
+                                left join (select * from " . TABLE_BUSINESS . ") as business on business.id  = icps.business_id
+                                where
+                                selfie.user_id = ? and
+                                selfie.is_currentuser = ? and
+                                selfie.is_delete = ? and (selfie.closingtime > ? or selfie.closingtime is null or selfie.closingtime = '')
+                                order by selfie.verifiedtime desc";
+
+//        echo $select_selfie_query;
+//        exit;
+
+
+        //echo $select_selfie_query;exit;
+        $select_selfie_stmt = $connection->prepare($select_selfie_query);
+        $iscurrentuser = "1";
+        $isdelete = 0;
+        $currentdate = date("Y-m-d H:i:s");
+
+        $select_selfie_stmt->bind_param("isis",$userid,$iscurrentuser,$isdelete,$currentdate);
+
+        if($select_selfie_stmt->execute()) {
+            $select_selfie_stmt->store_result();
+            if ($select_selfie_stmt->num_rows > 0) {
+
+                $canpurchage = 0;
+
+                $arrSelfie = array();
+
+                while($selfie = fetch_assoc_all_values($select_selfie_stmt))
+                {
+                    if($selfie['is_purchased']==0)
+                    {
+                        $canpurchage = $canpurchage + 1;
+                    }
+
+                    $arrSelfie[] =  $selfie['selfieid'];
+                    $posts[] = $selfie;
+                }
+
+
+                // Select all purchase image by current user
+
+                $arrPurchase = array();
+                $select_purchase_selfie  = "select DISTINCT cartitem.selfie_id as selfieid from cart as ordercart
+                left join (select * from cart_item) as cartitem on cartitem.cart_id = ordercart.id where user_id = ? and is_payment_done = '1'";
+
+                $select_purchase_selfie_stmt = $connection->prepare($select_purchase_selfie);
+                $select_purchase_selfie_stmt->bind_param("i",$userid);
+                if($select_purchase_selfie_stmt->execute())
+                {
+                    $select_purchase_selfie_stmt->store_result();
+                    if ($select_purchase_selfie_stmt->num_rows > 0)
+                    {
+                        while($purchase = fetch_assoc_all_values($select_purchase_selfie_stmt))
+                        {
+
+                            $arrPurchase[] =  $purchase['selfieid'];
+                        }
+                    }
+                }
+                else
+                {
+                    $data['status'] = FAILED;
+                    $data['message'] = "Some thing went wrong please try again...";
+                    return $data;
+
+                }
+
+                $purchase=array_diff($arrPurchase ,$arrSelfie);
+
+
+                foreach ($purchase as $selfie_id)
+                {
+
+
+                    $select_purchaseselfie_query = "select  selfie.id as selfieid,
+                                selfie.is_purchased,
+                                selfie.is_small_purchase,
+                                selfie.is_large_purchase,
+                                selfie.is_printed_purchase,
+
+                                selfie.created as detectedtime,
+                                selfie.closingtime as closingtime,
+                                selfie.verifiedtime as verifiedtime,
+                                imgselfie.image as selfieimg,
+                                imgselfie.id as icpimgid,
+                                icps.id as icpid,
+                                icps.name as icpname ,
+                                icps.icp_logo,
+                                business.id as businessid,
+                                business.name as businessname,
+                                business.logo as businesslogo,
+                                business.address1 as address1,
+                                business.address2 as address2,
+                                icpsettings.preview_photo ,
+                                icpsettings.addlogo_to_sharedimage ,
+                                icpsettings.is_low_image_free ,
+                                icpsettings.is_high_image_free ,
+                                icpsettings.lowfree_on_highpurchase ,
+                                icpsettings.digital_free_on_physical_purchase,
+                                icpsettings.is_image_timelimited,
+                                icpsettings.image_availabilty_time_limit,
+                                icpsettings.local_hotel_delivery_free,
+                                icpsettings.local_hotel_delivery_price,
+                                icpsettings.domestic_shipping_free ,
+                                icpsettings.domestic_shipping_price,
+                                icpsettings.international_shipping_free,
+                                icpsettings.international_shipping_price,
+                                icps.low_resolution_price,
+                                icps.high_resolution_price,
+                                icps.offer_printed_souvenir,
+                                icps.printed_souvenir_price
+                                from " . TABLE_ICP_IMAGE_TAG . " as selfie left join (select * from " . TABLE_ICP_IMAGE . ") as imgselfie on imgselfie.id = selfie.icp_image_id
+                                left join (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id
+                                left join (select * from " . TABLE_ICP_SETTING . ") as icpsettings on icps.id = icpsettings.icp_id
+                                left join (select * from " . TABLE_BUSINESS . ") as business on business.id  = icps.business_id
+                                where
+                                selfie.id = ? and
+                                selfie.is_delete = '0'";
+
+
+                    $select_purchaseselfie_stmt = $connection->prepare($select_purchaseselfie_query);
+                    $select_purchaseselfie_stmt->bind_param("i",$selfie_id);
+
+                    if($select_purchaseselfie_stmt->execute())
+                    {
+                        $select_purchaseselfie_stmt->store_result();
+                        if ($select_purchaseselfie_stmt->num_rows > 0)
+                        {
+                            while($photo = fetch_assoc_all_values($select_purchaseselfie_stmt))
+                            {
+                                $posts[] = $photo;
+                            }
+                        }
+                    }
+                }
+
+                $sortOrder = array();
+                foreach ($posts as $objPhoto) {
+                    $created = $objPhoto['detectedtime'].$objPhoto['selfieid'];
+                    $sortOrder[(string)$created] = $objPhoto;
+                }
+
+                krsort($sortOrder);
+                unset($posts);
+                $posts = array();
+
+                foreach ($sortOrder as $objRest) {
+                    array_push($posts, $objRest);
+                }
+
+                $status = 1;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "User verified selfie !!!";
+                $data['noofphotos'] = strval(count($posts));
+                $data['canpurchage'] = strval($canpurchage);
+                $data['verifiedselfie'] =  array_slice($posts,intval($offset),intval($noofrecord));
+                return $data;
+            }
+            else
+            {
+                $status = 1;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "No verified selfi found!!!";
+                return $data;
+            }
+
+        }
+        else
+        {
+            $status = 2;
+            $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+            $data['message'] = "Please try again!!!";
+            $data['user'] = $posts;
+            return $data;
+        }
+    }
+
     public  function getAllUserVerifiedSelfie($postdata)
     {
 
@@ -717,6 +1331,7 @@ class UserFunctions
                                 selfie.closingtime as closingtime,
                                 selfie.verifiedtime as verifiedtime,
                                 imgselfie.image as selfieimg,
+                                imgselfie.id as icpimgid,
                                 icps.id as icpid,
                                 icps.name as icpname ,
                                 icps.icp_logo,
@@ -730,6 +1345,7 @@ class UserFunctions
                                 icpsettings.is_low_image_free ,
                                 icpsettings.is_high_image_free ,
                                 icpsettings.lowfree_on_highpurchase ,
+                                icpsettings.digital_free_on_physical_purchase,
                                 icpsettings.is_image_timelimited,
                                 icpsettings.image_availabilty_time_limit,
                                 icpsettings.local_hotel_delivery_free,
@@ -743,9 +1359,17 @@ class UserFunctions
                                 icps.offer_printed_souvenir,
                                 icps.printed_souvenir_price
                                 from " . TABLE_ICP_IMAGE_TAG . " as selfie left join (select * from " . TABLE_ICP_IMAGE . ") as imgselfie on imgselfie.id = selfie.icp_image_id
-                                left join (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id left join (select * from " . TABLE_ICP_SETTING . ") as icpsettings on icps.id = icpsettings.icp_id
+                                left join (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id
+                                left join (select * from " . TABLE_ICP_SETTING . ") as icpsettings on icps.id = icpsettings.icp_id
                                 left join (select * from " . TABLE_BUSINESS . ") as business on business.id  = icps.business_id
-                                where selfie.user_id = ? and selfie.is_currentuser = ? and imgselfie.is_delete = ?  and (selfie.closingtime > ? or selfie.closingtime is null or selfie.closingtime = '') order by selfie.verifiedtime desc";
+                                where
+                                selfie.user_id = ? and
+                                selfie.is_currentuser = ? and
+                                selfie.is_delete = ? and (selfie.closingtime > ? or selfie.closingtime is null or selfie.closingtime = '')
+                                order by selfie.verifiedtime desc";
+
+//        echo $select_selfie_query;
+//        exit;
 
 
         //echo $select_selfie_query;exit;
@@ -762,14 +1386,133 @@ class UserFunctions
 
                 $canpurchage = 0;
 
+                $arrSelfie = array();
+
                 while($selfie = fetch_assoc_all_values($select_selfie_stmt))
                 {
                     if($selfie['is_purchased']==0)
                     {
                         $canpurchage = $canpurchage + 1;
                     }
+
+                    $arrSelfie[] =  $selfie['selfieid'];
                     $posts[] = $selfie;
                 }
+
+
+                // Select all purchase image by current user
+
+                $arrPurchase = array();
+                $select_purchase_selfie  = "select cartitem.selfie_id as selfieid from cart as ordercart
+                left join (select * from cart_item) as cartitem on cartitem.cart_id = ordercart.id where user_id = ? and is_payment_done = '1'";
+
+                $select_purchase_selfie_stmt = $connection->prepare($select_purchase_selfie);
+                $select_purchase_selfie_stmt->bind_param("i",$userid);
+                if($select_purchase_selfie_stmt->execute())
+                {
+                    $select_purchase_selfie_stmt->store_result();
+                    if ($select_purchase_selfie_stmt->num_rows > 0)
+                    {
+                        while($purchase = fetch_assoc_all_values($select_purchase_selfie_stmt))
+                        {
+
+                            $arrPurchase[] =  $purchase['selfieid'];
+                        }
+                    }
+                }
+                else
+                {
+                    $data['status'] = FAILED;
+                    $data['message'] = "Some thing went wrong please try again...";
+                    return $data;
+
+                }
+
+                $purchase=array_diff($arrPurchase ,$arrSelfie);
+
+
+                foreach ($purchase as $selfie_id)
+                {
+
+
+                    $select_purchaseselfie_query = "select selfie.id as selfieid,
+                                selfie.is_purchased,
+                                selfie.is_small_purchase,
+                                selfie.is_large_purchase,
+                                selfie.is_printed_purchase,
+
+                                selfie.created as detectedtime,
+                                selfie.closingtime as closingtime,
+                                selfie.verifiedtime as verifiedtime,
+                                imgselfie.image as selfieimg,
+                                imgselfie.id as icpimgid,
+                                icps.id as icpid,
+                                icps.name as icpname ,
+                                icps.icp_logo,
+                                business.id as businessid,
+                                business.name as businessname,
+                                business.logo as businesslogo,
+                                business.address1 as address1,
+                                business.address2 as address2,
+                                icpsettings.preview_photo ,
+                                icpsettings.addlogo_to_sharedimage ,
+                                icpsettings.is_low_image_free ,
+                                icpsettings.is_high_image_free ,
+                                icpsettings.lowfree_on_highpurchase ,
+                                icpsettings.digital_free_on_physical_purchase,
+                                icpsettings.is_image_timelimited,
+                                icpsettings.image_availabilty_time_limit,
+                                icpsettings.local_hotel_delivery_free,
+                                icpsettings.local_hotel_delivery_price,
+                                icpsettings.domestic_shipping_free ,
+                                icpsettings.domestic_shipping_price,
+                                icpsettings.international_shipping_free,
+                                icpsettings.international_shipping_price,
+                                icps.low_resolution_price,
+                                icps.high_resolution_price,
+                                icps.offer_printed_souvenir,
+                                icps.printed_souvenir_price
+                                from " . TABLE_ICP_IMAGE_TAG . " as selfie left join (select * from " . TABLE_ICP_IMAGE . ") as imgselfie on imgselfie.id = selfie.icp_image_id
+                                left join (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id
+                                left join (select * from " . TABLE_ICP_SETTING . ") as icpsettings on icps.id = icpsettings.icp_id
+                                left join (select * from " . TABLE_BUSINESS . ") as business on business.id  = icps.business_id
+                                where
+                                selfie.id = ? and
+                                selfie.is_delete = '0'";
+
+
+                $select_purchaseselfie_stmt = $connection->prepare($select_purchaseselfie_query);
+                $select_purchaseselfie_stmt->bind_param("i",$selfie_id);
+
+                    if($select_purchaseselfie_stmt->execute())
+                    {
+                        $select_purchaseselfie_stmt->store_result();
+                        if ($select_purchaseselfie_stmt->num_rows > 0)
+                        {
+                            while($photo = fetch_assoc_all_values($select_purchaseselfie_stmt))
+                            {
+                                $posts[] = $photo;
+                            }
+                       }
+                    }
+                }
+
+                //Sorting Based on created data
+
+                $sortOrder = array();
+                foreach ($posts as $objPhoto) {
+                    $created = $objPhoto['detectedtime'].$objPhoto['selfieid'];
+                    $sortOrder[(string)$created] = $objPhoto;
+                }
+
+                krsort($sortOrder);
+                unset($posts);
+                $posts = array();
+
+                foreach ($sortOrder as $objRest) {
+                    array_push($posts, $objRest);
+                }
+
 
                 $status = 1;
                 $data['status'] = ($status > 1) ? FAILED : SUCCESS;
@@ -946,6 +1689,38 @@ class UserFunctions
 
                 while($business = fetch_assoc_all_values($select_checkin_business_stmt))
                 {
+                    //check is favorite business
+                    $check_isfavorite_query = "select * from " . TABLE_FAVORITES . " where businessid = ? and userid = ?";
+                    $check_isfavorite_stmt = $connection->prepare($check_isfavorite_query);
+
+                    $check_isfavorite_stmt->bind_param("ii",$business['id'],$userid);
+                    $check_isfavorite_stmt->execute();
+                    $check_isfavorite_stmt->store_result();
+                    if($check_isfavorite_stmt->num_rows > 0)
+                    {
+                        $favorite = fetch_assoc_all_values($check_isfavorite_stmt);
+                        $business['isfavorite'] = $favorite['isfavorite'];
+                    }
+                    else
+                    {
+                        $business['isfavorite'] = "0";
+                    }
+
+                    //chcek is like business
+                    $check_islike_query = "select * from " . TABLE_LIKES . " where businessid = ? and userid = ?";
+                    $check_islike_stmt = $connection->prepare($check_islike_query);
+                    $check_islike_stmt->bind_param("ii",$business['id'],$userid);
+                    $check_islike_stmt->execute();
+                    $check_islike_stmt->store_result();
+                    if($check_islike_stmt->num_rows > 0)
+                    {
+                        $like = fetch_assoc_all_values($check_islike_stmt);
+                        $business['islike'] = $like['islike'];
+                    }
+                    else
+                    {
+                        $business['islike'] = "0";
+                    }
                     $checkin[] = $business;
                    // print_r($checkin."\n");
                    // echo $select_checkin_business;exit;
@@ -998,6 +1773,7 @@ class UserFunctions
                                 selfie.closingtime as closingtime,
                                 selfie.verifiedtime as verifiedtime,
                                 imgselfie.image as selfieimg,
+                                imgselfie.id as icpimgid,
                                 selfie.is_purchased,
                                 icps.id as icpid,
                                 icps.name as icpname ,
@@ -1008,6 +1784,7 @@ class UserFunctions
                                 icpsettings.is_low_image_free ,
                                 icpsettings.is_high_image_free ,
                                 icpsettings.lowfree_on_highpurchase ,
+                                icpsettings.digital_free_on_physical_purchase,
                                 icpsettings.is_image_timelimited,
                                 icpsettings.image_availabilty_time_limit,
                                 icpsettings.local_hotel_delivery_free,
@@ -1023,9 +1800,12 @@ class UserFunctions
                                 from " . TABLE_ICP_IMAGE_TAG . " as selfie left join (select * from " . TABLE_ICP_IMAGE . ") as imgselfie on imgselfie.id = selfie.icp_image_id
                                 left join (select * from " . TABLE_ICPS . ") as icps on imgselfie.icp_id = icps.id left join (select * from " . TABLE_ICP_SETTING . ") as icpsettings on icps.id = icpsettings.icp_id
                                 left join (select * from " . TABLE_BUSINESS . ") as business on business.id  = icps.business_id
-                                where selfie.user_id = ? and selfie.is_currentuser = ? and selfie.is_purchased = ? and business.id  = ? and imgselfie.is_delete = ?
+                                where selfie.user_id = ? and selfie.is_currentuser = ? and selfie.is_purchased = ? and business.id  = ? and selfie.is_delete = ?
                                 and (selfie.closingtime > ? or selfie.closingtime is null or selfie.closingtime = '')
                                 order by selfie.verifiedtime desc";
+
+
+
 
 //        echo $select_selfie_query;exit();
 
@@ -1034,6 +1814,7 @@ class UserFunctions
         $ispurchagse = "0";
         $isdelete = 0;
         $currentdate = date("Y-m-d H:i:s");
+
         $select_selfie_stmt->bind_param("issiis",$userid,$iscurrentuser,$ispurchagse,$businessid,$isdelete,$currentdate);
 
         if($select_selfie_stmt->execute()) {
@@ -1216,15 +1997,17 @@ class UserFunctions
         $deviceType = validateObject($userData, 'devicetype', "");
         $deviceType = addslashes($deviceType);
 
-        $select_facebookid_query = "Select * from " . TABLE_USER . "  where facebook_id = ? ";
+        $select_facebookid_query = "Select * from " . TABLE_USER . "  where facebook_id = ? and is_delete = ?";
         $select_facebookid_stmt = $connection->prepare($select_facebookid_query);
-        $select_facebookid_stmt->bind_param("s", $facebookID);
+        $isdelete = '0';
+        $select_facebookid_stmt->bind_param("ss", $facebookID,$isdelete);
 
         if($select_facebookid_stmt->execute()) {
             $select_facebookid_stmt->store_result();
             if ($select_facebookid_stmt->num_rows > 0) {
 
                 //update device type and token
+
                 $user = fetch_assoc_all_values($select_facebookid_stmt);
                 $login_count = intval($user['login_count']) + 1;
 
@@ -1241,7 +2024,8 @@ class UserFunctions
 
                 if ($update_query_stmt->execute()) {
 
-                    $select_fb_user = "select user.*,imguser.image from " . TABLE_USER . " as user JOIN " . TABLE_USER_IMAGES . " as imguser on imguser.id =  user.profile_image_id where user.facebook_id =  ?";
+                    $select_fb_user = "select user.*,imguser.image from " . TABLE_USER . " as user JOIN " . TABLE_USER_IMAGES . " as imguser on
+                    imguser.id =  user.profile_image_id where user.facebook_id =  ?";
                     // echo $select_fb_user;exit;
 
                     $select_fb_user_stmt = $connection->prepare($select_fb_user);
@@ -1264,15 +2048,17 @@ class UserFunctions
                         $data['usertoken'] = $user_token['UserToken'];
                     }
 
-                    $data['status'] = ($status > 1) ? FAILED : SUCCESS;
-                    $data['message'] = "User Login successfully !!!";
+                    $data['status'] = SUCCESS;
+                    $data['message'] = "User Login successfully...";
                     $data['isExist'] = "YES";
                     $data['user'] = $posts;
                     return $data;
-                } else {
-                    $status = 1;
-                    $data['status'] = ($status > 1) ? FAILED : SUCCESS;
-                    $data['message'] = "User with this facebook id not exist";
+                }
+                else
+                {
+                    $status = 2;
+                    $data['status'] = FAILED;
+                    $data['message'] = "Please try again...";
                     $data['isExist'] = "NO";
                     return $data;
                 }
@@ -1280,17 +2066,15 @@ class UserFunctions
             else
             {
                 $status = 1;
-                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['status'] = SUCCESS;
                 $data['message'] = "User with this facebook id not exist";
                 $data['isExist'] = "NO";
                 return $data;
-
             }
         }
         else
         {
-            $status = 2;
-            $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+            $data['status'] = FAILED;
             $data['message'] = "Please try again!!!";
             $data['user'] = $posts;
             return $data;
@@ -1310,12 +2094,10 @@ class UserFunctions
         $username = validateObject($userData, 'username', "");
         $username = addslashes($username);
 
-
-        $select_email_query = "Select email from " . TABLE_USER . "  where (email = ? or username = ?) and is_delete = ?";
-
+        $select_email_query = "Select email from " . TABLE_USER . "  where email = ? and is_delete = ?";
         $select_email_stmt = $connection->prepare($select_email_query);
-        $isdelete = 0;
-        $select_email_stmt->bind_param("sss", $useremail,$username,$isdelete);
+        $isdelete = '0';
+        $select_email_stmt->bind_param("ss", $useremail,$isdelete);
 
         if($select_email_stmt->execute())
         {
@@ -1330,11 +2112,42 @@ class UserFunctions
             }
             else
             {
-                $status = 1;
-                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
-                $data['message'] = "User with this email id not exist";
-                $data['isExist'] = "NO";
-                return $data;
+
+                $select_username_query = "Select username from " . TABLE_USER . "  where username = ? and is_delete = ?";
+                $select_username_stmt = $connection->prepare($select_username_query);
+                $isdelete = '0';
+                $select_username_stmt->bind_param("ss", $useremail,$isdelete);
+
+                if($select_username_stmt->execute())
+                {
+                    $select_username_stmt->store_result();
+                    if ($select_username_stmt->num_rows > 0)
+                    {
+                        $select_username_stmt->close();
+                        $status = 1;
+                        $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                        $data['message'] = "Username address already exist...";
+                        $data['isExist'] = "YES";
+                        return $data;
+                    }
+                    else
+                    {
+                        $status = 1;
+                        $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                        $data['message'] = "User with this email id not exist";
+                        $data['isExist'] = "NO";
+                        return $data;
+                    }
+                }
+                else
+                {
+                    $status = 2;
+                    $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                    $data['message'] = "Please try again!!!";
+                    $data['user'] = $posts;
+                    return $data;
+
+                }
             }
         }
         else
@@ -1531,12 +2344,12 @@ class UserFunctions
             }
         }
 
-
-
-
         if (strlen($selfipic) > 0) {
+
+            $this->delete_face($userid);
+
             //Selfie Pic
-            $selfi_image_name = 'profile_' . date("Y-m-d_H_i_s") . ".png";
+            $selfi_image_name = 'profile_' . date("Y_m_d_H_i_s") . ".png";
             $selfi_image_upload_dir = SELFI_IMAGES . $selfi_image_name;
             file_put_contents($selfi_image_upload_dir, base64_decode($selfipic));
 
@@ -1596,11 +2409,14 @@ class UserFunctions
 
         $update_user = mysqli_query($connection, $update_query) or $errorMsg = mysqli_error($connection);
 
+
         if($update_user)
         {
             $status = 1;
 
             $select_query = "Select * from " . TABLE_USER . " where id = '" . $userid ."'";
+
+
             $fetch_user = mysqli_query($connection, $select_query) or $errorMsg = mysqli_error($connection);
 
             if($fetch_user)
@@ -1648,8 +2464,6 @@ class UserFunctions
                 $data['user'] = $posts;
                 return $data;
             }
-
-
         }
         else
         {
@@ -1672,6 +2486,9 @@ class UserFunctions
 
         $password = validateObject($userData, 'password', "");
         $password = encryptPassword($password);
+
+
+
 
         $deviceid = validateObject($userData, 'deviceid', 0);
         $deviceid = addslashes($deviceid);
@@ -1750,7 +2567,7 @@ class UserFunctions
                                 }
 
 
-                                $select_image_query = "select * from " . TABLE_USER_IMAGES . " where user_id = ?";
+                                $select_image_query = "select * from " . TABLE_USER_IMAGES . " where user_id = ? and is_delete='0'";
                                 $select_image_query_stmt = $connection->prepare($select_image_query);
                                 $select_image_query_stmt->bind_param("i",$user['id']);
                                 $select_image_query_stmt->execute();
@@ -1799,7 +2616,7 @@ class UserFunctions
 
                         //Select image
 
-                        $select_image_query = "select * from " . TABLE_USER_IMAGES . " where user_id = ?";
+                        $select_image_query = "select * from " . TABLE_USER_IMAGES . " where user_id = ? and is_delete='0'";
                         $select_image_query_stmt = $connection->prepare($select_image_query);
                         $select_image_query_stmt->bind_param("i",$user['id']);
                         $select_image_query_stmt->execute();
@@ -1816,8 +2633,6 @@ class UserFunctions
                         $data['user'] = $posts;
                         return $data;
                     }
-
-
 
                 }
                 else
@@ -1894,6 +2709,8 @@ class UserFunctions
         $security=new SecurityFunctions();
         $isSecure = $security->checkForSecurityNew($access_key,$secret_key);
 
+        $isdeleted = '0';
+
         if ($isSecure == 'no')
         {
             $data['error_status']= MALICIOUS_SOURCE;
@@ -1901,30 +2718,31 @@ class UserFunctions
         }
         else
         {
-            if(strlen($phoneno) > 0)
-            {
-                $select_phone_query = "Select phone_no from " . TABLE_USER . "  where phone_no = ? ";
-                $select_phone_stmt = $connection->prepare($select_phone_query);
-                $select_phone_stmt->bind_param("s", $phoneno);
-                $select_phone_stmt->execute();
-                $select_phone_stmt->store_result();
-
-                if ($select_phone_stmt->num_rows > 0) {
-                    $select_phone_stmt->close();
-                    $status = 2;
-                    $data['status'] = ($status > 1) ? FAILED : SUCCESS;
-                    $data['message'] = "Phone number already exists !!!";
-                    $data['usertoken'] = '';
-                    $data['user'] = $posts;
-                    return $data;
-                }
-            }
+//            if(strlen($phoneno) > 0)
+//            {
+//                $select_phone_query = "Select phone_no from " . TABLE_USER . "  where phone_no = ? and is_delete = ? ";
+//                $select_phone_stmt = $connection->prepare($select_phone_query);
+//                $select_phone_stmt->bind_param("ss", $phoneno,$isdeleted);
+//                $select_phone_stmt->execute();
+//                $select_phone_stmt->store_result();
+//
+//                if ($select_phone_stmt->num_rows > 0) {
+//                    $select_phone_stmt->close();
+//                    $status = 2;
+//                    $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+//                    $data['message'] = "Phone number already exists !!!";
+//                    $data['usertoken'] = '';
+//                    $data['user'] = $posts;
+//                    return $data;
+//                }
+//            }
 
 
             if(strlen($email) > 0) {
-                $select_email_query = "Select email from " . TABLE_USER . "  where email = ? ";
+                $select_email_query = "Select email from " . TABLE_USER . "  where email = ? and is_delete = ?";
+
                 $select_email_stmt = $connection->prepare($select_email_query);
-                $select_email_stmt->bind_param("s", $email);
+                $select_email_stmt->bind_param("ss", $email,$isdeleted);
                 $select_email_stmt->execute();
                 $select_email_stmt->store_result();
 
@@ -1941,9 +2759,9 @@ class UserFunctions
 
             if(strlen($username) > 0)
             {
-                $select_username_query = "Select username from " . TABLE_USER . "  where username = ? ";
+                $select_username_query = "Select username from " . TABLE_USER . "  where username = ? and is_delete = ?";
                 $select_username_stmt = $connection->prepare($select_username_query);
-                $select_username_stmt->bind_param("s", $username);
+                $select_username_stmt->bind_param("ss", $username,$isdeleted);
                 $select_username_stmt->execute();
                 $select_username_stmt->store_result();
 
@@ -1983,15 +2801,19 @@ class UserFunctions
                              is_active
                              ";
 
+
                 $valuesFields = "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,? ";
                 $insert_query = ""."Insert into " . TABLE_USER . " (" . $insertFields . ") values (" .$valuesFields.")";
+
                 $select_insert_stmt = $connection->prepare($insert_query);
                 $modifieddate = date("Y-m-d H:i:s");
                 $logincount = "1";
                 $isactive = "1";
 
 
-                $select_insert_stmt->bind_param('issssssssssssssii',$userrole,$generate_guid,$accesscode,$firstname,$lastname,$username,$email,$password,$gender,$phoneno,$dob,$devicetype,$deviceid, $modifieddate, $modifieddate,$logincount, $isactive );
+                $select_insert_stmt->bind_param('issssssssssssssii',$userrole,$generate_guid,$accesscode,$firstname,$lastname,
+                    $username,$email,$password,$gender,$phoneno,$dob,$devicetype,$deviceid, $modifieddate, $modifieddate,$logincount, $isactive );
+
 
                 if($select_insert_stmt) {
                     if ($select_insert_stmt->execute())
@@ -2013,7 +2835,7 @@ class UserFunctions
                         if (strlen($selfipic) > 0) {
 
                             //Selfie Pic
-                            $selfi_image_name = 'profile_' . date("Y-m-d_H_i_s") . ".png";
+                            $selfi_image_name = 'profile_' . date("Y_m_d_H_i_s") . ".png";
                             $selfi_image_upload_dir = SELFI_IMAGES . $selfi_image_name;
                             file_put_contents($selfi_image_upload_dir, base64_decode($selfipic));
 
@@ -2040,7 +2862,10 @@ class UserFunctions
                                 {
                                     $update_user_stmt->close();
 
-                                    $select_user_query = "select user.*,imguser.image from " . TABLE_USER ." as user JOIN " . TABLE_USER_IMAGES . " as imguser on imguser.id =  user.profile_image_id where user.id =  ?";;
+                                    $select_user_query = "select user.*,imguser.image from " . TABLE_USER ." as user JOIN " . TABLE_USER_IMAGES . "
+                                    as imguser on imguser.id =  user.profile_image_id
+                                    where user.id =  ?
+                                    and imguser.is_delete='0'";
                                     $select_user_stmt = $connection->prepare($select_user_query);
                                     $select_user_stmt->bind_param("i",$user_inserted_id);
                                     if($select_user_stmt->execute())
@@ -2050,6 +2875,9 @@ class UserFunctions
                                         {
                                             $posts[] = fetch_assoc_all_values($select_user_stmt);
                                             $select_user_stmt->close();
+
+                                            //Send Verification Mail
+                                            $this->sendEmailVerificatoin($user_inserted_id,$username,$email);
 
                                             $status = 1;
                                             $data['status'] = ($status > 1) ? FAILED : SUCCESS;
@@ -2092,7 +2920,10 @@ class UserFunctions
                         }
                         else
                         {
-                            $select_user_query = "select user.*,imguser.image from " . TABLE_USER ." as user JOIN " . TABLE_USER_IMAGES . " as imguser on imguser.id =  user.profile_image_id where user.id =  ?";;
+
+
+                            $select_user_query = "select user.*,imguser.image from " . TABLE_USER ." as user JOIN " . TABLE_USER_IMAGES . " as imguser
+                            on imguser.id =  user.profile_image_id where user.id =  ? and imguser.is_delete='0'";
 
 //                            $select_user_query = "Select * from " . TABLE_USER . " where id = ?";
                             $select_user_stmt = $connection->prepare($select_user_query);
@@ -2105,6 +2936,10 @@ class UserFunctions
                                 {
                                     $posts[] = fetch_assoc_all_values($select_user_stmt);
                                     $select_user_stmt->close();
+
+                                    //Send Verification Mail
+                                    $this->sendEmailVerificatoin($user_inserted_id,$username,$email);
+
                                     $status = 1;
                                     $data['status'] = ($status > 1) ? FAILED : SUCCESS;
                                     $data['message'] = "User register successfully !!!";
@@ -2117,7 +2952,7 @@ class UserFunctions
                             {
                                 $status = 2;
                                 $data['status'] = ($status > 1) ? FAILED : SUCCESS;
-                                $data['message'] = "Please try again !!!". $select_insert_stmt->error;;
+                                $data['message'] = "Please try again !!!". $select_insert_stmt->error;
                                 $data['user'] = $posts;
                                 //return $data;
 
@@ -2126,11 +2961,20 @@ class UserFunctions
                     }
                     else
                     {
-                        $status = 2;
-                        $errorMsg = "Please try again !!!". $select_insert_stmt->error;
-//                        echo $errorMsg;exit;
 
+                        $status = 2;
+                        $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                        $data['message'] = "Please try again !!!". $select_insert_stmt->error;
+                        $data['user'] = $posts;
+//                        echo $errorMsg;exit;
                     }
+                }
+                else
+                {
+                    $status = 2;
+                    $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                    $data['message'] = "Please try again !!!". $select_insert_stmt->error;
+                    $data['user'] = $posts;
                 }
 
             }
@@ -2448,9 +3292,14 @@ class UserFunctions
                                             $data['usertoken'] = $user_token['UserToken'];
                                         }
 
+
+                                        //Send Verification Mail
+                                        $this->sendEmailVerificatoin($user['id'],$username,$email);
+
                                         $status = 1;
                                         $data['status'] = ($status > 1) ? FAILED : SUCCESS;
                                         $data['message'] = "User register successfully 1!!!";
+                                        $data['isNewUser'] = "YES";
                                         $posts[] = $user;
                                         $data['user'] = $posts;
                                         return $data;
@@ -2513,9 +3362,14 @@ class UserFunctions
                                     $data['usertoken'] = $user_token['UserToken'];
                                 }
 
+                                //Send Verification Mail
+                                $this->sendEmailVerificatoin($user['id'],$username,$email);
+
                                 $status = 1;
                                 $data['status'] = ($status > 1) ? FAILED : SUCCESS;
                                 $data['message'] = "User register successfully !!!";
+                                $data['isNewUser'] = "YES";
+
                                 $data['user'] = $posts;
                                 return $data;
                             }

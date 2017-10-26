@@ -9,13 +9,19 @@
 include_once 'Logger.php';
 
 //ini_set('display_errors', 1);
+//echo "okay";
 
 $logger = new Logger();
 
 date_default_timezone_set('UTC');
-$server = "192.168.1.201";
-$user = "facetag";
-$password = "W73vdXD1l3lc72u";
+//$server = "192.168.1.201";
+//$user = "facetag";
+//$password = "W73vdXD1l3lc72u";
+//$dbname = 'facetag';
+
+$server = "localhost";
+$user = "root";
+$password = "narola21";
 $dbname = 'facetag';
 
 global $con;
@@ -27,7 +33,8 @@ if (mysqli_connect_errno())
 }
 else
 {
-   // echo "connected successfully";
+    //echo "connected successfully";
 }
+
 
 ?>

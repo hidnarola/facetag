@@ -8,10 +8,8 @@
 
 define("SERVER_PATH" , $_SERVER["DOCUMENT_ROOT"]  . '/');
 define("SELFI_IMAGES", 'Images/selfiPic/');
-
-define("UPLOAD_SELFIE_PATH", 'http://clientapp.narola.online/HD/facetag/mobile/images/selfipic/');
+define("UPLOAD_SELFIE_PATH", 'http://facetag.co.nz/Mobile/Images/selfiPic/');
 //define("EVENT_IMAGES", 'Images/Event_Images/');
 //define("NEWPLACE_IMAGES", 'Images/NewPlace_Images/');
-
 
 ?>

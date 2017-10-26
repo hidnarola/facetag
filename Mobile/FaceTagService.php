@@ -47,6 +47,13 @@ switch ($_REQUEST['Service']) {
         $data = $objAndroidPush->call_service($_REQUEST['Service'], $postData);
     }
         break;
+    case "GetBusinessLocationData":
+    {
+        include_once 'BusinessFunction.php';
+        $objBusiness = new BusinessFunction();
+        $data = $objBusiness->call_service($_REQUEST['Service'], $postData);
+    }
+        break;
 
     case "refreshToken":
     case "updateTokenforUser":
@@ -57,6 +64,9 @@ switch ($_REQUEST['Service']) {
     }
         break;
 
+    case "GetAllUserVerifiedSelfieClone":
+    case "ReSendEmailVerificatoinMail":
+    case "sendEmailVerificatoinMail":
     case "Login":
     case "Register":
     case "LoginWithFB":
@@ -74,11 +84,13 @@ switch ($_REQUEST['Service']) {
     case "GetAllUserVerifiedSelfieTemp":
     case "UpdateUserSelfie":
     case "SearchSelfie":
+    case "searchSelfieNew":
     case "LogoutUser":
+    case "GetAllNonExpireSelfie":
     case "ForgotPassword":
+
     {
 //        $isSecure= (new SecurityFunctions())->checkForSecurityNew($postData->access_key,$postData->secret_key);
-
         $isSecure = 'yes';
         if ($isSecure == 'no') {
             $data['Result']['status'] = FAILED;
@@ -105,6 +117,8 @@ switch ($_REQUEST['Service']) {
     }
         break;
 
+    case "GetSpecificBusinessDetails":
+    case "DeleteSelfie":
     case "GetAllBusiness":
     case "SearchBusiness":
     case "CheckInBusiness":
@@ -116,6 +130,7 @@ switch ($_REQUEST['Service']) {
     case "ToggleBusinessFavorites":
     case "GetAllCheckinBusiness":
     case "GetBusinessSearchICP":
+    case "GetBusinessHotel":
     case "GetNearByBusiness":
     {
         //$isSecure= (new SecurityFunctions())->checkForSecurityNew($postData->access_key,$postData->secret_key);
@@ -179,9 +194,15 @@ switch ($_REQUEST['Service']) {
     }
         break;
 
+    case "MakePaymentWithStripe":
+    case "MakePaymentWithPayPal":
+    case "SaveOrder":
+    case "SaveOrderData":
+    case "CancelOrder":
     case "GetUserOrderData":
     case "PutOrder":
     case "PurchaseFreeImage":
+    case "PurchaseWithPaypal":
     case "GetUserOrder":
     {
         //$isSecure= (new SecurityFunctions())->checkForSecurityNew($postData->access_key,$postData->secret_key);
@@ -200,6 +221,41 @@ switch ($_REQUEST['Service']) {
             include_once 'OrderFunction.php';
             $objOrder = new OrderFunction();
             $data = $objOrder->call_service($_REQUEST['Service'], $postData);
+            if ($isSecure != 'yes' || $isSecure != 'yes')
+            {
+                if ($isSecure['key'] == "Temp") {
+                    $data['temptoken'] = $isSecure['value'];
+                } else {
+                    $data['usertoken'] = $isSecure['value'];
+                }
+            }
+        }
+    }
+        break;
+
+    case "GetShippingDetails":
+    case "AddShippingAddress":
+    case "UpdateAddress":
+    case "DeleteAddress":
+    case "GetUserAddress":
+
+    {
+        //$isSecure= (new SecurityFunctions())->checkForSecurityNew($postData->access_key,$postData->secret_key);
+        $isSecure = 'yes';
+        if ($isSecure == 'no') {
+            $data['Result']['status'] = FAILED;
+            $data['Result']['error_status'] = MALICIOUS_SOURCE;
+
+        }
+        elseif($isSecure == 'error'){
+            $data['Result']['status'] = FAILED;
+            $data['Result']['error_status'] = TOKEN_ERROR;
+        }
+        else
+        {
+            include_once 'ShippingFunction.php';
+            $objShipping = new ShippingFunction();
+            $data = $objShipping->call_service($_REQUEST['Service'], $postData);
             if ($isSecure != 'yes' || $isSecure != 'yes')
             {
                 if ($isSecure['key'] == "Temp") {

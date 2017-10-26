@@ -12,6 +12,8 @@ define("SUCCESS","success");
 define("FAILED", "failed");
 define("APPNAME", "FaceTag");
 
+define("VERIFYPAGE","http://facetag.co.nz/Mobile/VerifiedPage.php?uidentifier=");
+
 define("FIREBASE_API_KEY", "AAAAa4KifOY:APA91bHPx-78lE5GY7T-RZcLKVJInIdnCCOzR1s3nkqCvLl_C9pnhCR8efV254BR8MN32ww5Ly2OTMkqwZCUrYE71gZWNaPQ-ydQma-uY848NGsAC7v3m0fZtV7LLeFg1T6DUohne0xpKIbnBh3Yr7wsxp1117V_hA");
 //define("FIREBASE_API_KEY", "AIzaSyCNcPqh0ZzFS6ihlUvFl4ZtQ-k55_EFBHY");
 //define("FIREBASE_API_KEY", "AIzaSyCyoUklUlozEutMzBmLLy5IMFrHYxhEYv0");

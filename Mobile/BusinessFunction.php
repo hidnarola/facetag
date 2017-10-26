@@ -68,10 +68,291 @@ class BusinessFunction
             {
                 return $this->getNearByBusiness($postData);
             }
+            case "DeleteSelfie":
+            {
+                return $this->deleteSelfie($postData);
+            }
+            case "GetBusinessLocationData":
+            {
+                return $this->getBusinessLocationData($postData);
+            }
+            case "GetBusinessHotel":
+            {
+                return $this->getBusinessHotel($postData);
+            }
+            case "GetSpecificBusinessDetails":
+            {
+                return $this->getSpecificBusinessDetails($postData);
+            }
         }
     }
 
 
+
+
+    public function getSpecificBusinessDetails($postData)
+    {
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+        $businessId = validateObject($postData, 'businessId', "");
+        $businessId = addslashes($businessId);
+
+        $userid = validateObject($postData, 'userid', "");
+        $userid = addslashes($userid);
+
+        $select_business = "Select * from " . TABLE_BUSINESS . " where id = ? and is_delete = ?";
+        $select_business_stmt = $connection->prepare($select_business);
+        $isdelete = 0;
+        $select_business_stmt->bind_param("is",$businessId,$isdelete);
+
+        if($select_business_stmt->execute())
+        {
+            $select_business_stmt->store_result();
+            if($select_business_stmt->num_rows > 0)
+            {
+                while($business = fetch_assoc_all_values($select_business_stmt))
+                {
+
+                    //check is like
+                    $select_business_likes = "Select * from " . TABLE_LIKES ." where businessid = ? and userid = ?";
+                    $select_business_likes = $connection->prepare($select_business_likes);
+                    $select_business_likes->bind_param("ii",$business['id'],$userid);
+                    $select_business_likes->execute();
+                    $select_business_likes->store_result();
+                    if($select_business_likes->num_rows > 0)
+                    {
+                        $businesslikes = fetch_assoc_all_values($select_business_likes);
+                        $business['islike'] = $businesslikes['islike'];
+                    }
+                    else
+                    {
+                        $business['islike'] = "0";
+                    }
+
+                    //check is favorite
+                    $select_business_favorite = "Select * from " . TABLE_FAVORITES ." where businessid = ? and userid = ?";
+                    $select_business_favorite = $connection->prepare($select_business_favorite);
+                    $select_business_favorite->bind_param("ii",$business['id'],$userid);
+                    $select_business_favorite->execute();
+                    $select_business_favorite->store_result();
+                    if($select_business_favorite->num_rows > 0)
+                    {
+                        $businessfavorites = fetch_assoc_all_values($select_business_favorite);
+                        $business['isfavorite'] = $businessfavorites['isfavorite'];
+                    }
+                    else
+                    {
+                        $business['isfavorite'] = "0";
+                    }
+
+                    $posts[] = $business;
+                }
+
+                $status = 1;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "List of business !!!";
+                $data['business'] = $posts;
+                return $data;
+            }
+            else
+            {
+                $status = 1;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "Business not found !!!";
+                $data['business'] = $posts;
+                return $data;
+            }
+        }
+        else
+        {
+            $status = 2;
+            $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+            $data['message'] = "Please try again";
+            $data['business'] = $posts;
+            return $data;
+        }
+
+
+
+
+    }
+    public function getBusinessHotel($postData)
+    {
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+        $icpID = validateObject($postData, 'icpId', "");
+        $icpID = addslashes($icpID);
+
+        $select_hotel_query = "select * from hotels where FIND_IN_SET( icp_id, ? ) and is_delete = ? ";
+        $select_hotel_stmt = $connection->prepare($select_hotel_query);
+        $isdelete = "0";
+        $select_hotel_stmt->bind_param("ss", $icpID,$isdelete);
+
+        if ($select_hotel_stmt->execute()) {
+            $select_hotel_stmt->store_result();
+            if ($select_hotel_stmt->num_rows > 0)
+            {
+                while($hotel = fetch_assoc_all_values($select_hotel_stmt))
+                {
+                    $posts[] =$hotel;
+                }
+                $status = 1;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "List of hotel...";
+                $data['Hotels'] = $posts;
+                return $data;
+            }
+            else
+            {
+                $status = 2;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "Hotel's not found...";
+                return $data;
+
+            }
+        }
+        $status = 2;
+        $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+        $data['message'] = "Some thing went wrong please try again...";
+        return $data;
+
+    }
+
+    public function getBusinessLocationData($postData)
+    {
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+
+        $synchDate = validateObject($postData, 'lastSynchDate', "");
+        $synchDate = addslashes($synchDate);
+
+
+
+        if($synchDate == '0')
+        {
+            $select_business_query = "select
+        business.id as businessid,
+        business.name as name,
+        business.logo as logo,
+        business.description as description,
+        business.address1 as address1,
+        business.latitude as latitude,
+        business.longitude as longitude,
+        business.is_delete as is_delete
+        from " . TABLE_BUSINESS . " as business
+        where business.is_delete = ? and business.latitude IS NOT NULL and business.longitude IS NOT NULL";
+
+            $select_business_stmt = $connection->prepare($select_business_query);
+            $isdelete = "0";
+            $select_business_stmt->bind_param("s", $isdelete);
+        }
+        else
+        {
+            $select_business_query = "select
+        business.id as businessid,
+        business.name as name,
+        business.logo as logo,
+        business.description as description,
+        business.address1 as address1,
+        business.latitude as latitude,
+        business.longitude as longitude,
+        business.is_delete as is_delete
+        from " . TABLE_BUSINESS . " as business
+        where business.is_delete = ? and business.latitude IS NOT NULL and business.longitude IS NOT NULL and modified >= ?";
+
+            $select_business_stmt = $connection->prepare($select_business_query);
+            $isdelete = "0";
+            $select_business_stmt->bind_param("ss", $isdelete,$synchDate);
+        }
+
+
+        if ($select_business_stmt->execute())
+        {
+            $select_business_stmt->store_result();
+            if ($select_business_stmt->num_rows > 0)
+            {
+                while($business = fetch_assoc_all_values($select_business_stmt))
+                {
+
+                    $select_icp_query = "select count(*) as icpCount from " . TABLE_ICPS . " where business_id = ? and is_delete = ?";
+                    $select_icp_stmt = $connection->prepare($select_icp_query);
+                    $isdelete = "0";
+                    $select_icp_stmt->bind_param("is", $business['businessid'],$isdelete);
+
+                    if ($select_icp_stmt->execute()) {
+                        $select_icp_stmt->store_result();
+                        if ($select_icp_stmt->num_rows > 0)
+                        {
+                            $icpCount = fetch_assoc_all_values($select_icp_stmt);
+                            if( $icpCount['icpCount'] > 0)
+                            {
+                                $business['icpCount'] = $icpCount['icpCount'];
+                                $posts[] = $business;
+                            }
+
+                        }
+                    }
+                }
+                $status = 1;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "List of business...";
+                $data['businessLoc'] = $posts;
+                return $data;
+            }
+            else
+            {
+                $status = 2;
+                $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+                $data['message'] = "business's not found...";
+                return $data;
+
+            }
+        }
+        $status = 2;
+        $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+        $data['message'] = "Some thing went wrong please try again...";
+        return $data;
+    }
+
+
+    public function deleteSelfie($postData)
+    {
+        $connection = $GLOBALS['con'];
+        $status = 2;
+        $posts = array();
+        $errorMsg = "Service responce data";
+
+        $selfieid = validateObject($postData, 'selfieid', "");
+        $selfieid = addslashes($selfieid);
+
+        $update_delete_query = "update " . TABLE_ICP_IMAGE_TAG . " set is_delete = ? where id = ? ";
+        $update_delete_stmt = $connection->prepare($update_delete_query);
+        $isdelete = "1";
+        $update_delete_stmt->bind_param("ii",$isdelete,$selfieid);
+        if($update_delete_stmt->execute())
+        {
+            $status = 1;
+            $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+            $data['message'] = "Delete Successfully !!!";
+            return $data;
+        }
+        else
+        {
+            $status = 2;
+            $data['status'] = ($status > 1) ? FAILED : SUCCESS;
+            $data['message'] = "Some thing went wrong please try again !!!";
+            return $data;
+        }
+    }
 
     public function toggleBusinessFavorites($postData)
     {
@@ -349,17 +630,15 @@ class BusinessFunction
 
 
         $select_business_image_query = "select icptagimg.id  as selfieid,
-
                                     icptagimg.is_purchased,
-
-                                     icptagimg.is_small_purchase,
-                                     icptagimg.is_large_purchase,
-                                     icptagimg.is_printed_purchase,
-
+                                    icptagimg.is_small_purchase,
+                                    icptagimg.is_large_purchase,
+                                    icptagimg.is_printed_purchase,
                                     icptagimg.created as detectedtime,
                                     icptagimg.closingtime as closingtime,
                                     icptagimg.verifiedtime as verifiedtime,
                                     icpiamges.image as selfieimg,
+                                    icpiamges.id as icpimgid,
                                     icp.name as icpname,
                                     icp.icp_logo,
                                     icp.business_id as businessid,
@@ -379,6 +658,7 @@ class BusinessFunction
                                       is_low_image_free,
                                       is_high_image_free,
                                       lowfree_on_highpurchase,
+                                      digital_free_on_physical_purchase,
                                       collection_point_delivery,
                                       local_hotel_delivery,
                                       domestic_shipping,
@@ -397,7 +677,7 @@ class BusinessFunction
                                       (select * from " . TABLE_ICP_IMAGE . ") as icpiamges on icp.id  = icpiamges.icp_id left join
                                       (select * from " . TABLE_ICP_IMAGE_TAG . ") as icptagimg on icptagimg.icp_image_id = icpiamges.id
                                       left join (select * from " . TABLE_BUSINESS . ") as business on business.id  = icp.business_id
-                                      where icp.business_id = ? and icpiamges.is_face_detected = ? and icptagimg.is_currentuser = ? and icptagimg.user_id = ? and icpiamges.is_delete = ? and (icptagimg.closingtime > ? or icptagimg.closingtime is null or icptagimg.closingtime = '')order by icptagimg.verifiedtime desc";
+                                      where icp.business_id = ? and icpiamges.is_face_detected = ? and icptagimg.is_currentuser = ? and icptagimg.user_id = ? and icptagimg.is_delete = ? and (icptagimg.closingtime > ? or icptagimg.closingtime is null or icptagimg.closingtime = '')order by icptagimg.verifiedtime desc";
 
 
         $select_business_image_stmt = $connection->prepare($select_business_image_query);
@@ -414,6 +694,7 @@ class BusinessFunction
 
                 while($businessselfie = fetch_assoc_all_values($select_business_image_stmt)) {
                     $businessselfie['ispromoimg'] = "0";
+                    $businessselfie['isuserphoto'] = "1";
                     $posts[] =$businessselfie;
                 }
                 $status = 1;
@@ -455,6 +736,8 @@ class BusinessFunction
             {
                 while($businesspromo = fetch_assoc_all_values($select_promo_query_stmt)) {
                     $businesspromo['ispromoimg'] = "1";
+                    $businessselfie['isuserphoto'] = "0";
+
                     $posts[] =$businesspromo;
                 }
                 $status = 1;
@@ -496,7 +779,7 @@ class BusinessFunction
 user_id,
 reg_no,is_gst_registered,logo,description,street_no,street_name,
 address1,latitude,longitude,address2,facebook_url,twitter_url,instagram_url,website_url,
-ticket_url,contact_no,contact_email,likes,favorite,checkin,created,modified
+ticket_url,contact_no,contact_email,likes,favorite,checkin,created,modified,address_text,display_text
 from
 (select distinct business.id as businessid, checkin.id as checkinid,
 business.name as name,
@@ -522,7 +805,9 @@ business.likes as likes,
 business.favorite as favorite,
 business.checkin as checkin,
 business.created as created,
-business.modified as modified
+business.modified as modified,
+business.address_text as address_text,
+business.display_text as display_text
 from check_in as checkin INNER join
     (select * from businesses) as business on checkin.business_id = business.id
 where checkin.user_id  = ? and business.is_delete = ? order by checkin.modified desc) as data";
@@ -820,7 +1105,7 @@ where checkin.user_id  = ? and business.is_delete = ? order by checkin.modified 
         $userid = validateObject($businessData, 'userId', "");
         $userid = addslashes($userid);
 
-        $select_business = "Select * from " . TABLE_BUSINESS ." where is_delete = ?" ;
+        $select_business = "Select * from " . TABLE_BUSINESS ."  where is_delete = ?" ;
         $isdelete = 0;
 
         $select_business_stmt = $connection->prepare($select_business);
@@ -916,11 +1201,23 @@ where checkin.user_id  = ? and business.is_delete = ? order by checkin.modified 
         $userid = validateObject($businessData, 'userId', "");
         $userid = addslashes($userid);
 
-        $select_business = "Select * from " . TABLE_BUSINESS ." where is_delete = ?" ;
-        $isdelete = 0;
+        $synchDate = validateObject($businessData, 'lastSynchDate', "");
+        $synchDate = addslashes($synchDate);
 
-        $select_business_stmt = $connection->prepare($select_business);
-        $select_business_stmt->bind_param("i",$isdelete);
+        if($synchDate == '0' || strlen($synchDate) == 0)
+        {
+            $select_business = "Select * from " . TABLE_BUSINESS ." where latitude IS NOT NULL and longitude IS NOT NULL" ;
+            $select_business_stmt = $connection->prepare($select_business);
+        }
+        else
+        {
+            $select_business = "Select * from " . TABLE_BUSINESS ." where latitude IS NOT NULL and longitude IS NOT NULL and modified >= ?" ;
+            $select_business_stmt = $connection->prepare($select_business);
+            $select_business_stmt->bind_param("s",$synchDate);
+        }
+
+        //$select_business = "Select * from " . TABLE_BUSINESS ." where is_delete = ? and latitude IS NOT NULL and longitude IS NOT NULL" ;
+
         if($select_business_stmt->execute())
         {
             $select_business_stmt->store_result();
@@ -967,6 +1264,24 @@ where checkin.user_id  = ? and business.is_delete = ? order by checkin.modified 
                     $objGlobalFunction = new GlobalFunction();
                     $distance = $objGlobalFunction->distanceInkilometer($latitude,$longitude,$business['latitude'],$business['longitude']);
                     $business['distance'] = (string) $distance;
+
+                    //check current user is checked in or not
+
+                    $checkin_query = "select * from ". TABLE_CHECKIN . " where user_id = ? and is_checked_in = ? and business_id = ? ";
+                    $checkin_stmt = $connection->prepare($checkin_query);
+                    $isCheckin = "1";
+                    $checkin_stmt->bind_param("isi",$userid,$isCheckin,$business['id']);
+                    $checkin_stmt->execute();
+                    $checkin_stmt->store_result();
+                    if($checkin_stmt->num_rows > 0)
+                    {
+                        $business['ischeckin'] = "1";
+                    }
+                    else
+                    {
+                        $business['ischeckin'] = "0";
+                    }
+
                     $posts[] = $business;
                 }
 
@@ -1019,8 +1334,6 @@ where checkin.user_id  = ? and business.is_delete = ? order by checkin.modified 
             $data['business'] = $posts;
             return $data;
         }
-
-
     }
 
 
