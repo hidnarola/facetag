@@ -104,6 +104,7 @@
 <script type="text/javascript" src="assets/admin/js/plugins/forms/selects/select2.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/plugins/uploaders/fileinput.min.js"></script>
 <script type="text/javascript" src="assets/admin/js/pages/form_validation.js"></script>
+
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry,places&key=AIzaSyBR_zVH9ks9bWwA-8AzQQyD6mkawsfF9AI"></script>
 <div class="page-header page-header-default">
     <div class="page-header-content">
