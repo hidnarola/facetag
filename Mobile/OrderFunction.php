@@ -17,7 +17,7 @@ class OrderFunction
         //\Stripe\Stripe::setApiKey("pk_live_n98FZPvZlmZ0djsAm6QMulLh"); // live
 
         //Live Strip Key
-        \Stripe\Stripe::setApiKey("sk_live_H6SPLn7kkzLH3cwVRMW5F3CW"); // live
+        \Stripe\Stripe::setApiKey("abc"); // live
     }
 
     public function call_service($service, $postData)
