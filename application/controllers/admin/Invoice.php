@@ -177,7 +177,7 @@ class Invoice extends CI_Controller {
         $business_settings = $this->businesses_model->get_business_settings_by_id($business_id);
         $invoice_period = $this->input->post('invoice_period');
         $token_id = $this->input->post('token_id');
-        Stripe::setApiKey("sk_test_CQxqoWW70nXXmtFtmG605FvA");
+        Stripe::setApiKey("abc");
         if (isset($token_id)) {
 
             $amount = $this->input->post('amount');
