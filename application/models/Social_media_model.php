@@ -92,8 +92,6 @@ class Social_media_model extends CI_Model {
         $this->db->trans_begin();
 
         $icp_network = $this->session->userdata('assign_network_to_icp');
-        print_r($icp_network);
-        exit;
         $this->session->unset_userdata('assign_network_to_icp');
         if (!empty($icp_network['icp_id']))
             $data['icp_id'] = $icp_network['icp_id'];
@@ -107,13 +105,8 @@ class Social_media_model extends CI_Model {
 
             $this->session->set_flashdata('success', 'Your existing facebook account detail has been updated.');
 
-            if (!empty($icp_network) && !empty($icp_network['icp_id'])) {
-                if ($this->session->userdata('facetag_admin')['user_role'] == 2) {
-                    redirect('business/icps');
-                } else {
-                    redirect('admin/businesses');
-                }
-            }
+            if (!empty($icp_network) && !empty($icp_network['icp_id']))
+                redirect('business/icps');
         } else {
 
             $this->save_network($data, $escape);
@@ -127,11 +120,7 @@ class Social_media_model extends CI_Model {
                 $redirect_to_connect = true;
             }
 
-            if ($this->session->userdata('facetag_admin')['user_role'] == 2) {
-                    redirect('business/icps');
-                } else {
-                    redirect('admin/businesses');
-                }
+            $redirect = 'business/icps';
 
             $this->db->trans_complete();
 
@@ -145,7 +134,7 @@ class Social_media_model extends CI_Model {
             redirect($redirect);
         }
     }
-
+    
     /* disconnect from fb */
 
     public function disconnect_from_fb($icp_id) {
@@ -219,6 +208,7 @@ class Social_media_model extends CI_Model {
     }
 
     public function get_all_networks() {
+        
         $this->db->select('*');
         $this->db->from('connect_network');
         $this->db->where('user_id', $this->session->userdata('id'));

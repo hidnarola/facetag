@@ -514,7 +514,7 @@ class Icps extends CI_Controller {
         fwrite($handle, $spacee);
         fwrite($handle, "FILE='" . $local_path . "'");
         fwrite($handle, $spacee);
-        fwrite($handle, "REMOTEPATH='/html/uploads/automatic_upload/" . $biz_dir . "/" . $icp_dir . "'");
+        fwrite($handle, "REMOTEPATH='" . $biz_dir . "/" . $icp_dir . "'");
         fwrite($handle, $spacee);
         fwrite($handle, 'cd $FILE');
         fwrite($handle, $spacee);
@@ -746,11 +746,11 @@ class Icps extends CI_Controller {
                                     $icp_id = $icp_data[0]['id'];
 
                                     //-- Get checked in users who have checked in to particualr icps/business
-//                                    $business_users = $this->users_model->get_checkedinusers_by_business($business_id);
-//                                    $icp_users = $this->users_model->get_checkedinusers_by_icp($icp_id);
+                                    $business_users = $this->users_model->get_checkedinusers_by_business($business_id);
+                                    $icp_users = $this->users_model->get_checkedinusers_by_icp($icp_id);
 //                                    //-- merge both users
-//                                    $users = array_merge($business_users, $icp_users);
-                                    $users = $this->users_model->all_users();
+                                    $users = array_merge($business_users, $icp_users);
+//                                    $users = $this->users_model->all_users();
 
                                     $userids = array();
                                     $device_tokens = array();
@@ -1043,11 +1043,11 @@ class Icps extends CI_Controller {
                     $icp_id = $icp_data[0]['id'];
 
                     //-- Get checked in users who have checked in to particualr icps/business
-//                    $business_users = $this->users_model->get_checkedinusers_by_business($business_id);
-//                    $icp_users = $this->users_model->get_checkedinusers_by_icp($icp_id);
+                    $business_users = $this->users_model->get_checkedinusers_by_business($business_id);
+                    $icp_users = $this->users_model->get_checkedinusers_by_icp($icp_id);
 //                    //-- merge both users
-//                    $users = array_merge($business_users, $icp_users);
-                    $users = $this->users_model->all_users();
+                    $users = array_merge($business_users, $icp_users);
+//                    $users = $this->users_model->all_users();
 
                     $userids = array();
                     $device_tokens = array();
@@ -1352,7 +1352,7 @@ class Icps extends CI_Controller {
                     $icp_users = $this->users_model->get_checkedinusers_by_icp($icp_id);
                     //-- merge both users
                     $users = array_merge($business_users, $icp_users);
-                    $users = $this->users_model->all_users();
+//                    $users = $this->users_model->all_users();
 
                     $userids = array();
                     $device_tokens = array();

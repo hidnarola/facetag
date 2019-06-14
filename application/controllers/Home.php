@@ -46,6 +46,18 @@ class Home extends CI_Controller {
             p($this->email->print_debugger());
         }
     }
+    public function captcha_validation() {
+        $secret = GOOGLE_SECRET_KEY;
+        //get verify response data
+        $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . $secret . '&response=' . $this->input->post('g-recaptcha-response'));
+        $responseData = json_decode($verifyResponse);
+        if ($responseData->success) {
+            return TRUE;
+        } else {
+            $this->form_validation->set_message('captcha_validation', 'You have not verified captcha properly! Please try again.');
+            return FALSE;
+        }
+    }
 
     /**
      * Contact us functionality of frontend
@@ -58,8 +70,8 @@ class Home extends CI_Controller {
             $this->load->library('email', $configs);
 //        $this->email->initialize($configs);
             $this->email->from($this->input->post('contact_email'), $this->input->post('contact_name'));
-        $this->email->to('info@facetag.com.au');
-//            $this->email->to('anp@narola.email');
+//        $this->email->to('info@facetag.com.au');
+            $this->email->to('colin@facetag.com.au');
             $msg = 'Following are the details of contact us form filled by user<br>';
             $msg .= '<b>Name</b> : ' . $this->input->post('contact_name') . '<br>';
             $msg .= '<b>Email</b> : ' . $this->input->post('contact_email') . '<br>';
@@ -68,7 +80,6 @@ class Home extends CI_Controller {
             $this->email->subject('Facetag - Contact US');
             $this->email->message($msg);
             $this->email->set_mailtype("html");
-
             if ($this->email->send()) {
                 $this->session->set_flashdata('success', 'Thanks, Your email has been sent successfully!');
 //            return true;

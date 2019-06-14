@@ -144,6 +144,7 @@ class Invoice_model extends CI_Model {
         $this->db->join(TBL_ORDER_DETAIL . ' od', 'citem.cart_id=od.cart_id');
         $this->db->where('citem.business_id', $business_id);
         $this->db->where('(DATE(citem.created) BETWEEN "' . $start_date . '" AND "' . $end_date . '")');
+//        $this->db->where('(DATE(citem.created) > "' . $start_date . '" AND DATE(citem.created) <="' . $end_date . '")');
         $this->db->order_by('c.created', 'DESC');
         $query = $this->db->get(TBL_CART_ITEM . ' citem');
         return $query->result_array();
@@ -151,9 +152,9 @@ class Invoice_model extends CI_Model {
 
     public function x_week_range($date) {
         $ts = strtotime($date);
-        $start = (date('w', $ts) == 0) ? $ts : strtotime('last sunday', $ts);
+        $start = (date('w', $ts) == 0) ? $ts : strtotime('last monday', $ts);
         return array(date('Y-m-d', $start),
-            date('Y-m-d', strtotime('next saturday', $start)));
+            date('Y-m-d', strtotime('next sunday', $start)));
     }
 
     /**

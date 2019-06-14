@@ -646,5 +646,11 @@ class Cron extends CI_Controller {
             $facerecog_data = $this->facerecognition->post_face('application/json', $data);
         }
     }
+    
+    public function test_upload_img() {
+        error_reporting(E_ALL);
+        $full = ICP_AUTO_UPLOAD_IMAGES."business_57/icp_169/dsc_0016.jpg";
+        copy($full, ICP_IMAGES."business_1/icp_165/dsc_0016.jpg");
+    }
 
 }

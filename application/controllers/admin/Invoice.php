@@ -37,6 +37,12 @@ class Invoice extends CI_Controller {
         $data['business'] = $new_result_array;
         $this->template->load('default', 'admin/invoice/index', $data);
     }
+    
+    public function test_date() {
+        $row['createddate'] = '2017-12-24';
+        echo date('W', strtotime($row['createddate']));
+        exit;
+    }
 
     public function invoices($business_id) {
         $data['title'] = 'facetag | Manage Invoice';
@@ -72,7 +78,6 @@ class Invoice extends CI_Controller {
         $total_weekly_payment = 0;
         $new_result_array = [];
         $average_prices = [];
-//        p($orders);
         foreach ($orders as $row) {
 
             //Initialize the index's if they dont exist
@@ -107,7 +112,7 @@ class Invoice extends CI_Controller {
 
             $commision_on_small = $commision_on_large = $commision_on_printed = $total_price = 0;
 
-            if ($row['lowfree_on_highpurchase'] == 0 && $row['is_small_photo'] == 1 && $row['is_low_image_free'] == 0) {
+            if (($row['lowfree_on_highpurchase'] == 0 && $row['is_small_photo'] == 1) || ($row['is_small_photo'] == 1 && $row['is_low_image_free'] == 0)) {
                 $small_image_price = $row['low_resolution_price'];
                 $total_price += $small_image_price;
                 $percentage_commission_on_small = $small_image_price * ($percentage_Commision_on_digital_product / 100);
@@ -177,7 +182,8 @@ class Invoice extends CI_Controller {
         $business_settings = $this->businesses_model->get_business_settings_by_id($business_id);
         $invoice_period = $this->input->post('invoice_period');
         $token_id = $this->input->post('token_id');
-        Stripe::setApiKey("abc");
+//        Stripe::setApiKey("sk_test_CQxqoWW70nXXmtFtmG605FvA");
+        Stripe::setApiKey("sk_live_JqCgtjMEkJ96lMnsDVxlSn6a");
         if (isset($token_id)) {
 
             $amount = $this->input->post('amount');

@@ -9,7 +9,7 @@ require_once 'SecurityFunctions.php';
 //require_once "../Stripe/init.php";
 require_once "Stripe/init.php";
 
-class OrderFunction
+class OrderFunction_test
 {
     function __construct()
     {
@@ -18,8 +18,8 @@ class OrderFunction
 
         //Live Strip Key
 //        \Stripe\Stripe::setApiKey("sk_live_H6SPLn7kkzLH3cwVRMW5F3CW"); // live
-        \Stripe\Stripe::setApiKey("sk_live_JqCgtjMEkJ96lMnsDVxlSn6a"); // live
-//       \Stripe\Stripe::setApiKey("sk_test_usZEvRtgKNGX9EoRRDLHEmCG"); // test
+  //      \Stripe\Stripe::setApiKey("sk_live_JqCgtjMEkJ96lMnsDVxlSn6a"); // live
+       \Stripe\Stripe::setApiKey("sk_test_usZEvRtgKNGX9EoRRDLHEmCG"); // test
     }
 
     public function call_service($service, $postData)
@@ -41,7 +41,7 @@ class OrderFunction
                 return $this->makePaymentWithPayPal($postData);
             }
 
-            case  "MakePaymentWithStripe":
+            case  "MakePaymentWithStripe1":
             {
                 return $this->makePaymentWithStripe($postData);
             }

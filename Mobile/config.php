@@ -36,5 +36,4 @@ else
     //echo "connected successfully";
 }
 
-
 ?>

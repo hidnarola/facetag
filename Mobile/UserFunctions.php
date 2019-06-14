@@ -94,7 +94,7 @@ class UserFunctions
                 break;
             case "SearchSelfie":
             {
-                return $this->SearchSelfie($postData);
+                return $this->searchSelfie($postData);
             }
                 break;
             case "searchSelfieNew":

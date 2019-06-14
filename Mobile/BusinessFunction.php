@@ -630,10 +630,13 @@ class BusinessFunction
 
 
         $select_business_image_query = "select icptagimg.id  as selfieid,
+
                                     icptagimg.is_purchased,
-                                    icptagimg.is_small_purchase,
-                                    icptagimg.is_large_purchase,
-                                    icptagimg.is_printed_purchase,
+
+                                     icptagimg.is_small_purchase,
+                                     icptagimg.is_large_purchase,
+                                     icptagimg.is_printed_purchase,
+
                                     icptagimg.created as detectedtime,
                                     icptagimg.closingtime as closingtime,
                                     icptagimg.verifiedtime as verifiedtime,
@@ -694,7 +697,6 @@ class BusinessFunction
 
                 while($businessselfie = fetch_assoc_all_values($select_business_image_stmt)) {
                     $businessselfie['ispromoimg'] = "0";
-                    $businessselfie['isuserphoto'] = "1";
                     $posts[] =$businessselfie;
                 }
                 $status = 1;
@@ -736,8 +738,6 @@ class BusinessFunction
             {
                 while($businesspromo = fetch_assoc_all_values($select_promo_query_stmt)) {
                     $businesspromo['ispromoimg'] = "1";
-                    $businessselfie['isuserphoto'] = "0";
-
                     $posts[] =$businesspromo;
                 }
                 $status = 1;

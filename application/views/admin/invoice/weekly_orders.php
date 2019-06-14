@@ -15,7 +15,7 @@
         <ul class="breadcrumb">
             <li><a href="<?php echo site_url('business/home'); ?>"><i class="icon-home2 position-left"></i> Home</a></li>
             <li><a href="<?php echo site_url('admin/invoice'); ?>"><i class="icon-office position-left"></i> Business</a></li>
-            <li><a href="<?php echo site_url('admin/invoice/invoices/'.$businessId); ?>"><?php echo $business_name;?></a></li>
+            <li><a href="<?php echo site_url('admin/invoice/invoices/' . $businessId); ?>"><?php echo $business_name; ?></a></li>
             <li class="active">Weekly Orders</li>
         </ul>
     </div>
@@ -95,30 +95,46 @@
                             </td>
                             <td>
                                 <?php
+                                $purchase = '';
                                 if ($order['is_small_photo'] == 1) {
-                                    echo "Low resolution version";
-                                } elseif ($order['is_large_photo'] == 1) {
-                                    echo "High resolution version";
-                                } elseif ($order['is_frame'] == 1) {
-                                    echo "Printed Souvenir";
+                                    $purchase .= "Low resolution version";
                                 }
+                                if ($order['is_large_photo'] == 1) {
+                                    if ($purchase != '') {
+                                        $purchase .= ", High resolution version";
+                                    } else {
+                                        $purchase .= "High resolution version";
+                                    }
+                                }
+                                if ($order['is_frame'] == 1) {
+                                    if ($purchase != '') {
+                                        $purchase .= ", Printed Souvenir";
+                                    } else {
+                                        $purchase .= "Printed Souvenir";
+                                    }
+                                }
+                                echo $purchase;
                                 ?>
                             </td>
                             <td>
                                 <?php
-                                if ($order['is_small_photo'] == 1) {
+                                $amount = 0;
+                                if ($order['is_small_photo'] == 1 && $order['is_large_photo'] == 0 && $order['is_frame'] == 0) {
                                     if ($order['is_low_image_free'] == 1)
-                                        echo "Free";
+                                        $amount = "Free";
                                     else
-                                        echo $order['low_resolution_price'];
-                                } elseif ($order['is_large_photo'] == 1) {
+                                        $amount = $amount + $order['low_resolution_price'];
+                                }
+                                if ($order['is_large_photo'] == 1) {
                                     if ($order['is_high_image_free'] == 1)
                                         echo "Free";
                                     else
-                                        echo $order['high_resolution_price'];
-                                } elseif ($order['is_frame'] == 1) {
-                                    echo $order['printed_souvenir_price'];
+                                        $amount = $amount + $order['high_resolution_price'];
                                 }
+                                if ($order['is_frame'] == 1) {
+                                    $amount = $amount + $order['printed_souvenir_price'];
+                                }
+                                echo $amount;
                                 ?>
                             </td>
                             <td>
@@ -132,12 +148,12 @@
                             <td>
                                 <?php echo $order['created']; ?>
                             </td>
-<!--                            <td>
-                                <?php
+        <!--                            <td>
+                            <?php
 //                                echo '<a href="' . site_url() . 'business/orders/change_status/' . $order['id'] . '" class="btn border-info text-info-600 btn-flat btn-icon btn-rounded btn-xs" title="Change status"><i class="icon-pencil7"></i></a>';
-                                echo '&nbsp;&nbsp;<a href="' . site_url() . 'business/orders/view/' . $order['id'] . '" class="btn border-teal text-teal-600 btn-flat btn-icon btn-rounded btn-xs" title="View Order"><i class="icon-eye4"></i></a>';
+                            echo '&nbsp;&nbsp;<a href="' . site_url() . 'business/orders/view/' . $order['id'] . '" class="btn border-teal text-teal-600 btn-flat btn-icon btn-rounded btn-xs" title="View Order"><i class="icon-eye4"></i></a>';
 //                                echo '&nbsp;&nbsp;<a href="' . site_url() . 'business/orders/delete/' . $order['id'] . '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete Order"><i class="icon-trash"></i></a>';
-                                ?>
+                            ?>
                             </td>-->
                         </tr>
                         <?php
@@ -233,7 +249,7 @@
             function (oSettings, aData, iDataIndex) {
                 if (typeof aData._date == 'undefined') {
                     var date = aData[7],
-                    values = date.split(/[^0-9]/),
+                            values = date.split(/[^0-9]/),
                             year = parseInt(values[0], 10),
                             month = parseInt(values[1], 10) - 1,
                             day = parseInt(values[2], 10),

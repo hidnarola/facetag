@@ -193,11 +193,42 @@ switch ($_REQUEST['Service']) {
 
     }
         break;
+        
+    case "MakePaymentWithStripe1":
+    case "MakePaymentWithPayPal1":{
+    
+     $isSecure = 'yes';
+        if ($isSecure == 'no') {
+            $data['Result']['status'] = FAILED;
+            $data['Result']['error_status'] = MALICIOUS_SOURCE;
+
+        }
+        elseif($isSecure == 'error'){
+            $data['Result']['status'] = FAILED;
+            $data['Result']['error_status'] = TOKEN_ERROR;
+        }
+        else
+        {
+            include_once 'OrderFunction_test.php';
+            $objOrder = new OrderFunction_test();
+            $data = $objOrder->call_service($_REQUEST['Service'], $postData);
+            if ($isSecure != 'yes' || $isSecure != 'yes')
+            {
+                if ($isSecure['key'] == "Temp") {
+                    $data['temptoken'] = $isSecure['value'];
+                } else {
+                    $data['usertoken'] = $isSecure['value'];
+                }
+            }
+        }
+    
+    }    
+    
+     break;
 
     case "MakePaymentWithStripe":
     case "MakePaymentWithPayPal":
     case "SaveOrder":
-    case "SaveOrderData":
     case "CancelOrder":
     case "GetUserOrderData":
     case "PutOrder":
@@ -221,41 +252,6 @@ switch ($_REQUEST['Service']) {
             include_once 'OrderFunction.php';
             $objOrder = new OrderFunction();
             $data = $objOrder->call_service($_REQUEST['Service'], $postData);
-            if ($isSecure != 'yes' || $isSecure != 'yes')
-            {
-                if ($isSecure['key'] == "Temp") {
-                    $data['temptoken'] = $isSecure['value'];
-                } else {
-                    $data['usertoken'] = $isSecure['value'];
-                }
-            }
-        }
-    }
-        break;
-
-    case "GetShippingDetails":
-    case "AddShippingAddress":
-    case "UpdateAddress":
-    case "DeleteAddress":
-    case "GetUserAddress":
-
-    {
-        //$isSecure= (new SecurityFunctions())->checkForSecurityNew($postData->access_key,$postData->secret_key);
-        $isSecure = 'yes';
-        if ($isSecure == 'no') {
-            $data['Result']['status'] = FAILED;
-            $data['Result']['error_status'] = MALICIOUS_SOURCE;
-
-        }
-        elseif($isSecure == 'error'){
-            $data['Result']['status'] = FAILED;
-            $data['Result']['error_status'] = TOKEN_ERROR;
-        }
-        else
-        {
-            include_once 'ShippingFunction.php';
-            $objShipping = new ShippingFunction();
-            $data = $objShipping->call_service($_REQUEST['Service'], $postData);
             if ($isSecure != 'yes' || $isSecure != 'yes')
             {
                 if ($isSecure['key'] == "Temp") {
