@@ -110,6 +110,9 @@ class Businesses extends CI_Controller {
 //        $this->form_validation->set_rules('city_id', 'City', 'required');
 //        $this->form_validation->set_rules('zipcode', 'Zipcode', 'trim|required');
         $this->form_validation->set_rules('contact_email', 'Contact Email', 'trim|valid_email');
+        if ($this->input->post('address_text')) {
+            $this->form_validation->set_rules('address_display_text', 'Address display text', 'trim|required');
+        }
 
         if (is_numeric($business_id)) {
             $where = 'b.id = ' . $this->db->escape($business_id);
@@ -145,9 +148,6 @@ class Businesses extends CI_Controller {
             $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|callback_is_uniquemail');
             $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[5]|matches[repeat_password]');
             $this->form_validation->set_rules('repeat_password', 'Repeat Password', 'trim|required');
-            if ($this->input->post('address_text')) {
-                $this->form_validation->set_rules('address_display_text', 'Address display text', 'trim|required');
-            }
         }
 
         if ($this->form_validation->run() == FALSE) {
@@ -224,6 +224,8 @@ class Businesses extends CI_Controller {
                         'address1' => $this->input->post('address1'),
                         'display_text' => $this->input->post('address_text'),
                         'address_text' => $address,
+                        'latitude' => $this->input->post('latitude'),
+                        'longitude' => $this->input->post('longitude'),
 //                        'street_no' => $this->input->post('street_no'),
 //                        'street_name' => $this->input->post('street_name'),
                         'address2' => $this->input->post('address2'),
@@ -268,6 +270,12 @@ class Businesses extends CI_Controller {
 
                     $user_id = $this->users_model->insert($insert_array);
 
+                    if ($this->input->post('address_text') == 1) {
+                        $address = $this->input->post('address_display_text');
+                    } else {
+                        $address = null;
+                    }
+
                     $insert_business_data = array(
                         'logo' => $business_logo,
                         'user_id' => $user_id,
@@ -275,6 +283,10 @@ class Businesses extends CI_Controller {
                         'description' => $this->input->post('description'),
                         'ch_description' => $this->input->post('ch_description'),
                         'address1' => $this->input->post('address1'),
+                        'display_text' => $this->input->post('address_text'),
+                        'address_text' => $address,
+                        'latitude' => $this->input->post('latitude'),
+                        'longitude' => $this->input->post('longitude'),
 //                        'street_no' => $this->input->post('street_no'),
 //                        'street_name' => $this->input->post('street_name'),
                         'address2' => $this->input->post('address2'),
@@ -886,7 +898,7 @@ class Businesses extends CI_Controller {
                             $collection_address_longitude = $this->input->post('collection_address_longitude');
                             $collection_address_instructions = $this->input->post('collection_address_instructions');
                         }
-                         if ($this->input->post('hashtags')) {
+                        if ($this->input->post('hashtags')) {
                             $hashtags = str_replace(' ', '', $this->input->post('hashtags'));
                         }
                         $update_settings = array(
@@ -2160,7 +2172,7 @@ class Businesses extends CI_Controller {
 
             $business_data = $check_business[0];
             $verification_code = verification_code();
-            
+
             $update_array = array(
                 'password' => md5($verification_code),
                 'verification_code' => $verification_code,
