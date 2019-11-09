@@ -9,6 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Test extends CI_Controller {
 
     public function __construct() {
+
         parent::__construct();
         $this->headers = array(
             "X-PAYPAL-SECURITY-USERID: nm.narola-facilitator_api1.narolainfotech.com",
@@ -22,6 +23,7 @@ class Test extends CI_Controller {
         $this->load->library('push_notification');
         $this->load->library('facerecognition');
         $this->load->model('users_model');
+        $this->load->library('findface');
     }
 
     /**
@@ -272,7 +274,7 @@ class Test extends CI_Controller {
     public function store_selfie() {
         //-- post user selfie gallery to FR
         $gallary_name = 'userselfies';
-        $this->facerecognition->post_gallery($gallary_name);
+        /* $this->facerecognition->post_gallery($gallary_name); */
 
         $users = $this->users_model->get_active_users();
         //-- Post userselfi into FR's userselfi gallery;
@@ -1139,4 +1141,343 @@ class Test extends CI_Controller {
             }
         }
     }
+
+    public function ftest() {
+        /*
+          $URL = '52.236.81.69/detect';
+          //        $photo = file_get_contents("http://facetag.com.au/uploads/icp_images/business_1/icp_1/58ac19df989a31487673823.jpeg");
+          //        echo $photo;
+          //        exit;
+          //        $data = json_encode(array("photo" => $photo));
+
+          $ch = curl_init();
+          curl_setopt($ch, CURLOPT_URL, $URL);
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+          curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+          $fields = [
+          'name' => new \CurlFile("uploads/icp_images/business_1/icp_1/58ac19df989a31487673823.jpeg", 'image/jpeg', '58ac19df989a31487673823.jpeg')
+          ];
+          curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+          //        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d'));
+          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+          $result = curl_exec($ch);
+          if ($result === false) {
+          $response = array('curl_error' => curl_error($ch));
+          } else {
+          $response = json_decode($result, 1);
+          }
+          p($response, 1); */
+
+
+        $url = "52.236.81.69/detect"; // e.g. http://localhost/myuploader/upload.php // request URL
+//        $filename = $_FILES['file']['name'];
+//        $filedata = $_FILES['file']['tmp_name'];
+//        $filesize = $_FILES['file']['size'];
+
+        $filedata = 'uploads/icp_images/business_1/icp_1/58ac19df989a31487673823.jpeg';
+        $filename = '58ac19df989a31487673823.jpeg';
+
+        $headers = array("Content-Type:multipart/form-data", "Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d"); // cURL headers for file uploading
+        $postfields = array("filedata" => "@$filedata", "filename" => $filename);
+        $ch = curl_init();
+        $options = array(
+            CURLOPT_URL => $url,
+            CURLOPT_HEADER => true,
+            CURLOPT_POST => 1,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POSTFIELDS => $postfields,
+//            CURLOPT_INFILESIZE => $filesize,
+            CURLOPT_RETURNTRANSFER => true
+        ); // cURL options
+        curl_setopt_array($ch, $options);
+        $res = curl_exec($ch);
+//        var_dump($res);
+//        $res = json_decode($res, true);
+//        p($res, 1);
+        if (!curl_errno($ch)) {
+            $info = curl_getinfo($ch);
+            p($info, 1);
+            if ($info['http_code'] == 200)
+                $errmsg = "File uploaded successfully";
+        }
+        else {
+            $errmsg = curl_error($ch);
+        }
+        curl_close($ch);
+    }
+
+    public function newdetecttest() {
+        // data fields for POST request
+//        $fields = array("f1" => "value1", "another_field2" => "anothervalue");
+        $fields = [];
+
+        // files to upload
+//        $filenames = array("/tmp/1.jpg", "/tmp/2.png");
+//        $filenames = array("http://facetag.com.au/uploads/icp_images/business_1/icp_1/58ac19df989a31487673823.jpeg");
+//        $filenames = array("uploads/icp_images/business_1/icp_1/58ac19df989a31487673823.jpeg");
+//        $filenames = array("http://facetag.com.au/uploads/icp_images/business_1/icp_137/5947a7184fa031497868056.jpeg");
+//        $filenames = array("http://facetag.com.au/uploads/icp_images/business_6/icp_18/581e46bb146c31478379195.jpeg");
+
+        $filenames = array("http://facetag.com.au/Mobile/Images/selfiPic/581e46bb9dd031478379195.jpeg");
+
+        $files = array();
+        foreach ($filenames as $f) {
+            $files['photo'] = file_get_contents($f);
+        }
+
+        // URL to upload to
+        $url = "52.236.81.69/detect";
+
+
+        // curl
+
+        $curl = curl_init();
+
+//        $url_data = http_build_query($data);
+
+        $boundary = uniqid();
+        $delimiter = '-------------' . $boundary;
+
+        $post_data = $this->build_data_files($boundary, $fields, $files);
+
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $post_data,
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d",
+                "Content-Type: multipart/form-data; boundary=" . $delimiter,
+                "Content-Length: " . strlen($post_data)
+            ),
+        ));
+
+
+//
+        $response = curl_exec($curl);
+        $response = json_decode($response, 1);
+        p($response, 1);
+
+        $info = curl_getinfo($curl);
+        echo "code: ${info['http_code']}";
+//        print_r($info['request_header']);
+
+        var_dump($response);
+        $err = curl_error($curl);
+
+        echo "error";
+        var_dump($err);
+        curl_close($curl);
+    }
+
+    function build_data_files($boundary, $fields, $files) {
+        $data = '';
+        $eol = "\r\n";
+
+        $delimiter = '-------------' . $boundary;
+
+        foreach ($fields as $name => $content) {
+            $data .= "--" . $delimiter . $eol
+                    . 'Content-Disposition: form-data; name="' . $name . "\"" . $eol . $eol
+                    . $content . $eol;
+        }
+
+
+        foreach ($files as $name => $content) {
+            $data .= "--" . $delimiter . $eol
+                    . 'Content-Disposition: form-data; name="' . $name . '"; filename="58ac19df989a31487673823.jpeg"' . $eol
+//                    . 'Content-Type: image/jpg' . $eol
+                    . 'Content-Transfer-Encoding: binary' . $eol
+            ;
+
+            $data .= $eol;
+            $data .= $content . $eol;
+        }
+        $data .= "--" . $delimiter . "--" . $eol;
+
+
+        return $data;
+    }
+
+    public function addlisttest() {
+        $URL = '52.236.81.69/dossier-lists/';
+        $data = json_encode(array('active' => 'true', 'name' => 'userselfies'));
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d'));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $result = curl_exec($ch);
+        if ($result === false) {
+            $response = array('curl_error' => curl_error($ch));
+        } else {
+            $response = json_decode($result, 1);
+        }
+        p($response, 1);
+    }
+
+    public function adddossier() {
+        $URL = '52.236.81.69/dossiers/';
+        $data = json_encode(array('active' => 'true', 'name' => 'ku', 'dossier_lists' => [18]));
+//        $data = json_encode(array('active' => 'true', 'name' => 'abc', 'comment' => 'Narola Testing'));
+//        echo $data;exit;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d'));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $result = curl_exec($ch);
+        if ($result === false) {
+            $response = array('curl_error' => curl_error($ch));
+        } else {
+            $response = json_decode($result, 1);
+        }
+        p($response, 1);
+    }
+
+    public function adddossierface() {
+        $detection_id = 'blp204dhj1gu1tl8ogo0';
+        $fields = ['dossier' => 335, 'create_from' => 'detection:' . $detection_id];
+
+        $filenames = array("http://facetag.com.au/uploads/icp_images/business_6/icp_18/581e46bb146c31478379195.jpeg");
+
+        $files = array();
+        foreach ($filenames as $f) {
+            $files['source_photo'] = file_get_contents($f);
+        }
+
+        // URL to upload to
+        $url = "52.236.81.69/dossier-faces/";
+
+
+        // curl
+
+        $curl = curl_init();
+
+//        $url_data = http_build_query($data);
+
+        $boundary = uniqid();
+        $delimiter = '-------------' . $boundary;
+
+        $post_data = $this->build_data_files($boundary, $fields, $files);
+
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $post_data,
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d",
+                "Content-Type: multipart/form-data; boundary=" . $delimiter,
+                "Content-Length: " . strlen($post_data)
+            ),
+        ));
+
+
+//
+        $response = curl_exec($curl);
+        $response = json_decode($response, 1);
+        p($response, 1);
+
+        $info = curl_getinfo($curl);
+        echo "code: ${info['http_code']}";
+//        print_r($info['request_header']);
+
+        var_dump($response);
+        $err = curl_error($curl);
+
+        echo "error";
+        var_dump($err);
+        curl_close($curl);
+    }
+
+    public function search() {
+        $detection_id = 'blp25tthj1gu1tl8oh9g';
+        $URL = "52.236.81.69/dossiers/?looks_like=detection:$detection_id";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d'));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $result = curl_exec($ch);
+        if ($result === false) {
+            $response = array('curl_error' => curl_error($ch));
+        } else {
+            $response = json_decode($result, 1);
+        }
+        p($response, 1);
+    }
+
+    public function ui() {
+        $dossier_face = 4209364237350155129;
+        $URL = "52.236.81.69/dossier-faces​/$dossier_face/";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($ch);
+        curl_close($ch);
+        if ($result === false) {
+            $response = array('curl_error' => curl_error($ch));
+        } else {
+            $response = json_decode($result, 1);
+        }
+        var_dump($response);
+//        return $response;
+    }
+
+    public function t() {
+        $dossier_face = 4209364732847810560;
+        $URL = "52.236.81.69/dossier-faces/$dossier_face/";
+//        $URL = "52.236.81.69/dossier-faces​/";
+//        $URL = urlencode($URL);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d'));
+//        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST');
+//        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($ch);
+        curl_close($ch);
+        p($result);
+        if ($result === false) {
+            $response = array('curl_error' => curl_error($ch));
+        } else {
+            $response = json_decode($result, 1);
+        }
+
+        return $response;
+    }
+
+    public function new_test() {
+        $response = $this->findface->getdossierface('4209364237350155129');
+        p($response);
+    }
+
+    public function del_test() {
+        $response = $this->findface->delete_dossiers(44);
+        p($response);
+    }
+
 }

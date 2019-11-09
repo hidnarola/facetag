@@ -12,7 +12,6 @@ class Register extends CI_Controller {
         parent::__construct();
         $this->load->model('businesses_model');
         $this->load->model('users_model');
-        $this->load->library('facerecognition');
     }
 
     /**
@@ -146,11 +145,6 @@ class Register extends CI_Controller {
 
             //-- Make Business' is_active and is_verifed fields to 1
             $this->businesses_model->update_record('id=' . $business['id'], array('is_verified' => 1, 'is_active' => 1));
-
-            //--Create business gallery in face recognition database
-            /*
-              $gallary_name = 'business_' . $business['id'];
-              $this->facerecognition->post_gallery($gallary_name); */
 
             $this->session->set_flashdata('success', 'You have verified your email successfully! Please login to continue');
             redirect('login');

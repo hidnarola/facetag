@@ -233,7 +233,7 @@ class Users_model extends CI_Model {
         if (!is_null($condition)) {
             $this->db->where($condition);
         }
-        $query = $this->db->get(USER_IMAGES);
+        $query = $this->db->get(TBL_USER_IMAGES);
         return $query->result_array();
     }
 
@@ -274,7 +274,8 @@ class Users_model extends CI_Model {
             $this->db->where($condition);
         }
         $select = '(SELECT GROUP_CONCAT(id) FROM ' . TBL_ICPS . ' WHERE business_id=c.business_id AND is_active=1 AND is_delete=0) business_icps';
-        $this->db->select('c.business_id,c.icp_id,c.user_id,u.firstname,u.lastname,u.username,u.email,u.device_type,u.device_id,img.image as user_image,' . $select);
+        $this->db->select('c.business_id,c.icp_id,c.user_id,u.firstname,u.lastname,u.username,u.email,'
+                . 'img.dossierface_id,img.dossier_id,u.device_type,u.device_id,img.image as user_image,' . $select);
         $this->db->where('c.is_checked_in=1');
         $this->db->join(TBL_USERS . ' u', 'c.user_id=u.id', 'left');
         $this->db->join(TBL_USER_IMAGES . ' img', 'u.bio_selfie_id=img.id', 'left');
@@ -307,9 +308,9 @@ class Users_model extends CI_Model {
                     $last_char++;
                     unset($explode_slug[count($explode_slug) - 1]);
                     $username = implode($explode_slug, "-");
-                    $username.="-" . $last_char;
+                    $username .= "-" . $last_char;
                 } else {
-                    $username.="-1";
+                    $username .= "-1";
                 }
 //                $text = $text . time();
                 $i--;
@@ -319,7 +320,6 @@ class Users_model extends CI_Model {
         }
     }
 
-    
     public function all_users() {
         $this->db->select('img.image,u.id as user_id,u.device_id,u.device_type');
         $this->db->where('u.is_active', 1);
@@ -327,11 +327,10 @@ class Users_model extends CI_Model {
         $this->db->where('u.user_role', 3);
         $this->db->join(TBL_USER_IMAGES . ' img', 'u.bio_selfie_id=img.id', 'left');
         $query = $this->db->get(TBL_USERS . ' u');
-//        echo $this->db->last_query();
-//        exit;
+
         return $query->result_array();
     }
-    
+
     /**
      * Returns all users who have checked in to particular icp/business
      * @param int $business_id - Business Id
@@ -359,7 +358,6 @@ class Users_model extends CI_Model {
 
         return $query->result_array();
     }
-    
 
     /**
      * Returns all users with bio selfi images who have checked in to particular icp
@@ -376,7 +374,6 @@ class Users_model extends CI_Model {
 
         return $query->result_array();
     }
-    
 
     /**
      * Returns bi selfi images of users
@@ -434,14 +431,14 @@ class Users_model extends CI_Model {
      */
     public function checked_out_users_by_id($ids_array) {
         $this->db->where_in('id', $ids_array);
-        $this->db->update(TBL_CHECK_IN, array('is_checked_in' => 0));
+        $this->db->update(TBL_CHECK_IN, array('is_checked_in' => 0, 'modified' => date('Y-m-d H:i:s')));
     }
 
     /**
      * Returns all users who are enrolled within two hour
      */
     public function get_enrolled_users() {
-        $this->db->select('u.id,u.device_type,u.device_id,img.image as user_image');
+        $this->db->select('u.id,u.device_type,u.device_id,img.image as user_image,img.dossier_id,img.dossierface_id');
 //        $this->db->where('TIMESTAMPDIFF(HOUR,u.created,NOW()) < 2');
         $this->db->where(array('u.is_active' => 1, 'u.is_delete' => 0, 'u.user_role' => 3, 'img.is_delete' => 0, 'u.searched_face_database' => 0));
         $this->db->join(TBL_USER_IMAGES . ' img', 'u.bio_selfie_id=img.id', 'left');
@@ -482,8 +479,33 @@ class Users_model extends CI_Model {
      * Returns all users
      */
     public function get_active_users() {
-        $this->db->select('u.id,u.device_type,u.device_id,img.image as user_image');
+        $this->db->select('u.id,u.device_type,u.device_id,img.image as user_image,img.id as image_id');
         $this->db->where(array('u.is_delete' => 0, 'u.user_role' => 3, 'img.is_delete' => 0));
+        $this->db->join(TBL_USER_IMAGES . ' img', 'u.bio_selfie_id=img.id', 'left');
+        $query = $this->db->get(TBL_USERS . ' u');
+        return $query->result_array();
+    }
+
+    /**
+     * Get all users who are having dossiers ids 
+     * @param array $dossier_ids
+     */
+    public function get_users_by_dossier($dossier_ids) {
+        $this->db->select('u.id,u.device_type,u.device_id,img.image as user_image,img.id as image_id');
+        $this->db->where(array('u.is_delete' => 0, 'u.user_role' => 3, 'img.is_delete' => 0));
+        $this->db->where_in('img.dossier_id', $dossier_ids);
+        $this->db->join(TBL_USER_IMAGES . ' img', 'u.bio_selfie_id=img.id', 'left');
+        $query = $this->db->get(TBL_USERS . ' u');
+        return $query->result_array();
+    }
+    
+    /**
+     * Returns users which dossier is not set
+     */
+    public function get_emptydossier_users() {
+        $this->db->select('u.id,u.device_type,u.device_id,img.image as user_image,img.id as image_id');
+        $this->db->where(array('u.is_delete' => 0, 'u.user_role' => 3, 'img.is_delete' => 0));
+        $this->db->where('dossier_id IS NULL');
         $this->db->join(TBL_USER_IMAGES . ' img', 'u.bio_selfie_id=img.id', 'left');
         $query = $this->db->get(TBL_USERS . ' u');
         return $query->result_array();

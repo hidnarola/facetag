@@ -60,6 +60,9 @@ class Icp_imagetag_model extends CI_Model {
 
         $this->db->select('m.*,i.image as icp_image,b.image as user_image,u.firstname,u.lastname');
 
+        $this->db->where('i.is_delete', 0);
+        $this->db->where('m.is_delete', 0);
+
         if (!is_null($icp_id)) {
             $this->db->where('i.icp_id', $icp_id);
         }

@@ -414,6 +414,7 @@ class UserFunctions
 
 
     function delete_face($userID) {
+        /*
         $user_id = 306;
         $access_token = "Ug2-NOC3O86aadLQzbOBLvYFt2Rymyay";
         $param = 'user_' . $userID;
@@ -430,13 +431,30 @@ class UserFunctions
         } else {
             $response = json_decode($result, 1);
         }
+        return $response;*/
+        $response = [];
+        $connection = $GLOBALS['con'];
+        $select_user = "select imguser.dossier_id from " . TABLE_USER ." as user JOIN " . TABLE_USER_IMAGES . " as imguser on imguser.id =  user.profile_image_id where user.id =  ?";
+
+        $select_user_stmt = $connection->prepare($select_user);
+        $select_user_stmt->bind_param("i",$userID);
+        $select_user_stmt->execute();
+        $select_user_stmt->store_result();
+        
+        if ($select_user_stmt->num_rows > 0) {
+            $user = fetch_assoc_all_values($select_user_stmt);
+            if(!empty($user['dossier_id'])){
+                $response = $this->delete_dossier($user['dossier_id']);
+            }
+        }
         return $response;
+
     }
 
     function post_face($picName , $userid)
     {
         $photo = UPLOAD_SELFIE_PATH . $picName;
-        $gallery_name = "userselfies";
+        /*$gallery_name = "userselfies";
         $user_id = $userid;
         $data = array(
             'photo' => $photo,
@@ -461,6 +479,30 @@ class UserFunctions
             $response = array('curl_error' => curl_error($ch));
         } else {
             $response = json_decode($result, 1);
+        }
+        return $response;*/
+        $connection = $GLOBALS['con'];
+        $response = $this->detect($photo);
+            
+        if (isset($response['faces']) && !empty($response['faces'])) {
+            $detection_id = $response['faces'][0]['id'];
+            //-- create dossier
+            $dresponse = $this->adddossier(25, 'user_' . $userid);
+            if (isset($dresponse['id'])) {
+                $dossier_id = $dresponse['id'];
+                //-- add face into dossier
+                $fresponse = $this->adddossierface($dossier_id, $detection_id, $photo);
+                if (isset($fresponse['id'])) {
+                    $dossierface_id = $fresponse['id'];
+                    
+                    $update_query = "Update " . TABLE_USER_IMAGES . " set dossier_id = ? , dossierface_id = ? where user_id = ?";
+                    $update_user_stmt = $connection->prepare($update_query);
+                    $update_user_stmt->bind_param("isi",$dossier_id,$dossierface_id,$userid);
+                    $update_user_stmt->execute();
+                    $update_user_stmt->close();
+                    
+                }
+            }
         }
         return $response;
     }
@@ -833,8 +875,6 @@ class UserFunctions
                             $selfi_image_upload_dir = SELFI_IMAGES . $selfi_image_name;
                             file_put_contents($selfi_image_upload_dir, base64_decode($selfipic));
 
-                            //Post Face
-                            $this->post_face($selfi_image_name, $userid);
 
                             $insertFields = "user_id,
                                     image,
@@ -845,9 +885,13 @@ class UserFunctions
                             $insert_pic_stmt = $connection->prepare($insert_query);
                             $insert_pic_stmt->bind_param("iss", $userid, $selfi_image_name, $modifieddate);
                             if ($insert_pic_stmt->execute()) {
-
+                                
                                 $pic_inserted_id = mysqli_insert_id($connection);
                                 $insert_pic_stmt->close();
+                                
+                                //Post Face
+                                $this->post_face($selfi_image_name, $userid);
+                                
                                 $update_query = "Update " . TABLE_USER . " set profile_image_id = ?, bio_selfie_id = ? where id = ? ";
                                 $update_user_stmt = $connection->prepare($update_query);
                                 $update_user_stmt->bind_param("iii", $pic_inserted_id, $pic_inserted_id, $userid);
@@ -2839,9 +2883,6 @@ class UserFunctions
                             $selfi_image_upload_dir = SELFI_IMAGES . $selfi_image_name;
                             file_put_contents($selfi_image_upload_dir, base64_decode($selfipic));
 
-                            //Post Face
-                            $this->post_face($selfi_image_name,$user_inserted_id);
-
                             $insertFields = "user_id,
                                     image,
                                     modified";
@@ -2852,9 +2893,13 @@ class UserFunctions
                             $insert_pic_stmt->bind_param("iss",$user_inserted_id,$selfi_image_name,$modifieddate);
                             if($insert_pic_stmt->execute())
                             {
-
+                          
                                 $pic_inserted_id = mysqli_insert_id($connection);
                                 $insert_pic_stmt->close();
+                                
+                                //Post Face
+                                $this->post_face($selfi_image_name,$user_inserted_id);
+                                
                                 $update_query = "Update " . TABLE_USER . " set profile_image_id = ?, bio_selfie_id = ? where id = ? ";
                                 $update_user_stmt = $connection->prepare($update_query);
                                 $update_user_stmt->bind_param("iii",$pic_inserted_id,$pic_inserted_id,$user_inserted_id);
@@ -3240,9 +3285,6 @@ class UserFunctions
                         $selfi_image_upload_dir = SELFI_IMAGES . $selfi_image_name;
                         file_put_contents($selfi_image_upload_dir, base64_decode($selfipic));
 
-                        //Post Face
-                        $this->post_face($selfi_image_name,$user_inserted_id);
-
                         $insertFields = "user_id,
                                     image,
                                     modified";
@@ -3256,6 +3298,10 @@ class UserFunctions
 
                             $pic_inserted_id = mysqli_insert_id($connection);
                             $insert_pic_stmt->close();
+                            
+                            //Post Face
+                            $this->post_face($selfi_image_name,$user_inserted_id);
+                            
                             $update_query = "Update " . TABLE_USER . " set profile_image_id = ?, bio_selfie_id = ? where id = ? ";
                             $update_user_stmt = $connection->prepare($update_query);
                             $update_user_stmt->bind_param("iii",$pic_inserted_id,$pic_inserted_id,$user_inserted_id);
@@ -3401,6 +3447,158 @@ class UserFunctions
         $data['message'] = $errorMsg;
         $data['user'] = $posts;
         return $data;
+    }
+    
+    public function detect($photo) {
+        $URL = '52.236.81.69/detect';
+        $fields = [];
+
+        $filenames = array($photo);
+
+        $files = array();
+        foreach ($filenames as $f) {
+            $files['photo'] = file_get_contents($f);
+        }
+
+        // curl
+        $curl = curl_init();
+
+        $boundary = uniqid();
+        $delimiter = '-------------' . $boundary;
+
+        $post_data = $this->build_data_files($boundary, $fields, $files);
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $URL,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $post_data,
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d",
+                "Content-Type: multipart/form-data; boundary=" . $delimiter,
+                "Content-Length: " . strlen($post_data)
+            ),
+        ));
+
+        $result = curl_exec($curl);
+        if ($result === false) {
+            $response = array('curl_error' => curl_error($curl));
+        } else {
+            $response = json_decode($result, 1);
+        }
+        curl_close($curl);
+
+        return $response;
+    }
+    
+    public function adddossier($dossierlist_id, $dossier_name) {
+        $URL = '52.236.81.69/dossiers/';
+        $data = json_encode(array('active' => 'true', 'name' => $dossier_name, 'dossier_lists' => [$dossierlist_id]));
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d'));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $result = curl_exec($ch);
+        if ($result === false) {
+            $response = array('curl_error' => curl_error($ch));
+        } else {
+            $response = json_decode($result, 1);
+        }
+        return $response;
+    }
+    
+    public function adddossierface($dossier_id, $detection_id, $image) {
+        $fields = ['dossier' => $dossier_id, 'create_from' => 'detection:' . $detection_id];
+
+        $filenames = array($image);
+
+        $files = array();
+        foreach ($filenames as $f) {
+            $files['source_photo'] = file_get_contents($f);
+        }
+
+        // URL to upload to
+        $url = "52.236.81.69/dossier-faces/";
+
+        // curl
+        $curl = curl_init();
+
+        $boundary = uniqid();
+        $delimiter = '-------------' . $boundary;
+
+        $post_data = $this->build_data_files($boundary, $fields, $files);
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $post_data,
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d",
+                "Content-Type: multipart/form-data; boundary=" . $delimiter,
+                "Content-Length: " . strlen($post_data)
+            ),
+        ));
+
+        $result = curl_exec($curl);
+        if ($result === false) {
+            $response = array('curl_error' => curl_error($curl));
+        } else {
+            $response = json_decode($result, 1);
+        }
+        return $response;
+    }
+    
+    public function build_data_files($boundary, $fields, $files) {
+        $data = '';
+        $eol = "\r\n";
+
+        $delimiter = '-------------' . $boundary;
+
+        foreach ($fields as $name => $content) {
+            $data .= "--" . $delimiter . $eol
+                    . 'Content-Disposition: form-data; name="' . $name . "\"" . $eol . $eol
+                    . $content . $eol;
+        }
+
+        foreach ($files as $name => $content) {
+            $data .= "--" . $delimiter . $eol
+                    . 'Content-Disposition: form-data; name="' . $name . '"; filename="58ac19df989a31487673823.jpeg"' . $eol
+                    . 'Content-Transfer-Encoding: binary' . $eol
+            ;
+
+            $data .= $eol;
+            $data .= $content . $eol;
+        }
+        $data .= "--" . $delimiter . "--" . $eol;
+        return $data;
+    }
+    
+    public function delete_dossier($dossier_id) {
+        $URL = '52.236.81.69/dossiers/' . $dossier_id;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: Token 4582f5bb9047164799aa283de40a0365a591aa67f865bb4459198bf838eb065d', 'Content-Length: 0'));
+        $result = curl_exec($ch);
+        if ($result === false) {
+            $response = array('curl_error' => curl_error($ch));
+        } else {
+            $response = json_decode($result, 1);
+        }
+        return $response;
     }
 
 }

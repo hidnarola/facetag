@@ -9,13 +9,7 @@
 <link href="assets/admin/css/bootstrap-datetimepicker.css">
 <script type="text/javascript" src="assets/admin/js/bootstrap-datetimepicker.js"></script>
 
-<!--<script type="text/javascript" src="assets/admin/js/plugins/ui/moment/moment.min.js"></script>
-<script type="text/javascript" src="assets/admin/js/plugins/pickers/daterangepicker.js"></script>
-<script type="text/javascript" src="assets/admin/js/plugins/pickers/anytime.min.js"></script>
-<script type="text/javascript" src="assets/admin/js/plugins/pickers/pickadate/picker.js"></script>
-<script type="text/javascript" src="assets/admin/js/plugins/pickers/pickadate/picker.date.js"></script>
-<script type="text/javascript" src="assets/admin/js/plugins/pickers/pickadate/picker.time.js"></script>
-<script type="text/javascript" src="assets/admin/js/plugins/pickers/pickadate/legacy.js"></script>-->
+<script type="text/javascript" src="assets/admin/js/plugins/forms/validation/validate.min.js"></script>
 
 <div class="page-header page-header-default">
     <div class="page-header-content">
@@ -62,17 +56,12 @@
                 <div>
                     <div class="col-sm-3">
                         <div class="form-group">
-                            <div class='input-group date' id='datetimepicker1'>
+                            <div class='input-group date'>
                                 <span class="input-group-addon"><i class="icon-calendar3"></i></span>
                                 <input type='text' class="form-control" name="image_capture_time" id="ButtonCreationDemoInput" value="<?php echo date('m-d-Y h:i A'); ?>"/>
                             </div>
                         </div>
-                        <!--                        <div class="input-group">
-                                                    <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default btn-icon" id="ButtonCreationDemoButton"><i class="icon-calendar3"></i></button>
-                                                    </span>
-                                                    <input type="text" class="form-control" name="image_capture_time" id="ButtonCreationDemoInput" placeholder="Select a date">
-                                                </div>-->
+
                     </div>
                     <div class="col-sm-9">
                         <button class="btn btn-primary" type="button" id="btn_submit">Upload <i class="icon-arrow-up13 position-right"></i></button>
@@ -99,10 +88,11 @@
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    <div class='input-group date' id='datetimepicker1'>
+                                    <div class='input-group date'>
                                         <span class="input-group-addon"><i class="icon-calendar3"></i></span>
                                         <input type='text' class="form-control" name="image_dir_capture_time" id="ButtonCreationDemoInputDir" placeholder="Capture time" value="<?php echo date('m-d-Y h:i A'); ?>"/>
                                     </div>
+                                    <label id="ButtonCreationDemoInputDir-error" class="validation-error-label" for="ButtonCreationDemoInputDir"></label>
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -113,27 +103,21 @@
                 </form>
             </div>
         </div>
-        
+
         <div class="upload-dir-main">
             <div class="upload-dir">
                 <div style="text-align: center;">
                     <h1>Or you can crop and upload image : </h1>
                 </div>
-                <form action="<?php echo site_url('admin/businesses/upload_crop_image/'.$icp_data['id']); ?>" method="post" id="submit_icp_image_crop_form" class="validate-form" enctype="multipart/form-data">
+                <form action="<?php echo site_url('admin/businesses/upload_crop_image/' . $icp_data['id']); ?>" method="post" id="submit_icp_image_crop_form" class="validate-form" enctype="multipart/form-data">
                     <input type="hidden" name="icp_id" value="<?php echo $icp_data['id'] ?>"/>
                     <div class="panel-body">
                         <div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <div class="col-lg-10">
-                                        <div class="media-left" id="image_preview_div">
-                                            
-                                        </div>
-                                        <!--<input type="file" name="crop_file" id="files" class="form-control">-->
+                                        <div class="media-left" id="image_preview_div"></div>
                                         <div class="media-body">
-<!--                                            <input type="file" name="logo" id="logo" class="file-styled" onchange="readURL(this);" <?php echo $required ?>>
-                                            <span class="help-block">Accepted formats: png, jpg. Max file size 2Mb</span>-->
-
                                             <input type="file" name="original_img" class="file-styled js-fileinput img-upload form-control" accept="image/jpeg,image/png,image/gif" required="">
                                             <span class="help-block">Accepted formats: png, jpg. Max file size 2Mb</span>
                                             <canvas class="js-editorcanvas"></canvas>
@@ -146,10 +130,11 @@
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    <div class='input-group date' id='datetimepicker1'>
+                                    <div class='input-group date'>
                                         <span class="input-group-addon"><i class="icon-calendar3"></i></span>
-                                        <input type='text' class="form-control" name="image_crop_capture_time" id="ButtonCreationDemoInputCrop" placeholder="Capture time" value="<?php echo date('m-d-Y h:i A'); ?>" required=""/>
+                                        <input type='text' class="form-control" name="image_crop_capture_time" id="ButtonCreationDemoInputCrop" placeholder="Capture time" required=""/>
                                     </div>
+                                    <label id="ButtonCreationDemoInputCrop-error" class="validation-error-label" for="ButtonCreationDemoInputCrop"></label>
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -654,15 +639,14 @@
             confirmButtonColor: "#FF7043",
             confirmButtonText: "Yes, delete it!"
         },
-        function (isConfirm) {
-            if (isConfirm) {
-                window.location.href = $(e).attr('href');
-                return true;
-            }
-            else {
-                return false;
-            }
-        });
+                function (isConfirm) {
+                    if (isConfirm) {
+                        window.location.href = $(e).attr('href');
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
         return false;
     }
     // Lightbox
@@ -682,14 +666,6 @@
 //            maxFiles: 5,
             acceptedFiles: '.jpg, .png, .jpeg',
             init: function () {
-
-                /*
-                 this.on("error", function (file) {
-                 if (!file.accepted)
-                 this.removeFile(file)
-                 });
-                 */
-
                 var submitButton = document.querySelector("#btn_submit")
                 myDropzone = this;
 
@@ -797,46 +773,91 @@
         });
 
         $("#submit_icp_image_dir_form").submit(function (e) {
-            var formData = new FormData($(this)[0]);
-            var url = $(this).attr("action"); // the script where you handle the form input.
-            $('.loading').show();
-            $('#submit_icp_image_dir_form .panel-body').block({
-                message: '<span>Please wait while image(s) are being uploaded for processing</span>&nbsp;&nbsp;<i class="icon-spinner9 spinner"></i>',
-                overlayCSS: {
-                    backgroundColor: '#fff',
-                    opacity: 0.5,
-                    cursor: 'wait',
-                },
-                css: {
-                    border: 0,
-                    padding: 0,
-                    backgroundColor: 'none',
-                }
-            });
-            $.ajax({
-                type: "POST",
-                url: url,
-                dataType: 'json',
-                data: formData, // serializes the form's elements.
-                processData: false,
-                contentType: false,
-                success: function (data)
-                {
-//                    alert(data); // show response from the php script.
-                    window.location.href = '<?php echo base_url(); ?>admin/businesses/icp_images/<?php echo $icp_data['id'] ?>';
-                                    }
-                                });
+            if ($("#submit_icp_image_dir_form").valid()) {
 
-                                e.preventDefault(); // avoid to execute the actual submit of the form.
-                            });
-                        });
-                        $(function () {
-                            $('#ButtonCreationDemoInput').datetimepicker({
-                                maxDate: 'now'
-                            });
-                            $('#ButtonCreationDemoInputDir').datetimepicker({
-                                maxDate: 'now'
-                            });
-                        });
+                var formData = new FormData($(this)[0]);
+                var url = $(this).attr("action"); // the script where you handle the form input.
+                $('.loading').show();
+                $('#submit_icp_image_dir_form .panel-body').block({
+                    message: '<span>Please wait while image(s) are being uploaded for processing</span>&nbsp;&nbsp;<i class="icon-spinner9 spinner"></i>',
+                    overlayCSS: {
+                        backgroundColor: '#fff',
+                        opacity: 0.5,
+                        cursor: 'wait',
+                    },
+                    css: {
+                        border: 0,
+                        padding: 0,
+                        backgroundColor: 'none',
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    dataType: 'json',
+                    data: formData, // serializes the form's elements.
+                    processData: false,
+                    contentType: false,
+                    success: function (data)
+                    {
+                        window.location.href = site_url + 'admin/businesses/icp_images/<?php echo $icp_data['id'] ?>';
+                    }
+                });
+            }
+
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+        });
+    });
+    $(function () {
+        $('#ButtonCreationDemoInput').datetimepicker({
+            maxDate: 'now'
+        });
+        $('#ButtonCreationDemoInputDir').datetimepicker({
+            maxDate: 'now'
+        });
+        $('#ButtonCreationDemoInputCrop').datetimepicker({
+            maxDate: 'now'
+        });
+    });
+
+    var validator = $("#submit_icp_image_dir_form").validate({
+        ignore: 'input[type=hidden], .select2-search__field', // ignore hidden fields
+        errorClass: 'validation-error-label',
+        successClass: 'validation-valid-label',
+        highlight: function (element, errorClass) {
+            $(element).removeClass(errorClass);
+        },
+        unhighlight: function (element, errorClass) {
+            $(element).removeClass(errorClass);
+        },
+        validClass: "validation-valid-label",
+        success: function (label) {
+            label.addClass("validation-valid-label")
+        },
+        rules: {
+            'files[]': "required",
+            image_dir_capture_time: "required",
+        }
+    });
+    
+    var validator = $("#submit_icp_image_crop_form").validate({
+        ignore: 'input[type=hidden], .select2-search__field', // ignore hidden fields
+        errorClass: 'validation-error-label',
+        successClass: 'validation-valid-label',
+        highlight: function (element, errorClass) {
+            $(element).removeClass(errorClass);
+        },
+        unhighlight: function (element, errorClass) {
+            $(element).removeClass(errorClass);
+        },
+        validClass: "validation-valid-label",
+        success: function (label) {
+            label.addClass("validation-valid-label")
+        },
+        rules: {
+            'original_img': "required",
+            image_crop_capture_time: "required",
+        }
+    });
 
 </script>

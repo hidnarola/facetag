@@ -1125,7 +1125,7 @@
             return false;
         } else {
             $.ajax({
-                url: '<?php echo base_url(); ?>business/profile',
+                url: '<?php echo site_url(); ?>business/profile?ajax=true',
                 type: 'POST',
                 data: $(this).serialize(),
                 dataType: "json",

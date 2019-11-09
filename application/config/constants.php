@@ -155,7 +155,7 @@ define('EMAIL_FROM_NAME', 'facetag');
 //define('GOOGLE_SITE_KEY', '6LcbSwoUAAAAAGwOF1kSPJuMoXiS93XMOYnRjzI4');
 //define('GOOGLE_SECRET_KEY', '6LcbSwoUAAAAALW-xGxnulbTqPbthDtXHomkEp27');
 
-/*@anp : Google Captch Site Key and Secret Constatns*/
+/* @anp : Google Captch Site Key and Secret Constatns */
 define('GOOGLE_SITE_KEY', '6Lc0aSMUAAAAAM5ZJWSSC3u3PqZQlwiRjbPzEm0w');
 define('GOOGLE_SECRET_KEY', '6Lc0aSMUAAAAAGjHF7ViRUNmpguWt6VFygzBq47k');
 
@@ -179,3 +179,7 @@ define("FIREBASE_FCM_URL", "https://fcm.googleapis.com/fcm/send");
 define("SUCCESS", "success");
 define("FAILED", "failed");
 
+/**
+ * Userselfie dossier list id
+ */
+define("USERDOSSIERLIST_ID", 25);

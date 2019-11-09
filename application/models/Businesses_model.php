@@ -286,7 +286,7 @@ class Businesses_model extends CI_Model {
      * @param int $business_id
      */
     public function get_icps($business_id) {
-        $this->db->select('id');
+        $this->db->select('id,dossierlist_id');
         $this->db->where('business_id', $business_id);
         $this->db->where('is_delete', 0);
         $query = $this->db->get(TBL_ICPS);

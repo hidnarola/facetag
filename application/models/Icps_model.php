@@ -147,7 +147,7 @@ class Icps_model extends CI_Model {
      * Returns all active icps
      */
     public function get_all_active_icps() {
-        $this->db->select('i.id,i.name');
+        $this->db->select('i.id,i.name,i.dossierlist_id');
         $this->db->where(array('i.is_delete' => 0, 'i.is_active' => 1, 'b.is_delete' => 0));
         $this->db->join(TBL_BUSINESSES . ' b', 'i.business_id=b.id', 'left');
         $query = $this->db->get(TBL_ICPS . ' i');
@@ -155,10 +155,23 @@ class Icps_model extends CI_Model {
     }
 
     public function get_icps() {
-        $this->db->select('i.id,i.name');
+        $this->db->select('i.id,i.name,i.dossierlist_id');
         $this->db->where(array('i.is_delete' => 0, 'b.is_delete' => 0));
         $this->db->join(TBL_BUSINESSES . ' b', 'i.business_id=b.id', 'left');
         $query = $this->db->get(TBL_ICPS . ' i');
+        return $query->result_array();
+    }
+
+    /**
+     * Get dossier id of icp
+     * @param array $icp_ids
+     */
+    public function get_icp_dossierlist($icp_ids) {
+        $this->db->select('id,name,dossierlist_id');
+        $this->db->where('dossierlist_id IS NOT NULL');
+        $this->db->where('is_delete=0');
+        $this->db->where_in('id', $icp_ids);
+        $query = $this->db->get(TBL_ICPS);
         return $query->result_array();
     }
 

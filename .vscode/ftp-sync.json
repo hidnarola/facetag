@@ -1,0 +1,14 @@
+{
+    "remotePath": "/var/www/html",
+    "host": "13.54.170.29",
+    "username": "ec2-user",
+    "port": "22",
+    "protocol": "sftp",
+    "uploadOnSave": true,
+    "privateKeyPath": "d:/FaceTag/facetag.ppk",
+    "ignore": [
+        "\\.vscode",
+        "\\.git",
+        "\\.DS_Store"
+    ]
+}

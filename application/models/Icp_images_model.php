@@ -140,7 +140,7 @@ class Icp_images_model extends CI_Model {
     }
 
     /**
-     * Get count of icp_images stored in facerecognition database
+     * Get count of icp_images stored in findface database
      */
     public function count_facerecog_images() {
         $this->db->select('icp_id,count(icp_id) as count');
@@ -153,7 +153,7 @@ class Icp_images_model extends CI_Model {
     }
 
     /**
-     * Get count of icp_images stored in facerecognition database
+     * Get count of icp_images stored in findface database
      */
     public function count_facerecogimages_by_businessid() {
         $this->db->select('ic.business_id,count(icp_id) as count');
@@ -216,6 +216,7 @@ class Icp_images_model extends CI_Model {
         $query = $this->db->get(TBL_ICP_IMAGE_TAG . ' imgtag');
         return $query->result_array();
     }
+
     public function get_icp_images_to_post($icp_id = NULL, $type = 'result') {
         $columns = ['id', 'image', 'created', 'icp_images', 'image_capture_time', 'created'];
 
@@ -237,7 +238,7 @@ class Icp_images_model extends CI_Model {
             return $query->result_array();
         }
     }
-    
+
     public function get_icp_selected_images($selected_images) {
         $columns = ['id', 'image', 'created', 'icp_images', 'image_capture_time', 'created'];
 
@@ -249,8 +250,8 @@ class Icp_images_model extends CI_Model {
         $this->db->where_in('id', $selected_images);
 
 
-            $query = $this->db->get(TBL_ICP_IMAGES);
-            return $query->result_array();
+        $query = $this->db->get(TBL_ICP_IMAGES);
+        return $query->result_array();
     }
 
     /**
@@ -264,18 +265,45 @@ class Icp_images_model extends CI_Model {
         $query = $this->db->get(TBL_ICP_IMAGES);
         return $query->result_array();
     }
-    
+
     public function get_icp_access_token($icpid) {
         $this->db->select('c.access_token');
         $this->db->where(array('c.icp_id' => $icpid));
         $query = $this->db->get("connect_network" . ' c');
         return $query->row_array();
     }
-    
-     public function get_hashtags($icpid) {
+
+    public function get_hashtags($icpid) {
         $this->db->select('i.hashtags');
         $this->db->where(array('i.id' => $icpid));
         $query = $this->db->get(TBL_ICPS . ' i');
+        return $query->row_array();
+    }
+
+    /**
+     * Get dossiers of icp images
+     * @param int $icp_id
+     */
+    public function get_icp_dossiers($icp_id) {
+        $this->db->select('dossier_id');
+        $this->db->where('dossier_id IS NOT NULL');
+        $this->db->where('icp_id', $icp_id);
+        $this->db->where('is_delete=0');
+        $this->db->where('is_deleted_from_face_recognition=0');
+        $query = $this->db->get(TBL_ICP_IMAGES);
+        return $query->result_array();
+    }
+
+    /**
+     * Get ICP image which is having dossier id 
+     * @param array $dossier_id
+     */
+    public function get_image_by_dossier($dossier_id) {
+        $this->db->select('img.icp_id,img.image,img.id,i.business_id');
+        $this->db->where('img.is_delete', 0);
+        $this->db->where('img.dossier_id', $dossier_id);
+        $this->db->join(TBL_ICPS . ' i', 'img.icp_id=i.id', 'left');
+        $query = $this->db->get(TBL_ICP_IMAGES . ' img');
         return $query->row_array();
     }
 

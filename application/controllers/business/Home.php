@@ -175,7 +175,7 @@ class Home extends CI_Controller {
         $this->form_validation->set_rules('latitude', 'Latitiude', 'trim|required', array('required' => 'Latitude field is required. Please enter valid address!'));
         $this->form_validation->set_rules('longitude', 'Longitude', 'trim|required', array('required' => 'Longitude field is required. Please enter valid address!'));
         $this->form_validation->set_rules('contact_email', 'Contact Email', 'trim|valid_email');
-        if($this->input->post('address_text')) {
+        if ($this->input->post('address_text')) {
             $this->form_validation->set_rules('address_display_text', 'Address display text', 'trim|required');
         }
 
@@ -256,9 +256,9 @@ class Home extends CI_Controller {
 //                if ($_FILES['logo']['name'] != '') {
 //                    unlink(BUSINESS_LOGO_IMAGES . $data['business_data']['logo']);
 //                }
-                 if($this->input->post('address_text') == 1) {
+                if ($this->input->post('address_text') == 1) {
                     $address = $this->input->post('address_display_text');
-                }else {
+                } else {
                     $address = $business_profile[0]['address_text'];
                 }
                 $update_array = array(
@@ -301,9 +301,13 @@ class Home extends CI_Controller {
                 } else {
                     $result['icpexist'] = 1;
                 }
-
-                echo json_encode($result);
-                exit;
+                $ajax = $this->input->get('ajax');
+                if ($ajax == 'true') {
+                    echo json_encode($result);
+                    exit;
+                } else {
+                    redirect($this->uri->uri_string());
+                }
             }
         }
         $this->template->load('default', 'business/home/business_profile', $data);
@@ -555,7 +559,7 @@ class Home extends CI_Controller {
             $this->businesses_model->insert_promo_images($insert_data);
         }
     }
-    
+
     /* reorder promo images list */
 
     public function change_promo_images_order() {

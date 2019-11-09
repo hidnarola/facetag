@@ -123,7 +123,7 @@
                     searchable: false,
                     sortable: false,
                     render: function (data, type, full, meta) {
-                        action = '<a href="' + site_url + 'admin/users/delete/' + full.id + '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete Business"><i class="icon-trash"></i></a>';
+                        action = '<a href="' + site_url + 'admin/users/delete/' + full.id + '" class="btn border-danger text-danger btn-flat btn-icon btn-rounded btn-xs" onclick="return confirm_alert(this)" title="Delete User"><i class="icon-trash"></i></a>';
                         return action;
                     }
                 },

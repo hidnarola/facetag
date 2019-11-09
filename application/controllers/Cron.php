@@ -7,14 +7,15 @@ class Cron extends CI_Controller {
     public function __construct() {
         parent::__construct();
 
-        $this->load->library('facerecognition');
         $this->load->library('push_notification');
+        //-- New API integration
+        $this->load->library('findface');
 
         $this->load->model(array('icp_images_model', 'users_model', 'icp_imagetag_model', 'settings_model', 'icps_model'));
     }
 
     /**
-     * Get all checked in users and match thier images with stored facerecogntion images
+     * Get all checked in users and match their images with stored face recognition images
      * Send user push notification if match exist
      */
     public function match_image() {
@@ -22,6 +23,7 @@ class Cron extends CI_Controller {
         $checkedin_users = $this->users_model->checked_in_users();
         $facerecog = $this->icp_images_model->count_facerecog_images();
         $new_arr = array();
+        $icp_arr = $dossier_list_arr = [];
         foreach ($checkedin_users as $key => $checkedin_user) {
             $icp_ids = array();
             if ($checkedin_user['icp_id'] != '') {
@@ -29,9 +31,19 @@ class Cron extends CI_Controller {
             } else if ($checkedin_user['business_icps'] != '') {
                 $icp_ids = explode(",", $checkedin_user['business_icps']);
             }
+
+            $icp_arr[] = $icp_ids;
+
             foreach ($icp_ids as $icp_id) {
                 $checkedin_user['icp_id'] = $icp_id;
                 $new_arr[] = $checkedin_user;
+            }
+        }
+        $icp_arr = array_unique($icp_arr);
+        if (!empty($icp_arr)) {
+            $dossier_list = $this->icps_model->get_icp_dossierlist($icp_arr);
+            foreach ($dossier_list as $key => $value) {
+                $dossier_list_arr[$value['id']] = $value['dossierlist_id'];
             }
         }
 
@@ -48,91 +60,93 @@ class Cron extends CI_Controller {
                     'mf_selector' => 'all',
                     'n' => $facerecog_images[$user['icp_id']],
                 );
-                $match_images = $this->facerecognition->identify('application/json', $img_arr, 'icp_' . $user['icp_id']);
 
-                if (isset($match_images['results'])) {
+                $photo = base_url() . USER_IMAGE_SITE_PATH . $user['user_image'];
 
-                    $detected_images = $match_images['results'];
-                    $key_arrays = array_keys($detected_images);
+                $match_images = $this->findface->identify($user['dossierface_id'], $dossier_list_arr[$user['icp_id']], $facerecog_images[$user['icp_id']], 'dossierface');
 
-                    foreach ($key_arrays as $key_arr) {
-                        $detected_imgs = $detected_images[$key_arr];
-//                    $key = key($detected_images);
-//                    $detected_images = $detected_images[$key];
-                        foreach ($detected_imgs as $detected_image) {
-                            $meta = $detected_image['face']['meta'];
-                            $icp_image_id = explode('_', $meta);
-                            $icp_image_id = $icp_image_id[2];
+                if (isset($match_images['results']) && !empty($match_images['results'])) {
 
-                            //--Check image is already tag or not
-                            $tag_exist = $this->icp_imagetag_model->check_imagetag_exist($user['user_id'], $icp_image_id);
+                    foreach ($match_images['results'] as $result) {
+                        if (!empty($result['looks_like']['matched_face'])) {
 
-                            if ($tag_exist == 0) {
-                                //-- if image is verified then store it into image_tag table and send push notification to user
-                                $icp_image_tag = array(
-                                    'icp_image_id' => $icp_image_id,
-                                    'user_id' => $user['user_id'],
-                                    'is_user_verified' => 0,
-                                    'is_purchased' => 0,
-                                    'created' => date('Y-m-d H:i:s'),
-                                    'modified' => date('Y-m-d H:i:s'));
-                                $icp_image_tag_id = $this->icp_imagetag_model->insert($icp_image_tag);
+                            //-- Get xy bounds of matched dossier face
+                            $dossier_face = $this->findface->getdossierface($result['looks_like']['matched_face']);
+
+                            if (!empty($dossier_face['id'])) {
+
+                                $detected_image = $this->icp_images_model->get_image_by_dossier($result['id']);
+
+                                $icp_image_id = $detected_image['id'];
+
+                                //-- Check image is already tag or not
+                                $tag_exist = $this->icp_imagetag_model->check_imagetag_exist($user['user_id'], $detected_image['id']);
+
+                                if ($tag_exist == 0) {
+                                    //-- if image is verified then store it into image_tag table and send push notification to user
+                                    $icp_image_tag = array(
+                                        'icp_image_id' => $detected_image['id'],
+                                        'user_id' => $user['user_id'],
+                                        'is_user_verified' => 0,
+                                        'is_purchased' => 0,
+                                        'created' => date('Y-m-d H:i:s'),
+                                        'modified' => date('Y-m-d H:i:s'));
+                                    $icp_image_tag_id = $this->icp_imagetag_model->insert($icp_image_tag);
 
 
-                                $url = $detected_image['face']['photo'];
-                                $source_x = $detected_image['face']['x1'];
-                                $x2 = $detected_image['face']['x2'];
-                                $source_y = $detected_image['face']['y1'];
-                                $y2 = $detected_image['face']['y2'];
-                                $width = $x2 - $source_x;
-                                $height = $y2 - $source_y;
-                                crop_image($source_x, $source_y, $width, $height, $url, $icp_image_tag_id);
+                                    $url = base_url(ICP_IMAGES) . $detected_image['image'];
 
-                                $messageText = "Hello there, you have a new 'facetag' ...is this you?";
-                                if ($user['device_type'] == 0) {
-                                    $where = 'im.id = ' . $this->db->escape($icp_image_id);
-                                    $icp_img_data = $this->icp_images_model->get_result($where);
-                                    $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
-                                    $icp_data = $this->icps_model->get_result($where);
+                                    $source_x = $dossier_face['source_coords_left'];
+                                    $x2 = $dossier_face['source_coords_right'];
+                                    $source_y = $dossier_face['source_coords_top'];
+                                    $y2 = $dossier_face['source_coords_bottom'];
 
-                                    $extension = explode('/', $icp_img_data[0]['image']);
-                                    $image_name = explode('.', $extension[2]);
-                                    $pushData = array(
-                                        "notification_type" => "data",
-                                        "body" => $messageText,
-                                        "selfietagid" => $icp_image_tag_id,
-                                        "businessid" => $icp_img_data[0]['business_id'],
-                                        "businessname" => $icp_data[0]['businessname'],
-                                        "businessaddress" => $icp_data[0]['businessaddress'],
-                                        "icpid" => $user['icp_id'],
-                                        "icpname" => $icp_data[0]['name'],
-                                        "icpaddress" => $icp_data[0]['address'],
-                                        "imgid" => $icp_image_id,
-//                                        "image" => $icp_img_data[0]['image']
-                                        "image" => $image_name[0] . $icp_image_tag_id . "." . $image_name[1]
-                                    );
+                                    $width = $x2 - $source_x;
+                                    $height = $y2 - $source_y;
+                                    crop_image($source_x, $source_y, $width, $height, $url, $icp_image_tag_id);
 
-                                    $response = $this->push_notification->sendPushToAndroid(array($user['device_id']), $pushData, FALSE);
-                                } else {
+                                    $messageText = "Hello there, you have a new 'facetag' ...is this you?";
+                                    if ($user['device_type'] == 0) {
 
-                                    $where = 'im.id = ' . $this->db->escape($icp_image_id);
-                                    $icp_img_data = $this->icp_images_model->get_result($where);
-                                    $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
-                                    $icp_data = $this->icps_model->get_result($where);
+                                        $where = 'i.id = ' . $this->db->escape($detected_image['icp_id']);
+                                        $icp_data = $this->icps_model->get_result($where);
 
-                                    $pushData = array(
-                                        "selfietagid" => $icp_image_tag_id,
-                                        "businessid" => $icp_img_data[0]['business_id'],
-                                        "businessname" => $icp_data[0]['businessname'],
-                                        "businessaddress" => $icp_data[0]['businessaddress'],
-                                        "icpid" => $user['icp_id'],
-                                        "icpname" => $icp_data[0]['name'],
-                                        "icpaddress" => $icp_data[0]['address'],
-                                        "imgid" => $icp_image_id,
-                                        "image" => $icp_img_data[0]['image']
-                                    );
+                                        $extension = explode('/', $detected_image['image']);
+                                        $image_name = explode('.', $extension[2]);
+                                        $pushData = array(
+                                            "notification_type" => "data",
+                                            "body" => $messageText,
+                                            "selfietagid" => $icp_image_tag_id,
+                                            "businessid" => $detected_image['business_id'],
+                                            "businessname" => $icp_data[0]['businessname'],
+                                            "businessaddress" => $icp_data[0]['businessaddress'],
+                                            "icpid" => $user['icp_id'],
+                                            "icpname" => $icp_data[0]['name'],
+                                            "icpaddress" => $icp_data[0]['address'],
+                                            "imgid" => $icp_image_id,
+                                            "image" => $image_name[0] . $icp_image_tag_id . "." . $image_name[1]
+                                        );
 
-                                    $response = $this->push_notification->sendPushiOS(array('deviceToken' => $user['device_id'], 'pushMessage' => $messageText), $pushData);
+                                        $response = $this->push_notification->sendPushToAndroid(array($user['device_id']), $pushData, FALSE);
+                                    } else {
+
+                                        $where = 'i.id = ' . $this->db->escape($detected_image['icp_id']);
+                                        $icp_data = $this->icps_model->get_result($where);
+
+                                        $pushData = array(
+                                            "selfietagid" => $icp_image_tag_id,
+                                            "businessid" => $detected_image['business_id'],
+                                            "businessname" => $icp_data[0]['businessname'],
+                                            "businessaddress" => $icp_data[0]['businessaddress'],
+                                            "icpid" => $user['icp_id'],
+                                            "icpname" => $icp_data[0]['name'],
+                                            "icpaddress" => $icp_data[0]['address'],
+                                            "imgid" => $icp_image_id,
+                                            "image" => $detected_image['image']
+                                        );
+
+                                        $response = $this->push_notification->sendPushiOS(array('deviceToken' => $user['device_id'], 'pushMessage' => $messageText), $pushData);
+                                    }
                                 }
                             }
                         }
@@ -143,7 +157,7 @@ class Cron extends CI_Controller {
     }
 
     /**
-     * Purger images from facial recognition databse as per the settings set by admin
+     * Purger images from facial recognition database as per the settings set by admin
      */
     public function purge_images() {
         ini_set('max_execution_time', 0);
@@ -175,7 +189,7 @@ class Cron extends CI_Controller {
                 }
             }
             foreach ($icp_image_tag as $image) {
-                $this->facerecognition->delete_face('meta', 'icp_img_' . $image['id']);
+                $this->findface->delete_dossier($image['dossier_id']);
                 $this->icp_images_model->update_record('id=' . $image['id'], array('is_deleted_from_face_recognition' => 1, 'modified' => date('Y-m-d h:i:s')));
             }
         }
@@ -215,96 +229,92 @@ class Cron extends CI_Controller {
         foreach ($users as $user) {
             foreach ($icps as $icp) {
                 if ($user['user_image'] != '' && isset($facerecog_images[$icp['id']])) {
-                    $img_arr = array(
-                        'photo' => base_url() . USER_IMAGE_SITE_PATH . $user['user_image'],
-                        'threshold' => 0.72,
-                        'mf_selector' => 'all',
-                        'n' => $facerecog_images[$icp['id']],
-                    );
-                    $match_images = $this->facerecognition->identify('application/json', $img_arr, 'icp_' . $icp['id']);
 
-                    if (isset($match_images['results'])) {
+                    $match_images = $this->findface->identify($user['dossierface_id'], $icp['dossierlist_id'], $facerecog_images[$icp['id']], 'dossierface');
 
-                        $detected_images = $match_images['results'];
-                        $key_arrays = array_keys($detected_images);
+                    if (isset($match_images['results']) && !empty($match_images['results'])) {
 
-                        foreach ($key_arrays as $key_arr) {
-                            $detected_imgs = $detected_images[$key_arr];
-                            foreach ($detected_imgs as $detected_image) {
-                                $meta = $detected_image['face']['meta'];
-                                $icp_image_id = explode('_', $meta);
-                                $icp_image_id = $icp_image_id[2];
+                        foreach ($match_images['results'] as $result) {
 
-                                //--Check image is already tag or not
-                                $tag_exist = $this->icp_imagetag_model->check_imagetag_exist($user['id'], $icp_image_id);
+                            if (!empty($result['looks_like']['matched_face'])) {
+                                //-- Get xy bounds of matched dossier face
+                                $dossier_face = $this->findface->getdossierface($result['looks_like']['matched_face']);
 
-                                if ($tag_exist == 0) {
-                                    //-- if image is verified then store it into image_tag table and send push notification to user
-                                    $icp_image_tag = array(
-                                        'icp_image_id' => $icp_image_id,
-                                        'user_id' => $user['id'],
-                                        'is_user_verified' => 0,
-                                        'is_purchased' => 0,
-                                        'created' => date('Y-m-d H:i:s'),
-                                        'modified' => date('Y-m-d H:i:s'));
-                                    $icp_image_tag_id = $this->icp_imagetag_model->insert($icp_image_tag);
+                                if (!empty($dossier_face['id'])) {
 
+                                    $detected_image = $this->icp_images_model->get_image_by_dossier($result['id']);
+                                    $icp_image_id = $detected_image['id'];
 
-                                    $url = $detected_image['face']['photo'];
-                                    $source_x = $detected_image['face']['x1'];
-                                    $x2 = $detected_image['face']['x2'];
-                                    $source_y = $detected_image['face']['y1'];
-                                    $y2 = $detected_image['face']['y2'];
-                                    $width = $x2 - $source_x;
-                                    $height = $y2 - $source_y;
-                                    crop_image($source_x, $source_y, $width, $height, $url, $icp_image_tag_id);
+                                    //--Check image is already tag or not
+                                    $tag_exist = $this->icp_imagetag_model->check_imagetag_exist($user['id'], $icp_image_id);
 
-                                    $messageText = "Hello there, you have a new 'facetag' ...is this you?";
-                                    if ($user['device_type'] == 0) {
-                                        $where = 'im.id = ' . $this->db->escape($icp_image_id);
-                                        $icp_img_data = $this->icp_images_model->get_result($where);
-                                        if (!empty($icp_img_data)) {
-                                            $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
+                                    if ($tag_exist == 0) {
+                                        //-- if image is verified then store it into image_tag table and send push notification to user
+                                        $icp_image_tag = array(
+                                            'icp_image_id' => $icp_image_id,
+                                            'user_id' => $user['id'],
+                                            'is_user_verified' => 0,
+                                            'is_purchased' => 0,
+                                            'created' => date('Y-m-d H:i:s'),
+                                            'modified' => date('Y-m-d H:i:s'));
+
+                                        $icp_image_tag_id = $this->icp_imagetag_model->insert($icp_image_tag);
+
+                                        $url = base_url(ICP_IMAGES) . $detected_image['image'];
+
+                                        $source_x = $dossier_face['source_coords_left'];
+                                        $x2 = $dossier_face['source_coords_right'];
+                                        $source_y = $dossier_face['source_coords_top'];
+                                        $y2 = $dossier_face['source_coords_bottom'];
+
+                                        $width = $x2 - $source_x;
+                                        $height = $y2 - $source_y;
+
+                                        crop_image($source_x, $source_y, $width, $height, $url, $icp_image_tag_id);
+
+                                        $messageText = "Hello there, you have a new 'facetag' ...is this you?";
+
+                                        if ($user['device_type'] == 0) {
+
+                                            $where = 'i.id = ' . $this->db->escape($detected_image['icp_id']);
                                             $icp_data = $this->icps_model->get_result($where);
 
-                                            $extension = explode('/', $icp_img_data[0]['image']);
+                                            $extension = explode('/', $detected_image['image']);
                                             $image_name = explode('.', $extension[2]);
 
                                             $pushData = array(
                                                 "notification_type" => "data",
                                                 "body" => $messageText,
                                                 "selfietagid" => $icp_image_tag_id,
-                                                "businessid" => $icp_img_data[0]['business_id'],
+                                                "businessid" => $detected_image['business_id'],
                                                 "businessname" => $icp_data[0]['businessname'],
                                                 "businessaddress" => $icp_data[0]['businessaddress'],
                                                 "icpid" => $icp['id'],
                                                 "icpname" => $icp_data[0]['name'],
                                                 "icpaddress" => $icp_data[0]['address'],
                                                 "imgid" => $icp_image_id,
-//                                            "image" => $icp_img_data[0]['image']
                                                 "image" => $image_name[0] . $icp_image_tag_id . "." . $image_name[1]
                                             );
 
                                             $response = $this->push_notification->sendPushToAndroid(array($user['device_id']), $pushData, FALSE);
-                                        }
-                                    } else {
+                                        } else {
 
-                                        $where = 'im.id = ' . $this->db->escape($icp_image_id);
-                                        $icp_img_data = $this->icp_images_model->get_result($where);
-                                        if (!empty($icp_img_data)) {
-                                            $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
+                                            $where = 'i.id = ' . $this->db->escape($detected_image['icp_id']);
                                             $icp_data = $this->icps_model->get_result($where);
+
+                                            $extension = explode('/', $detected_image['image']);
+                                            $image_name = explode('.', $extension[2]);
 
                                             $pushData = array(
                                                 "selfietagid" => $icp_image_tag_id,
-                                                "businessid" => $icp_img_data[0]['business_id'],
+                                                "businessid" => $detected_image['business_id'],
                                                 "businessname" => $icp_data[0]['businessname'],
                                                 "businessaddress" => $icp_data[0]['businessaddress'],
                                                 "icpid" => $icp['id'],
                                                 "icpname" => $icp_data[0]['name'],
                                                 "icpaddress" => $icp_data[0]['address'],
                                                 "imgid" => $icp_image_id,
-                                                "image" => $icp_img_data[0]['image']
+                                                "image" => $image_name[0] . $icp_image_tag_id . "." . $image_name[1]
                                             );
 
                                             $response = $this->push_notification->sendPushiOS(array('deviceToken' => $user['device_id'], 'pushMessage' => $messageText), $pushData);
@@ -322,7 +332,7 @@ class Cron extends CI_Controller {
     }
 
     /**
-     * Move images from automatic image folder to icp images folder and store that images to database and Facerecognition database
+     * Move images from automatic image folder to icp images folder and store that images to database and Findface database
      * Send push notification if checked in user's image is detected
      * @author KU
      */
@@ -379,212 +389,190 @@ class Cron extends CI_Controller {
                     $arr = explode('_', $src);
                     $icp_id = end($arr);
 
-                    $auto_uploaded_images = $this->icp_images_model->get_auto_uploaded_images($icp_id);
-                    $auto_uploaded_images_arr = array_column($auto_uploaded_images, 'image');
+                    $where = 'i.id = ' . $this->db->escape($icp_id);
+                    $icp_data = $this->icps_model->get_result($where);
 
-                    $ext = pathinfo($full, PATHINFO_EXTENSION);
-                    $image_name = pathinfo($full, PATHINFO_FILENAME);
-                    $image_name.='_auto.' . $ext;
-                    $biz_dir = 'business_' . $business_id;
-                    $icp_dir = 'icp_' . $icp_id;
+                    if ($icp_data) {
+                        $dossierlist_id = $icp_data[0]['dossierlist_id'];
 
-                    //-- Check image already exist or not 
-                    if (!in_array($biz_dir . '/' . $icp_dir . '/' . $image_name, $auto_uploaded_images_arr)) {
-                        $ext_arr = ['png', 'jpeg', 'jpg', 'PNG', 'JPEG', 'JPG'];
-                        if (!in_array($ext, $ext_arr)) {
-                            unlink($full);
-                        } else {
-                            $images[] = ['img' => $file, 'icp_id' => $icp_id, 'business_id' => $business_id];
+                        $auto_uploaded_images = $this->icp_images_model->get_auto_uploaded_images($icp_id);
+                        $auto_uploaded_images_arr = array_column($auto_uploaded_images, 'image');
 
-                            //-- Create business directory if not exist
-                            if (!file_exists(ICP_IMAGES . $biz_dir)) {
-                                mkdir(ICP_IMAGES . $biz_dir);
-                            }
-                            if (!file_exists(ICP_BLUR_IMAGES . $biz_dir)) {
-                                mkdir(ICP_BLUR_IMAGES . $biz_dir);
-                            }
-                            if (!file_exists(ICP_SMALL_IMAGES . $biz_dir)) {
-                                mkdir(ICP_SMALL_IMAGES . $biz_dir);
-                            }
-                            //-- Create icp directory inside business directory if not exist
-                            if (!file_exists(ICP_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
-                                mkdir(ICP_IMAGES . $biz_dir . '/' . $icp_dir);
-                            }
-                            if (!file_exists(ICP_BLUR_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
-                                mkdir(ICP_BLUR_IMAGES . $biz_dir . '/' . $icp_dir);
-                            }
-                            if (!file_exists(ICP_SMALL_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
-                                mkdir(ICP_SMALL_IMAGES . $biz_dir . '/' . $icp_dir);
-                            }
+                        $ext = pathinfo($full, PATHINFO_EXTENSION);
+                        $image_name = pathinfo($full, PATHINFO_FILENAME);
+                        $image_name .= '_auto.' . $ext;
+                        $biz_dir = 'business_' . $business_id;
+                        $icp_dir = 'icp_' . $icp_id;
+
+                        //-- Check image already exist or not 
+                        if (!in_array($biz_dir . '/' . $icp_dir . '/' . $image_name, $auto_uploaded_images_arr)) {
+                            $ext_arr = ['png', 'jpeg', 'jpg', 'PNG', 'JPEG', 'JPG'];
+                            if (!in_array($ext, $ext_arr)) {
+                                unlink($full);
+                            } else {
+                                $images[] = ['img' => $file, 'icp_id' => $icp_id, 'business_id' => $business_id];
+
+                                //-- Create business directory if not exist
+                                if (!file_exists(ICP_IMAGES . $biz_dir)) {
+                                    mkdir(ICP_IMAGES . $biz_dir);
+                                }
+                                if (!file_exists(ICP_BLUR_IMAGES . $biz_dir)) {
+                                    mkdir(ICP_BLUR_IMAGES . $biz_dir);
+                                }
+                                if (!file_exists(ICP_SMALL_IMAGES . $biz_dir)) {
+                                    mkdir(ICP_SMALL_IMAGES . $biz_dir);
+                                }
+                                //-- Create icp directory inside business directory if not exist
+                                if (!file_exists(ICP_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
+                                    mkdir(ICP_IMAGES . $biz_dir . '/' . $icp_dir);
+                                }
+                                if (!file_exists(ICP_BLUR_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
+                                    mkdir(ICP_BLUR_IMAGES . $biz_dir . '/' . $icp_dir);
+                                }
+                                if (!file_exists(ICP_SMALL_IMAGES . '/' . $biz_dir . '/' . $icp_dir)) {
+                                    mkdir(ICP_SMALL_IMAGES . $biz_dir . '/' . $icp_dir);
+                                }
 
 //                        $image_name = uniqid() . time() . '.' . $ext;
 //                        copy($full, ICP_IMAGES . $biz_dir . '/' . $icp_dir . '/' . $image_name);
-                            rename($full, ICP_IMAGES . $biz_dir . '/' . $icp_dir . '/' . $image_name);
+                                rename($full, ICP_IMAGES . $biz_dir . '/' . $icp_dir . '/' . $image_name);
 
-                            $insert_data = array(
-                                'icp_id' => $icp_id,
-                                'image' => $biz_dir . '/' . $icp_dir . '/' . $image_name,
-                                'upload_type' => 0,
-                                'created' => date('Y-m-d H:i:s'),
-                                'modified' => date('Y-m-d H:i:s'),
-                                'image_capture_time' => date('Y-m-d H:i:s')
-                            );
-
-                            //-- Store image into thumb
-                            $src1 = ICP_IMAGES . $biz_dir . '/' . $icp_dir . '/' . $image_name;
-                            $thumb_dest = ICP_SMALL_IMAGES . $biz_dir . '/' . $icp_dir . '/' . $image_name;
-                            thumbnail_image($src1, $thumb_dest);
-
-                            //-- Convert image into blur image
-                            blur_image(FCPATH . ICP_SMALL_IMAGES . $biz_dir . '/' . $icp_dir . '/' . $image_name, FCPATH . ICP_BLUR_IMAGES . $biz_dir . '/' . $icp_dir . '/');
-                            $icp_image_id = $this->icp_images_model->insert($insert_data);
-
-
-                            //-- Detects faces on uploaded ICP image and and store it in face recognition database
-                            //-- Code start
-                            $photo = base_url(ICP_IMAGES) . $biz_dir . '/' . $icp_dir . '/' . $image_name;
-                            $icp_gallary_name = 'icp_' . $icp_id;
-
-                            $photo_array = array(
-                                'photo' => $photo,
-                                'meta' => 'icp_img_' . $icp_image_id,
-                                'mf_selector' => 'all', //-- Detect all faces and post them into facerecognition IDS
-                                'galleries' => array($icp_gallary_name)
-                            );
-
-                            $facerecog_data = $this->facerecognition->post_face('application/json', $photo_array);
-
-                            //-- check if face detected or not in uploaded icp image
-                            if (isset($facerecog_data['code'])) {
-                                $update_data = array('is_face_detected' => 0);
-                            } else if (isset($facerecog_data['results'])) {
-
-                                //-- if face detected 
-                                $result = $facerecog_data['results'];
-                                $face_recog_ids = array();
-                                foreach ($result as $val) {
-                                    $face_recog_ids[] = $val['id'];
-                                }
-                                $update_data = array(
-                                    'is_face_detected' => 1,
-                                    'face_recognition_ids' => implode(',', $face_recog_ids));
-
-                                $this->icp_images_model->update_record('id=' . $icp_image_id, $update_data);
-
-                                //-- Get all users
-                                $users = $this->users_model->all_users();
-
-                                $userids = array();
-                                $device_tokens = array();
-                                $device_types = array();
-                                $total_users = $this->users_model->get_total_users();
-                                //-- Make array of userids,device tokens and device types
-                                foreach ($users as $val) {
-                                    $userids[] = $val['user_id'];
-                                    $device_tokens[$val['user_id']] = $val['device_id'];
-                                    $device_types[$val['user_id']] = $val['device_type'];
-                                }
-                                $img_arr = array(
-                                    'photo' => $photo,
-                                    'threshold' => 0.72,
-                                    'mf_selector' => 'all',
-                                    'n' => $total_users,
+                                $insert_data = array(
+                                    'icp_id' => $icp_id,
+                                    'image' => $biz_dir . '/' . $icp_dir . '/' . $image_name,
+                                    'upload_type' => 0,
+                                    'created' => date('Y-m-d H:i:s'),
+                                    'modified' => date('Y-m-d H:i:s'),
+                                    'image_capture_time' => date('Y-m-d H:i:s')
                                 );
-                                $match_images = $this->facerecognition->identify('application/json', $img_arr, 'userselfies');
 
-                                if (isset($match_images['results'])) {
-                                    $detected_images = $match_images['results'];
-                                    $key_arrays = array_keys($detected_images);
+                                //-- Store image into thumb
+                                $src1 = ICP_IMAGES . $biz_dir . '/' . $icp_dir . '/' . $image_name;
+                                $thumb_dest = ICP_SMALL_IMAGES . $biz_dir . '/' . $icp_dir . '/' . $image_name;
+                                thumbnail_image($src1, $thumb_dest);
 
-                                    foreach ($key_arrays as $key_arr) {
-
-                                        $detected_imgs = $detected_images[$key_arr];
-                                        foreach ($detected_imgs as $detected_image) {
-                                            $meta = $detected_image['face']['meta'];
-                                            $user_id = explode('_', $meta);
-                                            $user_id = $user_id[1];
-
-                                            if (in_array($user_id, $userids)) {
-                                                //-- if image is verified then store it into image_tag table and send push notification to user
-                                                $icp_image_tag = array(
-                                                    'icp_image_id' => $icp_image_id,
-                                                    'user_id' => $user_id,
-                                                    'is_user_verified' => 0,
-                                                    'is_purchased' => 0,
-                                                    'created' => date('Y-m-d H:i:s'),
-                                                    'modified' => date('Y-m-d H:i:s'));
-                                                $icp_image_tag_id = $this->icp_imagetag_model->insert($icp_image_tag);
-
-                                                $url = $photo;
-                                                $new_key = substr($key_arr, 1, -1);
-                                                $bounds = explode(",", $new_key);
-
-                                                $source_x = trim($bounds[0]);
-                                                $source_y = trim($bounds[1]);
-                                                $x2 = trim($bounds[2]);
-                                                $y2 = trim($bounds[3]);
-
-                                                $width = $x2 - $source_x;
-                                                $height = $y2 - $source_y;
-                                                crop_image($source_x, $source_y, $width, $height, $url, $icp_image_tag_id);
+                                //-- Convert image into blur image
+                                blur_image(FCPATH . ICP_SMALL_IMAGES . $biz_dir . '/' . $icp_dir . '/' . $image_name, FCPATH . ICP_BLUR_IMAGES . $biz_dir . '/' . $icp_dir . '/');
+                                $icp_image_id = $this->icp_images_model->insert($insert_data);
 
 
-                                                $messageText = "Hello there, you have a new 'facetag' ...is this you?";
-                                                if ($device_types[$user_id] == 0) {
-                                                    $where = 'im.id = ' . $this->db->escape($icp_image_id);
-                                                    $icp_img_data = $this->icp_images_model->get_result($where);
-                                                    if (!empty($icp_img_data)) {
-                                                        $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
-                                                        $icp_data = $this->icps_model->get_result($where);
-                                                        $pushData = array(
-                                                            "notification_type" => "data",
-                                                            "body" => $messageText,
-                                                            "selfietagid" => $icp_image_tag_id,
-                                                            "businessid" => $icp_img_data[0]['business_id'],
-                                                            "businessname" => $icp_data[0]['businessname'],
-                                                            "businessaddress" => $icp_data[0]['businessaddress'],
-                                                            "icpid" => $icp_id,
-                                                            "icpname" => $icp_data[0]['name'],
-                                                            "icpaddress" => $icp_data[0]['address'],
-                                                            "imgid" => $icp_image_id,
-                                                            "image" => $icp_img_data[0]['image']
-                                                        );
-                                                        if (!empty($device_tokens[$user_id])) {
-                                                            $response = $this->push_notification->sendPushToAndroid(array($device_tokens[$user_id]), $pushData, FALSE);
-                                                        }
-                                                    }
-                                                } else {
-                                                    $url = '';
-                                                    $where = 'im.id = ' . $this->db->escape($icp_image_id);
-                                                    $icp_img_data = $this->icp_images_model->get_result($where);
-                                                    if (!empty($icp_img_data)) {
-                                                        $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
-                                                        $icp_data = $this->icps_model->get_result($where);
-                                                        $pushData = array(
-                                                            "selfietagid" => $icp_image_tag_id,
-                                                            "businessid" => $icp_img_data[0]['business_id'],
-                                                            "businessname" => $icp_data[0]['businessname'],
-                                                            "businessaddress" => $icp_data[0]['businessaddress'],
-                                                            "icpid" => $icp_id,
-                                                            "icpname" => $icp_data[0]['name'],
-                                                            "icpaddress" => $icp_data[0]['address'],
-                                                            "imgid" => $icp_image_id,
-                                                            "image" => $icp_img_data[0]['image']
-                                                        );
-                                                        if (!empty($device_tokens[$user_id])) {
-                                                            $response = $this->push_notification->sendPushiOS(array('deviceToken' => $device_tokens[$user_id], 'pushMessage' => $messageText), $pushData);
+                                //-- Detects faces on uploaded ICP image and and store it in face recognition database
+                                //-- Code start
+                                $photo = base_url(ICP_IMAGES) . $biz_dir . '/' . $icp_dir . '/' . $image_name;
+
+                                $response = $this->findface->detect($photo);
+                                if (isset($response['faces']) && !empty($response['faces'])) {
+
+                                    $total_users = $this->users_model->get_total_users();
+                                    //-- Get checked in users who have checked in to particualr icps/business
+                                    $business_users = $this->users_model->get_checkedinusers_by_business($business_id);
+                                    $icp_users = $this->users_model->get_checkedinusers_by_icp($icp_id);
+                                    //-- merge both users
+                                    $users = array_merge($business_users, $icp_users);
+
+                                    $userids = array_column($users, 'user_id');
+
+                                    //-- create dossier
+                                    $dresponse = $this->findface->adddossier($dossierlist_id, 'icpimage_' . $icp_image_id);
+
+                                    if (isset($dresponse['id'])) {
+                                        $dossier_id = $dresponse['id'];
+                                        $face_id = [];
+                                        foreach ($response['faces'] as $key1 => $face) {
+                                            $detection_id = $face['id'];
+                                            //-- add face into dossier
+                                            $fresponse = $this->findface->adddossierface($dossier_id, $detection_id, $photo);
+                                            if (isset($fresponse['id'])) {
+                                                $face_id[] = $fresponse['id'];
+                                            }
+
+                                            //-- Search face in userselfie list
+                                            $match_images = $this->findface->identify($detection_id, USERDOSSIERLIST_ID, $total_users);
+
+                                            if (isset($match_images['results']) && !empty($match_images['results'])) {
+                                                $dossier_ids = array_column($match_images['results'], 'id');
+                                                $detected_users = $this->users_model->get_users_by_dossier($dossier_ids);
+                                                foreach ($detected_users as $key2 => $detected_user) {
+
+                                                    if (in_array($detected_user['id'], $userids)) {
+                                                        //-- if image is verified then store it into image_tag table and send push notification to user
+                                                        $icp_image_tag = array(
+                                                            'icp_image_id' => $icp_image_id,
+                                                            'user_id' => $detected_user['id'],
+                                                            'is_user_verified' => 0,
+                                                            'is_purchased' => 0,
+                                                            'created' => date('Y-m-d H:i:s'),
+                                                            'modified' => date('Y-m-d H:i:s'));
+                                                        $icp_image_tag_id = $this->icp_imagetag_model->insert($icp_image_tag);
+
+                                                        $url = $photo;
+
+                                                        $source_x = trim($face['bbox']['left']);
+                                                        $source_y = trim($face['bbox']['top']);
+                                                        $x2 = trim($face['bbox']['right']);
+                                                        $y2 = trim($face['bbox']['bottom']);
+
+                                                        $width = $x2 - $source_x;
+                                                        $height = $y2 - $source_y;
+                                                        crop_image($source_x, $source_y, $width, $height, $url, $icp_image_tag_id);
+
+
+                                                        $messageText = "Hello there, you have a new 'facetag' ...is this you?";
+                                                        if ($detected_user['device_type'] == 0) {
+                                                            $where = 'im.id = ' . $this->db->escape($icp_image_id);
+                                                            $icp_img_data = $this->icp_images_model->get_result($where);
+                                                            $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
+                                                            $icp_data = $this->icps_model->get_result($where);
+                                                            $pushData = array(
+                                                                "notification_type" => "data",
+                                                                "body" => $messageText,
+                                                                "selfietagid" => $icp_image_tag_id,
+                                                                "businessid" => $icp_img_data[0]['business_id'],
+                                                                "businessname" => $icp_data[0]['businessname'],
+                                                                "businessaddress" => $icp_data[0]['businessaddress'],
+                                                                "icpid" => $icp_id,
+                                                                "icpname" => $icp_data[0]['name'],
+                                                                "icpaddress" => $icp_data[0]['address'],
+                                                                "imgid" => $icp_image_id,
+                                                                "image" => $icp_img_data[0]['image']
+                                                            );
+                                                            if (!empty($detected_user['device_id'])) {
+                                                                $response = $this->push_notification->sendPushToAndroid(array($detected_user['device_id']), $pushData, FALSE);
+                                                            }
+                                                        } else {
+                                                            $url = '';
+                                                            $where = 'im.id = ' . $this->db->escape($icp_image_id);
+                                                            $icp_img_data = $this->icp_images_model->get_result($where);
+                                                            $where = 'i.id = ' . $this->db->escape($icp_img_data[0]['icp_id']);
+                                                            $icp_data = $this->icps_model->get_result($where);
+                                                            $pushData = array(
+                                                                "selfietagid" => $icp_image_tag_id,
+                                                                "businessid" => $icp_img_data[0]['business_id'],
+                                                                "businessname" => $icp_data[0]['businessname'],
+                                                                "businessaddress" => $icp_data[0]['businessaddress'],
+                                                                "icpid" => $icp_id,
+                                                                "icpname" => $icp_data[0]['name'],
+                                                                "icpaddress" => $icp_data[0]['address'],
+                                                                "imgid" => $icp_image_id,
+                                                                "image" => $icp_img_data[0]['image']
+                                                            );
+                                                            if (!empty($detected_user['device_id'])) {
+                                                                $response = $this->push_notification->sendPushiOS(array('deviceToken' => $detected_user['device_id'], 'pushMessage' => $messageText), $pushData);
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
+                                        $update_data = array('is_face_detected' => 1, 'dossier_id' => $dossier_id, 'dossierface_ids' => implode(",", $face_id));
+                                        $this->icp_images_model->update_record('id=' . $icp_image_id, $update_data);
                                     }
                                 }
+                                //-- Code End
                             }
-                            //-- Code End
+                        } else {
+                            unlink($full);
                         }
-                    } else {
-                        unlink($full);
                     }
                 }
             }
@@ -623,13 +611,21 @@ class Cron extends CI_Controller {
     public function store_images_in_API() {
         $icps = $this->icps_model->get_icps();
         foreach ($icps as $icp) {
-            //--Create icp gallery in face recognition database
-            $gallary_name = 'icp_' . $icp['id'];
-            $this->facerecognition->post_gallery($gallary_name);
+            if (!in_array($icp['id'], [182,183,184])) {
+                //--Create icp gallery in face recognition database
+                $gallary_name = 'icp_' . $icp['id'];
+//            if (is_null($icp['dossierlist_id'])) {
+
+                $api_response = $this->findface->adddossier_list($gallary_name);
+                if (!isset($api_response['curl_error']) && isset($api_response['id'])) {
+                    $this->icps_model->update_record(['id' => $icp['id']], ['dossierlist_id' => $api_response['id']]);
+                }
+            }
+//            }
         }
-        //-- post user selfie gallery to FR
-        $gallary_name = 'userselfies';
-        $this->facerecognition->post_gallery($gallary_name);
+    }
+
+    public function store_userdossier_in_API() {
 
         $users = $this->users_model->get_active_users();
         //-- Post userselfi into FR's userselfi gallery;
@@ -642,15 +638,30 @@ class Cron extends CI_Controller {
                 'meta' => 'user_' . $user_id,
                 'galleries' => array($gallery_name)
             );
-            $this->facerecognition->delete_face('meta', 'user_' . $user_id); //-- delete already added image
-            $facerecog_data = $this->facerecognition->post_face('application/json', $data);
+
+            //-- Detect Photo first
+            $response = $this->findface->detect($photo);
+
+            if (isset($response['faces']) && !empty($response['faces'])) {
+                $detection_id = $response['faces'][0]['id'];
+                //-- create dossier
+                $dresponse = $this->findface->adddossier(USERDOSSIERLIST_ID, 'user_' . $user['id']);
+                if (isset($dresponse['id'])) {
+                    $dossier_id = $dresponse['id'];
+                    //-- add face into dossier
+                    $fresponse = $this->findface->adddossierface($dossier_id, $detection_id, $photo);
+                    if (isset($fresponse['id'])) {
+                        $dossierface_id = $fresponse['id'];
+                        $this->users_model->update_user_image(['id' => $user['image_id']], ['dossier_id' => $dossier_id, 'dossierface_id' => $dossierface_id]);
+                    }
+                }
+            }
         }
     }
-    
-    public function test_upload_img() {
-        error_reporting(E_ALL);
-        $full = ICP_AUTO_UPLOAD_IMAGES."business_57/icp_169/dsc_0016.jpg";
-        copy($full, ICP_IMAGES."business_1/icp_165/dsc_0016.jpg");
+
+    public function updatedossier() {
+        $users = $this->users_model->get_emptydossier_users();
+        p($users, 1);
     }
 
 }
